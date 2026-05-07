@@ -37,7 +37,7 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 | 依赖技能 | 用途 | 是否必需 |
 |---------|------|---------|
-| `deep-research` | Phase 6 深度研究与争议分析 | 可选（不安装则跳过 Phase 6） |
+| `deep-research` | 争议分析功能中执行深度研究 | 可选（不安装则跳过争议分析） |
 
 **安装依赖技能方法：**
 ```bash
@@ -157,8 +157,8 @@ vault/
 
 ### 6. 依赖技能
 
-- Phase 6（争议分析）依赖 `deep-research` 技能
-- 如未安装该技能，Phase 6 会自动跳过
+- 争议分析功能依赖 `deep-research` 技能
+- 如未安装该技能，争议分析会自动跳过
 - 如需完整功能，请提前安装 `deep-research`
 
 ---
