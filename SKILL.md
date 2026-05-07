@@ -63,7 +63,7 @@ description: Process learning materials into structured Obsidian atomic notes wi
 
 **步骤 1.1: 检测 vault 并选择文件夹**
 - 自动检测 Obsidian vault 根目录
-- 使用网页选择器或文字列表让用户选择文件夹
+- 使用文字列表让用户选择文件夹
 - 用户确认选择后进入下一步
 
 **步骤 1.2: 完整阅读学习材料**
