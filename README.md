@@ -38,6 +38,7 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 1. **Obsidian Vault**：确保你有一个 Obsidian 知识库
 2. **Claude Code**：最新版本的 Claude Code CLI
 3. **学习材料**：PDF、Markdown 或其他文档格式
+4. **deep-research skill**：（可选）用于 Phase 6 深度研究，如未安装则跳过该阶段
 
 ---
 
