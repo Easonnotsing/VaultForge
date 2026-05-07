@@ -208,7 +208,7 @@ def add_links_to_notes(vault_path: str, note_links: Dict[str, List[str]]):
             pass
         else:
             # 添加新的相关笔记部分
-            links_text = '\n'.join([f'- [[{note}]]" for note in linked_notes])
+            links_text = '\n'.join([f'- [[{note}]]' for note in linked_notes])
             new_section = f"\n## 相关笔记\n\n{links_text}\n"
 
             content = content.rstrip() + new_section

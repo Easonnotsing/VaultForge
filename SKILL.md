@@ -584,60 +584,45 @@ tags:
 
 ### Phase 6: 深度研究与争议分析
 
-**步骤 6.1: 调用 deep-research**
+**步骤 6.1: 执行深度研究**
 
-#### 6.1.1 调用方式
-
-使用 Skill 工具调用 deep-research：
-
-```
-- skill: deep-research
-- args: "{主题}的深度研究，包括：主流观点、争议内容、不同视角、行业共识与分歧、权威来源"
-```
-
-#### 6.1.2 研究主题传递
+#### 6.1.1 研究主题提取
 
 从学习路线图中提取：
 - **主题名称**：学习材料的核心主题（如"Digital Transformation"）
 - **补充关键词**：关键概念、理论框架名称
 
-#### 6.1.3 预期返回格式
+#### 6.1.2 调用 deep-research
 
-deep-research 返回 markdown 研究报告：
+使用 Skill 工具调用 deep-research：
 
-```markdown
-# [Topic]: Research Report
-*Generated: [date] | Sources: [N] | Confidence: [High/Medium/Low]*
-
-## Executive Summary
-[3-5 sentence overview of key findings]
-
-## 1. [First Major Theme]
-[Findings with inline citations]
-
-## 2. [Second Major Theme]
-...
-
-## Key Takeaways
-- [Actionable insight 1]
-...
-
-## Sources
-1. [Title](url) — [one-line summary]
-2. ...
-
-## Methodology
-...
 ```
+Skill(
+  skill: "deep-research",
+  args: "{主题}的深度研究，包括：主流观点、争议内容、不同视角、行业共识与分歧、权威来源"
+)
+```
+
+deep-research 会执行深度网络搜索并产出研究报告。
+
+#### 6.1.3 研究报告接收
+
+从 deep-research 返回的结果中提取：
+- **Executive Summary**：用于争议分析笔记的摘要部分
+- **Sources**：用于参考来源列表
+- **各主题 Findings**：用于识别共识与争议
+
+将研究报告完整保存到：
+`{vault根目录}/{学习材料所在文件夹}/{主题} - 深度研究.md`
 
 **步骤 6.2: 解析研究结果**
 
 #### 6.2.1 研究结果到笔记内容的映射
 
-| 争议分析笔记部分 | 对应 deep-research 输出 |
+| 争议分析笔记部分 | 对应研究报告输出 |
 |-----------------|----------------------|
 | 摘要 | Executive Summary |
-| 毋庸置疑（行业共识） | 多个 sub-question 中多来源一致认可的内容 |
+| 毋庸置疑（行业共识） | 多个主题 findings 中多来源一致认可的内容 |
 | 存在争议（不同观点） | 各主题 findings 中观点分歧的内容 |
 | 因情景而已 | Key Takeaways 中提到"取决于具体情况"的内容 |
 | 参考来源 | Sources 列表（提取最有价值的 5-10 个） |
@@ -645,7 +630,7 @@ deep-research 返回 markdown 研究报告：
 
 #### 6.2.2 解析原则
 
-- **提取而非重写**：从 deep-research 报告中提取相关内容
+- **提取而非重写**：从研究报告中提取相关内容
 - **保留来源**：所有内容必须标注来源
 - **对比学习材料**：识别与学习材料观点一致/分歧的内容
 
@@ -684,7 +669,7 @@ tags:
 
 - **内容**：{具体共识内容}
 - **为何无争议**：{解释为什么这个观点没有争议}
-- **来源佐证**：{来自 deep research 的支持证据}
+- **来源佐证**：{来自深度研究的支持证据}
 
 ### 共识 2：{...}
 
@@ -697,7 +682,7 @@ tags:
 ### 争议 1：{标题}
 
 - **学习材料观点**：{学习材料中的观点}
-- **对立观点**：{deep research 中发现的反对或不同观点}
+- **对立观点**：{深度研究中发现的反对或不同观点}
 - **争议焦点**：{争议的核心是什么，分歧的根源}
 - **各方论据**：
   - 支持方：{支持学习材料观点的论据}
@@ -753,7 +738,7 @@ tags:
 
 ## 参考来源
 
-{按相关性和价值排列，列出 deep research 中发现的最有价值的参考来源。}
+{按相关性和价值排列，列出深度研究中发现的最有价值的参考来源。}
 
 1. [{来源标题}](URL) - {为什么这个来源有价值，简短评价}
 2. [{来源标题}](URL) - {...}
@@ -796,7 +781,7 @@ tags:
 **步骤 6.4: 批量报告结果**
 
 一次性展示：
-- Deep Research 执行摘要（研究了多少来源、覆盖了哪些方面）
+- 深度研究执行摘要（研究了多少来源、覆盖了哪些方面）
 - 争议分析笔记已生成
 - 参考来源列表
 
@@ -880,7 +865,6 @@ skill目录/
 ├── SKILL.md                    # 主 skill 文件（含完整流程）
 ├── agents/
 │   ├── roadmap-generator.md    # 路线图生成 agent
-│   ├── outline-generator.md     # 大纲生成 agent
 │   ├── file-structure-creator.md # 文件结构创建 agent
 │   ├── atomic-note-filler.md    # 原子笔记填充 agent
 │   └── note-reviewer.md         # 笔记审查 agent

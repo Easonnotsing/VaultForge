@@ -31,22 +31,15 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 如果只需要核心功能，可以直接下载 [SKILL.md](./SKILL.md) 文件到你本地 Claude Code 的 skills 目录。
 
-### 依赖技能
+### 依赖资源
 
-本技能的某些功能依赖其他 Claude Code 技能，使用前请确保已安装：
+Phase 6 深度研究需要以下工具权限：
 
-| 依赖技能 | 用途 | 是否必需 |
-|---------|------|---------|
-| `deep-research` | 争议分析功能中执行深度研究 | 可选（不安装则跳过争议分析） |
-
-**安装依赖技能方法：**
-```bash
-# 在 Claude Code 中使用 skill 命令安装
-/skill deep-research
-
-# 或查看可用的 skills 列表
-/skills
-```
+| 工具 | 用途 | 是否必需 |
+|------|------|---------|
+| `WebSearch` | 执行深度研究时的网络搜索 | 必需 |
+| `WebFetch` | 获取研究来源的完整内容 | 必需 |
+| `Agent` | 启动研究 agent 执行深度研究 | 必需 |
 
 ---
 
@@ -157,11 +150,11 @@ vault/
 - PDF 等大文件会自动分批读取（每批 50 页）
 - 无需手动确认，自动继续
 
-### 6. 依赖技能
+### 6. Phase 6 深度研究
 
-- 争议分析功能依赖 `deep-research` 技能
-- 如未安装该技能，争议分析会自动跳过
-- 如需完整功能，请提前安装 `deep-research`
+- Phase 6 使用 Agent 工具启动研究 agent 执行深度研究
+- 需要 WebSearch 和 WebFetch 工具权限
+- 如无相关工具权限，该 phase 会跳过
 
 ---
 
@@ -173,7 +166,6 @@ obsidian-learning/
 ├── SKILL.md                         # 完整技能定义
 ├── agents/
 │   ├── roadmap-generator.md         # 路线图生成
-│   ├── outline-generator.md         # 大纲生成
 │   ├── file-structure-creator.md    # 文件结构创建
 │   ├── atomic-note-filler.md        # 原子笔记填充
 │   └── note-reviewer.md             # 笔记审查
