@@ -23,7 +23,7 @@
 
 ```bash
 # Clone 到本地 skills 目录
-git clone https://github.com/polaris1025-design/obsidian-learning.git /path/to/your/skills/obsidian-learning
+git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/skills/obsidian-learning
 ```
 
 ### 方法二：下载单个文件
