@@ -31,16 +31,6 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 如果只需要核心功能，可以直接下载 [SKILL.md](./SKILL.md) 文件到你本地 Claude Code 的 skills 目录。
 
-### 依赖资源
-
-Phase 6 深度研究需要以下工具权限：
-
-| 工具 | 用途 | 是否必需 |
-|------|------|---------|
-| `WebSearch` | 执行深度研究时的网络搜索 | 必需 |
-| `WebFetch` | 获取研究来源的完整内容 | 必需 |
-| `Agent` | 启动研究 agent 执行深度研究 | 必需 |
-
 ---
 
 ## 前置要求
