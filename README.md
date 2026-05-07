@@ -152,9 +152,8 @@ vault/
 
 ### 6. Phase 6 深度研究
 
-- Phase 6 使用 Agent 工具启动研究 agent 执行深度研究
-- 需要 WebSearch 和 WebFetch 工具权限
-- 如无相关工具权限，该 phase 会跳过
+- Phase 5 完成后自动执行，无需用户确认
+- 使用 Skill 工具调用 deep-research skill 执行深度研究
 
 ---
 
