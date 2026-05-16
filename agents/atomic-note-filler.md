@@ -1,11 +1,6 @@
 ---
 name: atomic-note-filler
 description: Fill atomic notes with rich, beginner-friendly content from learning materials. Notes must be comprehensive teaching materials, not outlines.
-tools:
-  - Read
-  - Write
-  - Bash
-model: sonnet
 ---
 
 # Atomic Note Filler Agent
@@ -125,7 +120,7 @@ tags:
 2. **避免重复**
    - 不同笔记间不要出现大比例的重复内容（重复率 < 10%）
    - 每个笔记应该聚焦于自己的知识点
-   - 可以引用其他笔记（使用 `[[笔记名称]]]]`），但不要复制内容
+   - 可以引用其他笔记（使用 `[[笔记名称]]`），但不要复制内容
 
 3. **保持原创**
    - 不要直接复制学习材料的原文

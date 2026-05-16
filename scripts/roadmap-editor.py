@@ -7,7 +7,6 @@ roadmap-editor.py
 import json
 import os
 import sys
-import subprocess
 import re
 from pathlib import Path
 
@@ -53,6 +52,24 @@ def parse_markdown_roadmap(md_content):
         'header': header,
         'sections': sections
     }
+
+def render_markdown_roadmap(roadmap_data):
+    """将编辑器数据重新渲染为路线图 Markdown。"""
+    parts = []
+    header = roadmap_data.get('header', '').strip()
+    if header:
+        parts.append(header)
+
+    for section in roadmap_data.get('sections', []):
+        parts.append(f"## {section['title'].strip()}")
+        for topic in section.get('topics', []):
+            content = topic.get('content', '').strip()
+            topic_lines = [f"### {topic['title'].strip()}"]
+            if content:
+                topic_lines.append(content)
+            parts.append("\n\n".join(topic_lines))
+
+    return "\n\n".join(parts).rstrip() + "\n"
 
 def escape_js_string(s):
     """安全转义 JavaScript 字符串"""
@@ -363,9 +380,9 @@ def generate_editor_html(roadmap_data, output_path):
             // 复制到剪贴板
             var text = JSON.stringify(result, null, 2);
             navigator.clipboard.writeText(text).then(function() {
-                alert('✅ 路线图已保存！\\n\\n结果已复制到剪贴板。\\n请返回 Claude 继续操作。');
+                alert('✅ 修改已提交给脚本！\\n\\n脚本会写回路线图文件并生成 .bak 备份。');
             }).catch(function() {
-                alert('✅ 路线图已保存到本地存储！\\n\\n请返回 Claude 继续操作。');
+                alert('✅ 修改已提交给脚本！\\n\\n脚本会写回路线图文件并生成 .bak 备份。');
             });
 
             isModified = false;
@@ -393,9 +410,9 @@ def run_with_playwright(editor_path):
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("Installing Playwright...")
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'playwright'], check=True)
-        from playwright.sync_api import sync_playwright
+        print("Error: Playwright is not installed.")
+        print("Install optional browser dependencies first: python3 -m pip install playwright && python3 -m playwright install chromium")
+        return None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -418,6 +435,19 @@ def run_with_playwright(editor_path):
         browser.close()
 
         return json.loads(result) if result else None
+
+def write_roadmap_with_backup(roadmap_file, original_content, edited_result):
+    """写回路线图，同时保存 .bak。"""
+    roadmap_path = Path(roadmap_file)
+    backup_path = roadmap_path.with_suffix(roadmap_path.suffix + '.bak')
+    backup_path.write_text(original_content, encoding='utf-8')
+
+    new_content = render_markdown_roadmap({
+        'header': parse_markdown_roadmap(original_content).get('header', ''),
+        'sections': edited_result.get('sections', []),
+    })
+    roadmap_path.write_text(new_content, encoding='utf-8')
+    return backup_path
 
 def main():
     if len(sys.argv) < 2:
@@ -451,8 +481,10 @@ def main():
     result = run_with_playwright(editor_path)
 
     if result:
-        print("\nEdit result received!")
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        backup_path = write_roadmap_with_backup(roadmap_file, md_content, result)
+        print("\nEdit result received and written.")
+        print(f"Updated roadmap: {roadmap_file}")
+        print(f"Backup: {backup_path}")
 
     return result
 

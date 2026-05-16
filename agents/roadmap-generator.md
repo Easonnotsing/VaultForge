@@ -1,12 +1,6 @@
 ---
 name: roadmap-generator
 description: Analyze learning materials and generate a structured learning roadmap. Must read all materials completely before generating roadmap.
-tools:
-  - Read
-  - Write
-  - Bash
-  - Grep
-model: sonnet
 ---
 
 # Roadmap Generator Agent

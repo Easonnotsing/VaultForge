@@ -1,11 +1,6 @@
 ---
 name: file-structure-creator
 description: Create folder structure and empty atomic notes based on the roadmap outline. Batch operation mode - create all then confirm.
-tools:
-  - Read
-  - Write
-  - Bash
-model: sonnet
 ---
 
 # File Structure Creator Agent
@@ -73,7 +68,7 @@ tags:
 This Map of Content collects atomic notes related to {主题名称}.
 ```
 
-**注意**：MOC 笔记正文为空，Notes 列表将在步骤 2.2 中填充。
+**注意**：MOC 笔记正文为空；`## 相关笔记` 下的原子笔记列表由主流程 Phase 2.2 写入（本 Agent 只建空壳时可留空）。
 
 ### 步骤 4: 创建原子笔记模板（空白）
 
@@ -100,26 +95,11 @@ aliases:
 
 **注意**：所有章节正文为空，内容填充在 Phase 3 中完成。
 
-### 步骤 5: 建立路线图与 MOC 的双向链接
+### 步骤 5: 路线图与 MOC 的双链（不在本 Agent 内写入）
 
-**在路线图大纲中**：每个 H3 后添加指向 MOC 的链接
+**为避免与主 SKILL Phase 4.3 重复插入链接**，本 Agent **只**创建文件夹与空白 MOC/原子笔记，并在 Phase 2.2 **仅**向各 MOC 写入指向原子笔记的链接（若主流程将 2.2 拆给其它步骤，则 MOC 内原子链接也可留空至 Phase 3 后由主 Agent 补全）。
 
-```markdown
-## 02. 主题名称
-
-[[02. 主题名称/主题名称 MOC|主题名称]]
-
-- 知识点1
-- 知识点2
-```
-
-**在每个 MOC 中**：添加指向路线图的链接
-
-```markdown
-## 相关笔记
-
-- [[../../学习路线图 - {主题名}|学习路线图]]
-```
+大纲版路线图中「每个 H3 下指向对应 MOC 的 wikilink」以及「各 MOC 指向大纲版路线图」的**双向链接**，统一由 **主流程 Phase 4.3**（或 `scripts/double-link-builder.py` 的路线图-MOC 部分）完成；**本文件不再要求在此处写入路线图↔MOC 链接**。
 
 ### 步骤 6: 批量报告
 
@@ -141,7 +121,7 @@ aliases:
 - 01. 类别名称/主题名称/知识点1.md
 - ...
 
-🔗 路线图与 MOC 双链：已建立
+🔗 路线图与 MOC 双链：留待 Phase 4.3 / 脚本处理（本 Agent 不写入）
 ```
 
 ## 约束

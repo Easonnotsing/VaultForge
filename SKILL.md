@@ -1,6 +1,9 @@
 ---
 name: obsidian-learning
-description: Process learning materials into structured Obsidian atomic notes with roadmaps, MOCs, and double-links. Use when user wants to create a knowledge base from study materials.
+description: >-
+  Process learning materials into structured Obsidian atomic notes with roadmaps, MOCs, and double-links.
+  Use when the user wants to build a study vault from PDFs/Markdown.
+  将学习资料（PDF/Markdown 等）转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库；用户希望「从材料到笔记库」时使用。
 ---
 
 # Obsidian Learning Material Processing
@@ -18,13 +21,16 @@ description: Process learning materials into structured Obsidian atomic notes wi
 - 如果必须分批读取（例如 PDF 每批 50 页），**自动继续无需用户确认**
 - 只有在确认已读取全部内容后，才能生成学习路线图
 
-### ⚠️ 重要：原子笔记与知识点一一对应
+### ⚠️ 重要：原子笔记与知识点的对应关系（默认一对一 + 篇幅校准）
 
-**每个知识点对应一个原子笔记，不多不少。**
+**默认**：大纲版中每个 bullet 知识点对应**一篇**原子笔记；笔记标题与 bullet 文案一致（或为其规范化文件名）。
 
-- 不得将多个知识点合并为一个原子笔记
-- 不得将一个知识点拆分为多个原子笔记
-- 原子笔记的标题应与大纲版中的知识点名称一致
+**允许例外**（须与下一节「篇幅成正比」规则**同时**满足，并在路线图确认信息中**简短说明**合并或拆分理由）：
+
+- 材料中某知识点篇幅极少：可与相邻 bullet **合并**为一篇原子笔记（大纲需同步：合并 bullet 或标注「已合并」）。
+- 某知识点在材料中篇幅很大：可**拆分**为多篇原子笔记（大纲拆成多个 bullet，或子编号）。
+
+**禁止**：无材料依据的随意合并/拆分；禁止大纲与将要创建的原子笔记数量不一致。
 
 ---
 
@@ -294,9 +300,9 @@ vault根目录/
   - "取消" → 返回修改路线图
 ```
 
-**步骤 2.2: 填充 MOC 内容**
-- 将原子笔记链接写入对应 MOC
-- 在路线图大纲中将 H3 与对应 MOC 建立双向链接
+**步骤 2.2: 填充 MOC 内容（仅原子笔记链接）**
+- 将各 H3 主题文件夹下原子笔记的 wikilink 写入对应 MOC 的 `## 相关笔记`（或等价小节）
+- **不在此步骤**修改大纲版路线图：路线图大纲中「H3 ↔ MOC」及「MOC ↔ 路线图」的双向链接**统一在 Phase 4.3** 完成（或由 `scripts/double-link-builder.py` 的路线图-MOC 逻辑执行），避免与 Phase 4 重复插入
 
 **步骤 2.3: 验证结构**
 - 检查文件夹结构、笔记数量与路线图是否一致
@@ -334,6 +340,8 @@ vault根目录/
 **步骤 3.2: 并行填充内容**
 
 启动指定数量的 agents **并行执行**填充任务：
+
+**环境与降级**：若当前客户端**不支持**真正的多 Agent 并行（无 `Task` / 子 Agent 编排），则改为**顺序执行**：仍按「每批最多 5 篇原子笔记」分组，逐组调用 `atomic-note-filler` 或等价流程，直至全部完成；进度报告格式不变。
 
 ```
 [agent-1] 📝 正在填充: 原子笔记A, 原子笔记B, 原子笔记C
@@ -408,6 +416,22 @@ vault根目录/
 
 ### Phase 4: 双链建立
 
+#### Phase 4 执行策略（主 Agent 与脚本、去重）
+
+1. **默认路径（推荐）**  
+   - **步骤 4.2**：由**主 Agent**依据上文「双链建立标准」五类逻辑关系，在原子笔记的 `## 相关笔记` 中撰写链接；同一对笔记之间**只保留一种最贴切**的关系表述（可用一句括号说明关系类型，可选）。  
+   - **步骤 4.3**：由主 Agent 完成大纲版路线图 ↔ 各 MOC 的双向链接（与 Phase 2.2 已写入的原子列表并存），**插入前扫描**目标文件是否已有等价 `[[...]]`，**禁止重复行**。
+
+2. **可选脚本路径**  
+   - 仅当用户**明确要求**使用 `scripts/double-link-builder.py`，或主 Agent 因权限/篇幅无法稳妥写完 4.2/4.3 时，再运行脚本生成**候选清单**。  
+   - 脚本默认只在 vault 根目录生成 `link-candidates.md`，**不直接修改原子笔记或路线图**。  
+   - 主 Agent 必须逐条确认候选是否符合五类逻辑关系；确认后可手动写入，或在确认无误后运行 `python3 scripts/double-link-builder.py <vault_path> [roadmap_name] --apply` 应用候选与路线图-MOC 链接。
+   - 应用后，主 Agent 须按同一「去重」规则整理 `## 相关笔记` 与路线图：删除重复 wikilink、删除明显不符合五类标准的链，**不得**在未去重的情况下再叠一层全文链接。
+
+3. **禁止**  
+   - 同一 Phase 内「主 Agent 已写满 4.2 + 无清理再跑脚本」导致双倍链接；  
+   - 在 `## 相关笔记` 中重复出现指向同一目标的 `- [[同一目标]]` 多行（合并为一行）。
+
 **步骤 4.1: 读取所有原子笔记**
 - 批量读取所有原子笔记内容
 - 分析笔记间的逻辑关联
@@ -417,14 +441,19 @@ vault根目录/
 - 在相关笔记的 `## 相关笔记` 部分添加链接
 
 **步骤 4.3: 建立路线图与 MOC 的双链**
-- 在大纲版路线图中，每个 H3 主题后添加指向对应 MOC 的链接
-- 在每个 MOC 笔记中，添加指向路线图大纲的链接
-- 示例：
+- 本步为**唯一规范入口**：在大纲版路线图中为每个 H3 添加指向对应 MOC 的 wikilink，并在各 MOC 的 `## 相关笔记` 中回链大纲版路线图（与 Phase 2.2 已写入的「原子笔记列表」并存，**勿重复插入**已有链接）
+- 若已存在等价链接，仅做查漏补缺
+- 示例（`##` = H2 类别，`###` = H3 主题；MOC 链接紧跟对应 **H3** 标题行之后）：
   ```markdown
   <!-- 路线图大纲中 -->
   ## 02. 客户领域
 
+  ### 客户战略核心
+
   [[02. 客户领域/客户战略核心/客户战略核心 MOC|客户战略核心]]
+
+  - 知识点一
+  - 知识点二
 
   <!-- 对应 MOC 中 -->
   ## 相关笔记
@@ -465,16 +494,18 @@ vault根目录/
 #### 5.1.3 路线图与 MOC 双链检查
 - [ ] 大纲版学习路线图中每个 H3 主题后已添加指向对应 MOC 的链接
 - [ ] 每个 MOC 笔记中已添加指向大纲版学习路线的链接
-- 示例：
+- 示例（层级与 Phase 4.3 一致：`##` 类别 → `###` 主题 → MOC 链接）：
   ```markdown
   <!-- 大纲版路线图中 -->
   ## 02. 客户领域
-  
+
+  ### 客户战略核心
+
   [[02. 客户领域/客户战略核心/客户战略核心 MOC|客户战略核心]]
-  
+
   <!-- 对应 MOC 中 -->
   ## 相关笔记
-  
+
   - [[../../学习路线图 - Digital Transformation Roadmap|学习路线图]]
   ```
 
@@ -593,9 +624,11 @@ tags:
 - **主题名称**：学习材料的核心主题（如"Digital Transformation"）
 - **补充关键词**：关键概念、理论框架名称
 
-#### 6.1.2 调用 deep-research
+#### 6.1.2 调用 deep-research（可选）
 
-使用 Skill 工具调用 deep-research：
+**仅当**环境中已安装并可调用 `deep-research` skill（或等价的网络深度检索 MCP / 工具）时执行本节；**否则**跳过 Phase 6，并向用户说明：「未检测到 deep-research，已跳过深度研究与争议分析自动化；可手动检索后按 6.3 模板自建笔记。」
+
+在 Claude Code 等支持 Skill 链式调用的环境中，可使用（示例，以实际工具名为准）：
 
 ```
 Skill(
@@ -604,11 +637,11 @@ Skill(
 )
 ```
 
-deep-research 会执行深度网络搜索并产出研究报告。
+在 Cursor 等环境若无上述调用方式，改用已启用的 **Web 搜索 / 研究类 MCP**，自行归纳出与下表同构的「研究报告」后再进入 6.2。
 
 #### 6.1.3 研究报告接收
 
-从 deep-research 返回的结果中提取：
+从 deep-research（或等价研究输出）返回的结果中提取：
 - **Executive Summary**：用于争议分析笔记的摘要部分
 - **Sources**：用于参考来源列表
 - **各主题 Findings**：用于识别共识与争议
@@ -842,7 +875,7 @@ tags:
 | 逐个确认导致进度缓慢 | 交互模式设计问题 | 改为**批量确认模式** |
 | 长文件分批阅读需要多次确认 | 未考虑自动继续 | 改为**自动分批，无需确认** |
 | 原子笔记内容过于简化 | 未明确内容丰富度要求 | 明确要求**200+ 字详细解释，含案例分析** |
-| 双链标准模糊 | 仅基于术语相似 | 明确**5 种逻辑关联标准** |
+| 双链标准模糊 | 仅基于术语相似 | 明确**5 种逻辑关联标准**；Phase 4 约定主 Agent 与 `double-link-builder.py` 分工及去重；脚本仅用结构化信号、禁止仅靠词面相似 |
 | 路线图与 MOC 未建立双链 | 步骤遗漏 | 增加**步骤 4.3 专门建立此双链** |
 | MOC 与原子笔记双链遗漏 | 步骤遗漏 | 增加 **Phase 5.1.2 专门检查 MOC 与原子笔记双链** |
 | 学习后缺乏重点引导 | 未提供核心问题框架 | 增加 **Phase 5.2 生成"核心问题"笔记**，用 5 个以内关键问题引导学习 |
@@ -857,13 +890,15 @@ tags:
 1. **优先使用 Python 脚本而非 agents** - agents 受限于权限和上下文
 2. **批量操作减少交互** - 减少用户确认次数，提高效率
 3. **自动错误恢复** - 脚本出错时记录日志并继续
-4. **进度持久化** - 长时间任务定期保存进度
+4. **长任务断点（可选，非强制）** - 每完成一个 Phase，可将「已完成步骤编号 + 关键产出文件路径列表」追加写入 vault 根目录的 `.obsidian-learning-progress.md`（纯文本 Markdown 即可，任务结束后可删除）；未写入不影响流程合规性
 
 ## 文件结构
 
 ```
 skill目录/
 ├── SKILL.md                    # 主 skill 文件（含完整流程）
+├── README.md                   # 安装说明与产品说明
+├── COMPATIBILITY.md            # Claude Code / Cursor / Codex 兼容性说明
 ├── agents/
 │   ├── roadmap-generator.md    # 路线图生成 agent
 │   ├── file-structure-creator.md # 文件结构创建 agent
@@ -871,8 +906,14 @@ skill目录/
 │   └── note-reviewer.md         # 笔记审查 agent
 ├── references/
 │   └── obsidian-structure.md    # Obsidian 结构规范
-└── scripts/
-    └── double-link-builder.py   # 双链构建脚本（推荐使用）
+├── scripts/
+│   ├── double-link-builder.py   # 双链候选生成器（默认只输出 link-candidates.md；确认后 --apply）
+│   ├── roadmap-editor.py        # 可选：路线图可视化编辑（依赖本机浏览器/Playwright）
+│   ├── run-picker.py            # 可选：vault 文件夹选择器网页
+│   └── generate-picker.sh       # 可选：生成并打开选择器的壳脚本
+└── tests/
+    ├── fixtures/
+    └── test_scripts.py
 ```
 
 ## 流程概览
@@ -891,6 +932,12 @@ Phase 5: 最终审查 + 核心问题生成
 Phase 6: 深度研究与争议分析
 ```
 
+### 客户端差异（Claude Code / Cursor 等）
+
+- **Claude Code**：常见触发方式为 slash command（如 `/obsidian-learning`，以本地配置为准）；子 Agent 与「Skill 调 Skill」依赖当前 harness 是否启用。
+- **Cursor**：通常由 **Agent Skills** 根据描述自动匹配，或由用户在对话中显式要求按本 SKILL 执行；若无多 Agent 编排，Phase 3 按上文**降级为顺序分组**即可。
+- **`scripts/double-link-builder.py`**：笔记间链接仅当同时满足 SKILL 五类关系之一对应的**结构化信号**（互引、标题主题重叠、因果/类比/转折/应用/背景等领域词汇及目录关系）时才生成候选；默认不写入原子笔记。主 Agent 确认后才应用；**不**根据全文词面相似度单独建链。自动无法断言时宁可不建链，可在 Obsidian 中补全。
+
 ## 输出质量标准
 
 ### 路线图质量
@@ -906,8 +953,8 @@ Phase 6: 深度研究与争议分析
 - 无大量重复内容
 
 ### 双链质量
-- 笔记间双链基于逻辑关联（非术语相似）
-- 路线图与 MOC 双向链接
+- 笔记间双链基于逻辑关联（非术语相似）；若曾运行 `double-link-builder.py`，仍建议抽样复核（脚本保守，可能漏链）
+- 路线图与 MOC 双向链接（以 Phase 4.3 为准）
 - MOC 正确链接所有原子笔记
 
 ### Obsidian 格式

@@ -7,7 +7,6 @@ run-picker.py
 import json
 import os
 import sys
-import subprocess
 from pathlib import Path
 
 def scan_vault(vault_path):
@@ -349,10 +348,9 @@ def run_with_playwright(picker_path):
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("Playwright not installed, installing...")
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'playwright'], check=True)
-        subprocess.run([sys.executable, '-m', 'playwright', 'install', 'chromium'], check=True)
-        from playwright.sync_api import sync_playwright
+        print("Error: Playwright is not installed.")
+        print("Install optional browser dependencies first: python3 -m pip install playwright && python3 -m playwright install chromium")
+        return None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
