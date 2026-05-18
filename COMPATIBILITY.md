@@ -1,51 +1,65 @@
 # Compatibility
 
-This skill is designed to be portable across agent clients, but each client has
-different support for subagents, file access, browser automation, and research
-tools. Treat `SKILL.md` as the source of truth and use the notes below as an
-execution guide.
+This skill is designed to be portable across agent clients. Each client has different support for subagents, file access, and research tools. `SKILL.md` is the source of truth — use the notes below as an execution guide.
 
-## Claude Code
+## Common Setup
 
-- Can use this repository as a skill directory.
-- Subagent files in `agents/` are written as generic task specs; the current
-  harness may map them to its own agent/task system.
-- If true parallel subagents are unavailable, run Phase 3 sequentially in
-  batches of no more than 5 atomic notes.
-- Optional browser scripts require Playwright to be installed beforehand.
+1. Clone the repository to your skills directory
+2. Install optional PDF dependency: `pip install pypdf` (or `PyPDF2`)
+3. Trigger the skill in your client (see below)
+
+## Claude Code / Codex
+
+- Use the full repository as a skill directory.
+- Subagent files in `agents/` are platform-neutral task specs; the harness maps them to its own agent/task system.
+- If parallel subagents are unavailable, run Phase 3 sequentially in batches of ≤ 5 notes.
+- The optional `roadmap-editor.py` requires Playwright: `pip install playwright && playwright install chromium`.
 
 ## Cursor
 
-- Place the whole repository in the Agent Skills location or reference
-  `SKILL.md` explicitly in the conversation/rules.
-- Cursor may not honor `agents/` as executable subagents. In that case, treat
-  each agent file as a prompt/spec and execute the work in the main agent.
-- Use the default conversational folder/file selection flow if local browser
-  automation is unavailable.
+- Place the whole repository in the Agent Skills location, or reference `SKILL.md` explicitly.
+- Cursor may not honor `agents/` as executable subagents → treat each agent file as a prompt/spec and execute in the main agent.
+- Use the default conversational folder/file selection flow (no browser automation needed).
 
-## Codex
+## Other Clients
 
-- Use the full repository as the working skill package.
-- The subagent markdown files are platform-neutral task instructions; they do
-  not require Claude-specific `model` or `tools` fields.
-- Prefer normal filesystem edits and local scripts for deterministic steps.
-- `scripts/double-link-builder.py` defaults to candidate generation; the main
-  agent should review `link-candidates.md` before applying links.
+- Any client that supports loading a skill directory should work.
+- Reference `SKILL.md` explicitly in the conversation if auto-detection fails.
+- The core flow requires no browser; all scripts are CLI-based.
 
-## Optional Scripts
+## Scripts
 
-- `scripts/run-picker.py`: optional local browser picker for vault folders.
-- `scripts/roadmap-editor.py`: optional local browser editor; writes back the
-  roadmap file and creates a `.bak` backup after saving.
-- `scripts/double-link-builder.py`: generates `link-candidates.md` by default;
-  use `--apply` only after main-agent review.
+| Script | Purpose | Dependencies |
+|--------|---------|-------------|
+| `context-extractor.py` | Extract source text per knowledge point (Phase 3.0b) | Python 3, pypdf (optional, for PDF) |
+| `double-link-builder.py` | Three-stage funnel: structural → TF-IDF → candidate generation (Phase 4) | Python 3 |
+| `roadmap-editor.py` | Optional browser-based roadmap editor | Python 3, Playwright |
 
-Install optional browser dependencies only if you plan to use picker/editor:
+### double-link-builder.py Modes
 
 ```bash
-python3 -m pip install playwright
-python3 -m playwright install chromium
+# Default: generate candidates.json for main agent LLM review (stage 3)
+python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --output candidates.json
+
+# Strict: deterministic links only (no LLM needed, ~40-50% coverage)
+python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --mode strict
+
+# Adjust thresholds
+python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --output c.json --tfidf-threshold 0.2
 ```
 
-The scripts do not auto-install dependencies. This keeps behavior predictable
-in restricted or offline agent environments.
+### context-extractor.py Usage
+
+```bash
+# Extract source excerpts based on roadmap source_range annotations
+python3 scripts/context-extractor.py <vault_path> <roadmap_path> -o context_packets.json
+
+# Adjust page buffer (±N pages)
+python3 scripts/context-extractor.py <vault_path> <roadmap_path> -o packets.json --buffer 2
+```
+
+## Testing
+
+```bash
+python3 -m unittest discover -s tests
+```
