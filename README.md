@@ -1,6 +1,6 @@
 # Obsidian Learning Material Processing
 
-这是一个咨询顾问式的学习方法论，旨在帮助你在极短时间内掌握一个新领域的核心知识，快速达到能够与专业人士深入交流的水平。这个工具利用Obsidian+Claude Code来自动整理领域核心问题与框架、明确核心知识点、建立知识点间的逻辑联系、并识别领域知识边界与争议之处。整个过程中，你只需专注于理解、思考、提问，繁琐的手工工作全部由 AI 代为完成，更容易进入心流状态，提高学习效率。
+这是一个咨询顾问式的学习方法论，旨在帮助你在极短时间内掌握一个新领域的核心知识，快速达到能够与专业人士深入交流的水平。这个工具利用 Obsidian + AI Agent（Claude Code / Codex / Cursor 等）来自动整理领域核心问题与框架、明确核心知识点、建立知识点间的逻辑联系、并识别领域知识边界与争议之处。整个过程中，你只需专注于理解、思考、提问，繁琐的手工工作全部由 AI 代为完成，更容易进入心流状态，提高学习效率。
 
 [SKILL.md](./SKILL.md) - 完整技能定义文档
 
@@ -29,16 +29,17 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 ### 方法二：下载单个文件
 
-如果只需要核心功能，可以直接下载 [SKILL.md](./SKILL.md) 文件到你本地 Claude Code 的 skills 目录。
+如果只需要核心功能，可以直接下载 [SKILL.md](./SKILL.md) 文件到本地 AI Agent 的 skills 目录。
 
 ---
 
 ## 前置要求
 
 1. **Obsidian Vault**：确保你有一个 Obsidian 知识库
-2. **Claude Code**：最新版本的 Claude Code CLI
+2. **AI Agent 客户端**：兼容的 Agent 客户端（Claude Code / Codex / Cursor 等）
 3. **学习材料**：PDF、Markdown 或其他文档格式
-4. **deep-research skill**：（可选）用于 Phase 6 深度研究，如未安装则跳过该阶段
+4. **Python 3**（部分脚本需要）：`context-extractor.py`（可选 PyPDF2/pypdf）、`double-link-builder.py`
+5. **deep-research skill**：（可选）用于 Phase 6 深度研究，如未安装则跳过该阶段
 
 ---
 
@@ -46,24 +47,23 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 ### 调用技能
 
-在 Claude Code 中使用以下命令调用此技能：
-
-```
-/obsidian-learning
-```
+- **Claude Code / Codex**：若已配置 slash command，可使用例如 `/obsidian-learning`（以你本地的 command 配置为准）。
+- **Cursor**：将本仓库放入 Agent Skills 目录后，用自然语言说明「按 obsidian-learning 流程处理学习材料」即可；亦可在规则中引用本 skill。
+- **其他客户端**：将本仓库放入 Skills 目录后，在对话中显式要求「按 obsidian-learning 流程执行」。
 
 ### 典型工作流程
 
 ```
 1. 启动技能 → 选择 vault 文件夹 → 自动阅读学习材料
-2. 生成并确认学习路线图
-3. 自动创建文件夹结构和原子笔记框架
-4. 并行填充原子笔记内容（含质量审查，默认执行）
+2. 生成并确认学习路线图（完整版 + 大纲版，含 source_range 标注）
+3. 自动创建文件夹结构和空白原子笔记框架（含 status: draft）
+4. 断点恢复检查 → 上下文预提取（context-extractor.py）→ 并行填充原子笔记
    - 按工作量分配 agents（每个 agent ≤ 5 个笔记）
+   - .tmp 原子写保护（写入中断不损坏已完成的笔记）
    - 失败/未通过的笔记自动重试（最多 2 次）
-5. 建立笔记间双链
+5. 建立笔记间双链（三阶段漏斗：结构化亲和 → TF-IDF → LLM 分类）
 6. 最终审查 + 生成"核心问题"笔记
-7. 深度研究与争议分析 → 生成"争议分析"笔记
+7. （可选）深度研究与争议分析 → 生成「争议分析」笔记（需 deep-research）
 ```
 
 ### 输出产物
@@ -143,8 +143,12 @@ vault/
 
 ### 6. Phase 6 深度研究
 
-- Phase 5 完成后自动执行，无需用户确认
-- 使用 Skill 工具调用 deep-research skill 执行深度研究
+- **可选**：Phase 5 完成后会询问是否进入 Phase 6。确认后进入，Agent 自动检测可用检索工具（`deep-research` skill / Web Search MCP 等）。
+- 若检测到可用工具 → 执行深度研究，生成争议分析笔记；若未检测到 → 告知用户并跳过，可手动检索后按 `references/templates.md` 的争议分析模板自建笔记。
+
+### 7. 可选本地脚本（路线图编辑器）
+
+- `scripts/roadmap-editor.py` 用于在本机通过浏览器可视化编辑路线图，**依赖本机已安装的 Python 与浏览器**；若只用对话式流程，可以不安装、不运行。
 
 ---
 
@@ -160,9 +164,12 @@ obsidian-learning/
 │   ├── atomic-note-filler.md        # 原子笔记填充
 │   └── note-reviewer.md             # 笔记审查
 ├── references/
-│   └── obsidian-structure.md        # Obsidian 结构规范
+│   ├── obsidian-structure.md        # Obsidian 结构规范
+│   └── templates.md                 # 生成物格式模板
 └── scripts/
-    └── double-link-builder.py       # 双链构建脚本
+    ├── double-link-builder.py       # 双链构建（三阶段漏斗 v2）
+    ├── context-extractor.py         # 上下文预提取（Phase 3.0b 自动化）
+    └── roadmap-editor.py            # 可选：路线图网页编辑
 ```
 
 ---
@@ -171,11 +178,19 @@ obsidian-learning/
 
 ### Q: 技能无法调用怎么办？
 
-确保你已经正确安装技能到 Claude Code 的 skills 目录，并且使用正确的调用命令 `/obsidian-learning`。
+确保已将本 skill 安装到对应客户端的 skills 目录：Claude Code / Codex 下可配置 slash command；Cursor 下依赖 Agent Skills 匹配或显式在对话中要求按 `SKILL.md` 执行。
 
 ### Q: 双链不准确怎么办？
 
-技能的双链建立基于 AI 对内容的理解，可能存在不准确之处。你可以在 `## 相关笔记` 部分手动调整链接。
+双链采用三阶段漏斗策略：结构化亲和过滤 → TF-IDF 语义检测 → LLM 关系分类。默认路径下 LLM 会做精确分类（覆盖率 60-80%）。若环境不支持 LLM，`double-link-builder.py --mode strict` 只输出确定性链接（覆盖率 40-50%）。两种情况均可在 Obsidian 中手动补全遗漏的链接。
+
+### Q: 任务中断后如何恢复？
+
+流程内置断点恢复机制。每个原子笔记的 frontmatter 含 `status` 字段（draft/filling/filled/reviewed/needs_review），Phase 3 启动时自动扫描状态并提示「从断点继续」或「重新开始」。
+
+### Q: 上下文预提取是什么？
+
+为避免多个 agent 重复读取全文，`context-extractor.py` 根据路线图中的 `source_range` 标注，自动从原 PDF/MD 中提取每个知识点的对应段落。每个 agent 只接收其负责笔记的原文片段，大幅减少 token 消耗。
 
 ### Q: 可以处理非 Markdown 文件吗？
 

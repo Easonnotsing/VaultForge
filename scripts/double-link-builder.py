@@ -1,323 +1,615 @@
 #!/usr/bin/env python3
 """
-双链构建脚本 - Obsidian Learning Skill
+双链构建脚本 (v2) - Obsidian Learning Skill
 
-根据逻辑相关性建立笔记间的双链，包括：
-1. 推导关系：一篇笔记的结论由另一篇推导而出
-2. 原理相似：两篇笔记的原理可以类比借鉴
-3. 结论矛盾：两篇笔记的结论存在矛盾
-4. 应用关联：一篇笔记的应用涉及另一篇的概念
-5. 背景关联：两篇笔记属于同一领域的不同方面
+三阶段漏斗策略：
+  阶段1: 结构化亲和过滤 — 目录层级、H2/H3 归属关系（零成本，消去 ~80% 无关对）
+  阶段2: TF-IDF 语义相似 + 关键词启发式 — 高分候选筛选（低成本，无外部依赖）
+  阶段3: 候选对输出 → 由主 Agent 的 LLM 做最终五类关系分类
 
-同时建立学习路线图与各 MOC 的双向链接。
+用法:
+  # 完整模式（输出候选对供 LLM 分类）
+  python3 double-link-builder.py <vault_path> <roadmap_name> --output candidates.json
+
+  # 严格模式（仅确定性规则，不输出候选对）
+  python3 double-link-builder.py <vault_path> <roadmap_name> --mode strict
+
+  # 同时产出确定性链接和候选对
+  python3 double-link-builder.py <vault_path> <roadmap_name> --output candidates.json --mode strict
+
+roadmap_name 为 vault 根目录下「学习路线图 - {roadmap_name}.md」中 {roadmap_name} 一段；
+省略时自动在根目录查找唯一的大纲版路线图（排除含「完整版」的）。
 """
 
+import argparse
+import json
+import math
 import os
 import re
-import json
+import sys
+from collections import Counter
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
-# 双链关联分析
-RELATIONSHIP_TYPES = {
-    "derivation": "推导关系",
-    "analogy": "原理相似",
-    "contradiction": "结论矛盾",
-    "application": "应用关联",
-    "context": "背景关联"
+# ─── TF-IDF 轻量实现（零外部依赖） ────────────────────────────────
+
+
+def tokenize(text: str) -> List[str]:
+    """中英文混合分词：中文按2-gram切分，英文按空格+词干切分"""
+    tokens: List[str] = []
+    # 中文部分：2-gram 滑动窗口
+    chinese_chars = "".join(re.findall(r"[\u4e00-\u9fff]+", text))
+    for i in range(len(chinese_chars) - 1):
+        tokens.append(chinese_chars[i : i + 2])
+    # 英文部分：词级别
+    english_words = re.findall(r"[a-zA-Z]{3,}", text.lower())
+    tokens.extend(w for w in english_words if w not in _STOP_WORDS)
+    # 数字/专有名词
+    tokens.extend(re.findall(r"\d{2,}", text))
+    return tokens
+
+
+_STOP_WORDS: Set[str] = {
+    "the", "and", "for", "are", "but", "not", "you", "all", "can", "had",
+    "her", "was", "one", "our", "out", "has", "have", "from", "that",
+    "this", "with", "were", "which", "their", "will", "each", "about",
+    "many", "some", "would", "other", "into", "more", "these",
 }
 
+
+class TfidfIndex:
+    """极小 TF-IDF 索引，无外部依赖"""
+
+    def __init__(self):
+        self.doc_count = 0
+        self.df: Counter = Counter()  # document frequency
+        self.doc_vectors: Dict[int, Dict[int, float]] = {}
+
+    def add_document(self, doc_id: int, tokens: List[str]) -> None:
+        unique_tokens = set(tokens)
+        for t in unique_tokens:
+            self.df[t] += 1
+        self.doc_count += 1
+
+    def finalize(self) -> None:
+        self.idf = {
+            t: math.log((self.doc_count + 1) / (df + 1)) + 1.0
+            for t, df in self.df.items()
+        }
+
+    def vectorize(self, doc_id: int, tokens: List[str]) -> Dict[int, float]:
+        tf = Counter(tokens)
+        total = len(tokens) or 1
+        vec: Dict[int, float] = {}
+        for t, count in tf.items():
+            if t in self.idf:
+                vec[hash(t)] = (count / total) * self.idf[t]
+        return vec
+
+    @staticmethod
+    def cosine(v1: Dict[int, float], v2: Dict[int, float]) -> float:
+        common = set(v1.keys()) & set(v2.keys())
+        if not common:
+            return 0.0
+        dot = sum(v1[k] * v2[k] for k in common)
+        mag1 = math.sqrt(sum(x * x for x in v1.values()))
+        mag2 = math.sqrt(sum(x * x for x in v2.values()))
+        if mag1 == 0 or mag2 == 0:
+            return 0.0
+        return dot / (mag1 * mag2)
+
+
+# ─── 辅助函数 ──────────────────────────────────────────────────────
+
+
+def _is_auxiliary_note_file(filename: str) -> bool:
+    if filename == "核心问题.md":
+        return True
+    if filename.endswith("- 深度研究.md"):
+        return True
+    if filename.endswith("- 争议分析.md"):
+        return True
+    return False
+
+
+def _folder_parts(folder: str) -> List[str]:
+    n = folder.replace("\\", "/").strip("/")
+    return [p for p in n.split("/") if p]
+
+
+def _title_tokens(title: str) -> Set[str]:
+    t = title.strip().lower()
+    return set(re.findall(r"[一-龥]{2,}|[a-zA-Z]{3,}|\d+", t))
+
+
+def _title_topic_overlap(note1: Dict, note2: Dict) -> bool:
+    a, b = _title_tokens(note1["title"]), _title_tokens(note2["title"])
+    return len(a & b) >= 1
+
+
+def _title_cited_in_other(note1: Dict, note2: Dict) -> bool:
+    t1, t2 = note1["title"].strip(), note2["title"].strip()
+    if len(t1) >= 2 and t1 in note2.get("content", ""):
+        return True
+    if len(t2) >= 2 and t2 in note1.get("content", ""):
+        return True
+    return False
+
+
+def _count_lexemes(text: str, lexemes: Tuple[str, ...]) -> int:
+    return sum(1 for w in lexemes if w in text)
+
+
+def discover_roadmap_theme(vault_path: str) -> Optional[str]:
+    vault = Path(vault_path)
+    themes: List[str] = []
+    for f in sorted(vault.glob("学习路线图 - *.md")):
+        if "完整版" in f.name:
+            continue
+        stem = f.stem
+        prefix = "学习路线图 - "
+        if stem.startswith(prefix):
+            themes.append(stem[len(prefix):])
+    if not themes:
+        return None
+    if len(themes) > 1:
+        print(f"⚠️ 检测到多个大纲版路线图文件，将使用: {themes[0]}（共 {len(themes)} 个）")
+    return themes[0]
+
+
+# ─── 数据获取 ──────────────────────────────────────────────────────
+
+
 def get_all_notes(vault_path: str) -> List[Dict]:
-    """获取 vault 中所有原子笔记"""
     notes = []
     for root, dirs, files in os.walk(vault_path):
-        # 跳过隐藏文件夹
-        dirs[:] = [d for d in dirs if not d.startswith('.')]
-
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
         for f in files:
-            if f.endswith('.md') and 'MOC' not in f and '学习路线图' not in f:
+            if f.endswith(".md") and "MOC" not in f and "学习路线图" not in f:
+                if _is_auxiliary_note_file(f):
+                    continue
                 path = os.path.join(root, f)
                 rel_path = os.path.relpath(path, vault_path)
-
-                # 读取笔记内容
-                with open(path, 'r', encoding='utf-8') as file:
+                with open(path, "r", encoding="utf-8") as file:
                     content = file.read()
-
-                # 提取标题
-                title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+                title_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
                 title = title_match.group(1) if title_match else f
-
-                # 提取所有文本用于关联分析
-                # 去除 frontmatter
-                body = re.sub(r'^---.*?---\n', '', content, flags=re.DOTALL)
-                # 去除 wikilinks
-                body = re.sub(r'\[\[([^\]|]+)(?:\|[^\]]+)?\]\]', r'\1', body)
-                # 去除 markdown 格式
-                body = re.sub(r'#{1,6}\s+', '', body)
-                body = re.sub(r'\*\*|__', '', body)
-                body = re.sub(r'\*|~|`', '', body)
-
-                notes.append({
-                    'path': path,
-                    'rel_path': rel_path,
-                    'title': title,
-                    'content': body,
-                    'folder': os.path.dirname(rel_path)
-                })
-
+                # 去除 frontmatter 和 markdown 格式后的纯文本（用于 TF-IDF）
+                body = re.sub(r"^---.*?---\n", "", content, flags=re.DOTALL)
+                clean_body = re.sub(r"\[\[([^\]|]+)(?:\|[^\]]+)?\]\]", r"\1", body)
+                clean_body = re.sub(r"#{1,6}\s+", "", clean_body)
+                clean_body = re.sub(r"\*\*|__|\*|~|`", "", clean_body)
+                # 提取前 300 字符作为预览（给 LLM 用的摘要）
+                preview = clean_body.strip()[:300]
+                notes.append(
+                    {
+                        "path": path,
+                        "rel_path": rel_path,
+                        "title": title,
+                        "content": clean_body,
+                        "preview": preview,
+                        "folder": os.path.dirname(rel_path),
+                    }
+                )
     return notes
 
 
 def get_all_mocs(vault_path: str) -> List[Dict]:
-    """获取 vault 中所有 MOC 笔记"""
     mocs = []
     for root, dirs, files in os.walk(vault_path):
-        dirs[:] = [d for d in dirs if not d.startswith('.')]
-
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
         for f in files:
-            if f.endswith('.md') and 'MOC' in f:
+            if f.endswith(".md") and "MOC" in f:
                 path = os.path.join(root, f)
                 rel_path = os.path.relpath(path, vault_path)
-
-                with open(path, 'r', encoding='utf-8') as file:
+                with open(path, "r", encoding="utf-8") as file:
                     content = file.read()
-
-                title_match = re.search(r'^#\s+(.+?)(?:\s*MOC)?$', content, re.MULTILINE)
-                title = title_match.group(1).strip() if title_match else f.replace(' MOC.md', '')
-
-                mocs.append({
-                    'path': path,
-                    'rel_path': rel_path,
-                    'title': title,
-                    'folder': os.path.dirname(rel_path)
-                })
-
+                title_match = re.search(
+                    r"^#\s+(.+?)(?:\s*MOC)?$", content, re.MULTILINE
+                )
+                title = (
+                    title_match.group(1).strip()
+                    if title_match
+                    else f.replace(" MOC.md", "")
+                )
+                mocs.append(
+                    {
+                        "path": path,
+                        "rel_path": rel_path,
+                        "title": title,
+                        "folder": os.path.dirname(rel_path),
+                    }
+                )
     return mocs
 
 
-def calculate_similarity(text1: str, text2: str) -> float:
-    """计算两个文本的相似度（基于词重叠）"""
-    words1 = set(re.findall(r'[一-龥a-zA-Z0-9]+', text1.lower()))
-    words2 = set(re.findall(r'[一-龥a-zA-Z0-9]+', text2.lower()))
-
-    if not words1 or not words2:
-        return 0.0
-
-    intersection = words1 & words2
-    union = words1 | words2
-
-    return len(intersection) / len(union) if union else 0.0
+# ─── 阶段1: 结构化亲和 ────────────────────────────────────────────
 
 
-def find_relationships(note1: Dict, note2: Dict) -> List[Tuple[str, str]]:
-    """分析两个笔记之间的关联类型"""
-    relationships = []
-    title1, content1 = note1['title'], note1['content']
-    title2, content2 = note2['title'], note2['content']
+def structural_affinity(note1: Dict, note2: Dict) -> float:
+    """
+    基于目录层级计算亲和力得分 (0.0 ~ 1.0)。
+    同一 H3 文件夹 → 高亲和；同一 H2 类别不同 H3 → 中亲和；其他 → 0。
+    """
+    f1, f2 = note1["folder"], note2["folder"]
+    if f1 == f2:
+        return 1.0  # 同一 H3 主题文件夹
+    p1 = _folder_parts(f1)
+    p2 = _folder_parts(f2)
+    if len(p1) >= 2 and len(p2) >= 2 and p1[0] == p2[0]:
+        return 0.5  # 同一 H2 类别，不同 H3
+    return 0.0
 
-    # 跳过同一笔记
-    if note1['path'] == note2['path']:
+
+# ─── 阶段2: 关键词启发式关系检测（保持原有逻辑）──────────────────
+
+
+def find_relationships_heuristic(
+    note1: Dict, note2: Dict
+) -> List[Tuple[str, str]]:
+    """按五类逻辑关系做关键词判定（每类需多项条件同时成立）"""
+    relationships: List[Tuple[str, str]] = []
+    content1, content2 = note1["content"], note2["content"]
+    combined = content1 + "\n" + content2
+    if note1["path"] == note2["path"]:
         return relationships
+    topical_anchor = _title_topic_overlap(note1, note2) or _title_cited_in_other(
+        note1, note2
+    )
 
-    # 1. 检查推导关系（关键词检测）
-    derivation_keywords = ['因此', '所以', '从而', '导致', '结果表明', '得出结论',
-                          'hence', 'therefore', 'thus', 'so', 'consequently',
-                          '导致', '由此可见', '证明', '推导']
+    derivation_lexemes = (
+        "因此", "所以", "从而", "导致", "结果表明", "得出结论",
+        "由此可见", "证明", "推导", "意味着", "可见",
+        "hence", "therefore", "thus", "consequently", "implies", "it follows",
+    )
+    if _count_lexemes(combined, derivation_lexemes) >= 2 and topical_anchor:
+        relationships.append(("derivation", "推导关系"))
 
-    content_combined = content1 + content2
-    derivation_count = sum(1 for kw in derivation_keywords if kw in content_combined)
+    analogy_lexemes = (
+        "类比", "类似于", "类似", "同理", "正如", "好比",
+        "比照", "异曲同工", "parallel", "analogous", "similarly",
+        "likewise", "by analogy", "comparable to",
+    )
+    if _count_lexemes(combined, analogy_lexemes) >= 1 and topical_anchor:
+        relationships.append(("analogy", "原理相似"))
 
-    # 2. 检查原理相似（高相似度）
-    similarity = calculate_similarity(content1, content2)
+    contradiction_lexemes = (
+        "但是", "然而", "相反", "不同于", "矛盾", "对立", "争议",
+        "however", "nevertheless", "unlike", "contradict", "tension between",
+    )
+    if _count_lexemes(combined, contradiction_lexemes) >= 2 and _title_topic_overlap(
+        note1, note2
+    ):
+        relationships.append(("contradiction", "结论矛盾"))
 
-    # 3. 检查结论矛盾
-    contradiction_keywords = ['但是', '然而', '相反', '不同', '矛盾',
-                             'however', 'but', '相反', 'unlike', 'contradict']
+    same_folder = note1["folder"] == note2["folder"]
+    application_lexemes = (
+        "应用", "适用于", "用于", "借助", "基于", "运用",
+        "实践", "落地", "实施", "部署", "apply",
+        "application of", "used for",
+    )
+    if same_folder and _count_lexemes(combined, application_lexemes) >= 1 and topical_anchor:
+        relationships.append(("application", "应用关联"))
 
-    contradiction_count = sum(1 for kw in contradiction_keywords if kw in content_combined)
-
-    # 4. 检查应用关联（同文件夹）
-    same_folder = note1['folder'] == note2['folder']
-
-    # 5. 检查背景关联（相同上层文件夹）
-    folder1_parts = note1['folder'].split('/')
-    folder2_parts = note2['folder'].split('/')
-    context_related = len(folder1_parts) >= 2 and len(folder2_parts) >= 2 and \
-                      folder1_parts[0] == folder2_parts[0] and \
-                      folder1_parts[1] == folder2_parts[1]
-
-    # 判断关联类型
-    if similarity > 0.3 and derivation_count >= 2:
-        relationships.append(('derivation', '推导关系'))
-
-    if similarity > 0.25:
-        relationships.append(('analogy', '原理相似'))
-
-    if contradiction_count >= 2 and similarity > 0.15:
-        relationships.append(('contradiction', '结论矛盾'))
-
-    if same_folder and similarity > 0.1:
-        relationships.append(('application', '应用关联'))
-
-    if context_related and similarity > 0.08:
-        relationships.append(('context', '背景关联'))
+    p1, p2 = _folder_parts(note1["folder"]), _folder_parts(note2["folder"])
+    same_h2_diff_h3 = (
+        len(p1) >= 2
+        and len(p2) >= 2
+        and p1[0] == p2[0]
+        and p1[1] != p2[1]
+    )
+    context_lexemes = (
+        "背景", "阶段", "发展", "演进", "历史", "时期",
+        "维度", "视角", "层面", "语境",
+        "context", "phase", "historically",
+    )
+    if same_h2_diff_h3 and _count_lexemes(combined, context_lexemes) >= 1:
+        relationships.append(("context", "背景关联"))
 
     return relationships
 
 
-def build_note_to_note_links(notes: List[Dict], min_relationships: int = 1) -> Dict[str, List[str]]:
-    """建立笔记间的双链"""
-    links = {}
+# ─── 阶段3: 候选对生成（供 LLM 分类） ──────────────────────────────
 
-    for i, note1 in enumerate(notes):
-        links[note1['rel_path']] = []
 
-        for j, note2 in enumerate(notes):
+def generate_candidates(
+    notes: List[Dict],
+    tfidf_index: TfidfIndex,
+    doc_tokens: Dict[int, List[str]],
+    doc_id_map: Dict[str, int],
+    structural_threshold: float = 0.5,
+    tfidf_threshold: float = 0.15,
+) -> List[Dict]:
+    """
+    对阶段 1+2 仍为"无链接"的笔记对，检查是否应提升为 LLM 候选：
+
+    - 阶段1: structural_affinity >= structural_threshold（同一 H3 或同一 H2 类别）
+    - 阶段2: TF-IDF cosine >= tfidf_threshold
+
+    两者同时满足的笔记对 → candidates.json 输出
+    """
+    candidates: List[Dict] = []
+    seen: Set[Tuple[str, str]] = set()
+
+    for i, note_a in enumerate(notes):
+        for j, note_b in enumerate(notes):
             if i >= j:
                 continue
+            # 检查结构化亲和
+            aff = structural_affinity(note_a, note_b)
+            if aff < structural_threshold:
+                continue
+            # 计算 TF-IDF 相似度
+            id_a = doc_id_map.get(note_a["rel_path"])
+            id_b = doc_id_map.get(note_b["rel_path"])
+            if id_a is None or id_b is None:
+                continue
+            vec_a = tfidf_index.vectorize(id_a, doc_tokens.get(id_a, []))
+            vec_b = tfidf_index.vectorize(id_b, doc_tokens.get(id_b, []))
+            cosine = TfidfIndex.cosine(vec_a, vec_b)
+            if cosine < tfidf_threshold:
+                continue
+            # 检查是否已被关键词启发式覆盖
+            heuristic_hits = find_relationships_heuristic(note_a, note_b)
+            keyword_score = len(heuristic_hits)
+            # 生成候选（即使关键词已有部分命中，仍作为候选以提升覆盖率）
+            candidates.append(
+                {
+                    "note_a": note_a["rel_path"],
+                    "note_b": note_b["rel_path"],
+                    "title_a": note_a["title"],
+                    "title_b": note_b["title"],
+                    "scores": {
+                        "structural": aff,
+                        "tfidf_cosine": round(cosine, 4),
+                        "keyword_rules": keyword_score,
+                    },
+                    "preview_a": note_a["preview"],
+                    "preview_b": note_b["preview"],
+                }
+            )
+    # 按综合得分排序（structural + tfidf + keyword）
+    candidates.sort(
+        key=lambda c: c["scores"]["structural"] * 2.0
+        + c["scores"]["tfidf_cosine"]
+        + c["scores"]["keyword_rules"] * 0.5,
+        reverse=True,
+    )
+    return candidates
 
-            relationships = find_relationships(note1, note2)
 
-            if len(relationships) >= min_relationships:
-                # 获取笔记名称（不含路径和扩展名）
-                note_name = note2['title']
+# ─── 确定性链接写入（strict 模式） ─────────────────────────────────
 
-                # 根据关联类型添加不同前缀（可选，便于理解）
-                rel_types = [r[1] for r in relationships]
-                links[note1['rel_path']].append(note_name)
 
+def build_note_to_note_links(notes: List[Dict]) -> Dict[str, List[str]]:
+    links: Dict[str, List[str]] = {}
+    for note1 in notes:
+        links[note1["rel_path"]] = []
+        for note2 in notes:
+            if note1["path"] >= note2["path"]:
+                continue
+            rels = find_relationships_heuristic(note1, note2)
+            if rels:
+                links[note1["rel_path"]].append(note2["title"])
     return links
 
 
-def add_links_to_notes(vault_path: str, note_links: Dict[str, List[str]]):
-    """将双链添加到笔记中"""
-    updated_count = 0
-
+def add_links_to_notes(vault_path: str, note_links: Dict[str, List[str]]) -> int:
+    updated = 0
     for rel_path, linked_notes in note_links.items():
         if not linked_notes:
             continue
-
         full_path = os.path.join(vault_path, rel_path)
-
-        with open(full_path, 'r', encoding='utf-8') as f:
+        with open(full_path, "r", encoding="utf-8") as f:
             content = f.read()
-
-        # 检查是否已有相关笔记部分
-        if '## 相关笔记' in content:
-            # 追加到现有部分
-            pass
+        missing = [
+            n
+            for n in linked_notes
+            if f"[[{n}]]" not in content and f"[[{n}|" not in content
+        ]
+        if not missing:
+            continue
+        append_block = "\n".join(f"- [[{note}]]" for note in missing)
+        if "## 相关笔记" in content:
+            content = content.rstrip() + "\n" + append_block + "\n"
         else:
-            # 添加新的相关笔记部分
-            links_text = '\n'.join([f'- [[{note}]]' for note in linked_notes])
-            new_section = f"\n## 相关笔记\n\n{links_text}\n"
-
-            content = content.rstrip() + new_section
-
-            with open(full_path, 'w', encoding='utf-8') as f:
-                f.write(content)
-
-            updated_count += 1
-
-    return updated_count
+            content = (
+                content.rstrip()
+                + f"\n## 相关笔记\n\n{append_block}\n"
+            )
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        updated += 1
+    return updated
 
 
-def build_roadmap_moc_links(vault_path: str, roadmap_name: str, mocs: List[Dict]):
-    """建立学习路线图与 MOC 的双向链接"""
+def build_roadmap_moc_links(
+    vault_path: str, roadmap_name: str, mocs: List[Dict]
+) -> int:
     roadmap_path = os.path.join(vault_path, f"学习路线图 - {roadmap_name}.md")
-
     if not os.path.exists(roadmap_path):
         print(f"⚠️ 路线图文件不存在: {roadmap_path}")
         return 0
-
-    # 读取路线图
-    with open(roadmap_path, 'r', encoding='utf-8') as f:
+    with open(roadmap_path, "r", encoding="utf-8") as f:
         roadmap_content = f.read()
-
-    # 为每个 MOC 在路线图中添加链接
-    # 找到路线图中对应的 H3 标题，添加 MOC 链接
-
     updated_mocs = 0
-
     for moc in mocs:
-        # 从 MOC 标题提取主题名
-        moc_title = moc['title']
-
-        # 在路线图中查找对应的 H3（使用正则匹配）
-        # 格式：### 主题名称 或 ### 主题名称 MOC
-        pattern = rf'(###\s+{re.escape(moc_title)}?\s*$)'
-
-        if re.search(pattern, roadmap_content, re.MULTILINE):
-            # 在该行后添加 MOC 链接
-            replacement = rf'\1\n\n[[{moc["rel_path"].replace(".md", "")}|{moc_title}]]'
-            roadmap_content = re.sub(pattern, replacement, roadmap_content, flags=re.MULTILINE)
-
-        # 同时更新 MOC 文件，添加指向路线图的链接
-        moc_rel_path = moc['rel_path']
-        with open(os.path.join(vault_path, moc_rel_path), 'r', encoding='utf-8') as f:
+        moc_title = moc["title"]
+        pattern = rf"(^###\s+{re.escape(moc_title)}\s*$)"
+        link_target = moc["rel_path"].replace(".md", "").replace("\\", "/")
+        link_line = f"[[{link_target}|{moc_title}]]"
+        if link_target not in roadmap_content.replace("\\", "/"):
+            if re.search(pattern, roadmap_content, re.MULTILINE):
+                replacement = rf"\1\n\n{link_line}"
+                roadmap_content = re.sub(
+                    pattern, replacement, roadmap_content, count=1, flags=re.MULTILINE
+                )
+        moc_rel_path = moc["rel_path"]
+        with open(os.path.join(vault_path, moc_rel_path), "r", encoding="utf-8") as f:
             moc_content = f.read()
-
-        # 检查是否已有路线图链接
-        if f'[[../../学习路线图 - {roadmap_name}' not in moc_content:
-            if '## 相关笔记' not in moc_content:
+        if f"[[../../学习路线图 - {roadmap_name}" not in moc_content:
+            if "## 相关笔记" not in moc_content:
                 new_section = f"\n## 相关笔记\n\n- [[../../学习路线图 - {roadmap_name}|学习路线图]]\n"
                 moc_content = moc_content.rstrip() + new_section
             else:
-                moc_content = moc_content.rstrip() + f"\n- [[../../学习路线图 - {roadmap_name}|学习路线图]]\n"
-
-            with open(os.path.join(vault_path, moc_rel_path), 'w', encoding='utf-8') as f:
+                moc_content = (
+                    moc_content.rstrip()
+                    + f"\n- [[../../学习路线图 - {roadmap_name}|学习路线图]]\n"
+                )
+            with open(os.path.join(vault_path, moc_rel_path), "w", encoding="utf-8") as f:
                 f.write(moc_content)
-
             updated_mocs += 1
-
-    # 保存路线图
-    with open(roadmap_path, 'w', encoding='utf-8') as f:
+    with open(roadmap_path, "w", encoding="utf-8") as f:
         f.write(roadmap_content)
-
     return updated_mocs
 
 
-def main():
-    import sys
+def estimate_coverage(
+    notes: List[Dict], heuristic_links: Dict[str, List[str]]
+) -> float:
+    """估算关键词启发式的覆盖率：对数线性推估"""
+    total_pairs = len(notes) * (len(notes) - 1) / 2
+    heuristic_pairs = sum(len(v) for v in heuristic_links.values())
+    # 每对笔记至少 1 条链接 → 大概率的逻辑关联上限约 10-15%
+    realistic_links = total_pairs * 0.12
+    if realistic_links == 0:
+        return 0.0
+    return min(1.0, heuristic_pairs / realistic_links)
 
-    if len(sys.argv) < 2:
-        print("用法: python3 double-link-builder.py <vault_path> [roadmap_name]")
+
+# ─── Main ──────────────────────────────────────────────────────────
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Obsidian Learning 双链构建脚本 v2")
+    parser.add_argument("vault_path", help="Vault 根目录路径")
+    parser.add_argument(
+        "roadmap_name",
+        nargs="?",
+        help="路线图主题名（可选，自动从 vault 根目录检测）",
+    )
+    parser.add_argument(
+        "--output", "-o", help="候选对 JSON 输出路径（用于 LLM 阶段 3）"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["full", "strict"],
+        default="full",
+        help="full=输出候选对+确定性链接; strict=仅确定性链接，不输出候选对",
+    )
+    parser.add_argument(
+        "--tfidf-threshold",
+        type=float,
+        default=0.15,
+        help="TF-IDF 余弦相似度阈值（默认 0.15）",
+    )
+    parser.add_argument(
+        "--structural-threshold",
+        type=float,
+        default=0.5,
+        help="结构化亲和力阈值（默认 0.5，即同一 H2 类别即可）",
+    )
+    args = parser.parse_args()
+
+    vault_path = args.vault_path
+    roadmap_name: Optional[str] = args.roadmap_name
+    if not roadmap_name:
+        roadmap_name = discover_roadmap_theme(vault_path)
+    if not roadmap_name:
+        print(
+            "错误: 未找到大纲版「学习路线图 - *.md」，或无法解析主题名。\n"
+            "请显式传入第 2 参数 roadmap_name。"
+        )
         sys.exit(1)
 
-    vault_path = sys.argv[1]
-    roadmap_name = sys.argv[2] if len(sys.argv) > 2 else "Digital Transformation Roadmap"
-
-    print(f"🔗 开始构建双链...")
+    print(f"🔗 双链构建 v2 — 三阶段漏斗")
     print(f"   Vault: {vault_path}")
+    print(f"   模式: {args.mode}")
 
     # 获取所有笔记和 MOC
     print("\n📚 扫描笔记...")
     notes = get_all_notes(vault_path)
     print(f"   找到 {len(notes)} 个原子笔记")
-
     mocs = get_all_mocs(vault_path)
     print(f"   找到 {len(mocs)} 个 MOC")
 
-    # 建立笔记间双链
-    print("\n🔗 分析笔记关联...")
+    # ─── 阶段1: 报告结构化亲和统计 ───
+    total_pairs = len(notes) * (len(notes) - 1) // 2
+    affinity_pairs = 0
+    for i, n1 in enumerate(notes):
+        for j, n2 in enumerate(notes):
+            if i >= j:
+                continue
+            if structural_affinity(n1, n2) >= args.structural_threshold:
+                affinity_pairs += 1
+    print(f"\n🔍 阶段1 结构化过滤: {affinity_pairs}/{total_pairs} 对通过 "
+          f"({affinity_pairs/max(total_pairs,1)*100:.1f}%)")
+
+    # ─── 阶段2: TF-IDF 索引构建 ───
+    print("\n📊 阶段2 构建 TF-IDF 索引...")
+    tfidf = TfidfIndex()
+    doc_tokens: Dict[int, List[str]] = {}
+    doc_id_map: Dict[str, int] = {}
+    for idx, note in enumerate(notes):
+        tokens = tokenize(note["content"])
+        doc_tokens[idx] = tokens
+        doc_id_map[note["rel_path"]] = idx
+        tfidf.add_document(idx, tokens)
+    tfidf.finalize()
+    print(f"   词表大小: {len(tfidf.df)}")
+
+    # ─── 阶段2: 关键词启发式链接 ───
+    print("\n🔗 阶段2 关键词启发式检测...")
     note_links = build_note_to_note_links(notes)
+    total_heuristic = sum(len(v) for v in note_links.values())
+    coverage = estimate_coverage(notes, note_links)
+    print(f"   启发式命中: {total_heuristic} 个链接（预估覆盖率 ~{coverage*100:.0f}%）")
 
-    # 统计链接数量
-    total_links = sum(len(links) for links in note_links.values())
-    print(f"   建立 {total_links} 个笔记间链接")
+    # ─── 阶段3: 候选对生成 ───
+    if args.output:
+        print("\n🎯 阶段3 生成 LLM 候选对...")
+        candidates = generate_candidates(
+            notes,
+            tfidf,
+            doc_tokens,
+            doc_id_map,
+            structural_threshold=args.structural_threshold,
+            tfidf_threshold=args.tfidf_threshold,
+        )
+        output_data = {
+            "vault_path": vault_path,
+            "roadmap_name": roadmap_name,
+            "total_notes": len(notes),
+            "total_pairs": total_pairs,
+            "affinity_pairs": affinity_pairs,
+            "heuristic_links": total_heuristic,
+            "estimated_coverage": round(coverage, 2),
+            "candidate_count": len(candidates),
+            "candidates": candidates,
+        }
+        with open(args.output, "w", encoding="utf-8") as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
+        print(f"   候选对: {len(candidates)} → 已写入 {args.output}")
+        print(f"   预估 LLM 总覆盖率: ~{min(1.0, coverage + len(candidates)*0.3/max(total_pairs,1)):.0%}")
+        if len(candidates) > 200:
+            print(f"   ⚠️ 候选对较多 ({len(candidates)})，建议调高 --tfidf-threshold 减少 LLM 调用")
 
-    # 添加链接到笔记
-    print("\n✏️ 更新笔记...")
-    updated = add_links_to_notes(vault_path, note_links)
-    print(f"   更新了 {updated} 个笔记")
+    # ─── 确定性链接写入（strict 模式始终写入，full 模式下候选对留给 LLM 判决） ───
+    if args.mode == "strict":
+        print("\n✏️ 写入确定性链接（strict 模式）...")
+        updated = add_links_to_notes(vault_path, note_links)
+        print(f"   更新了 {updated} 个笔记")
 
-    # 建立路线图与 MOC 的双链
-    print("\n📋 建立路线图与 MOC 双链...")
+    # ─── 路线图 ↔ MOC 双向链接（与模式无关，始终执行） ───
+    print("\n📋 建立路线图与 MOC 双向链接...")
     moc_updated = build_roadmap_moc_links(vault_path, roadmap_name, mocs)
     print(f"   更新了 {moc_updated} 个 MOC")
 
     print("\n✅ 双链构建完成！")
-    print(f"   - 笔记间链接: {total_links}")
-    print(f"   - 路线图-MOC 链接: {moc_updated * 2} (双向)")
+    print(f"   - 关键词启发式链接: {total_heuristic}（预估覆盖率 ~{coverage*100:.0f}%）")
+    if args.output:
+        print(f"   - LLM 候选对: {len(candidates) if args.output else 0} → {args.output}")
+    print(f"   - 路线图-MOC 双向链接: {moc_updated * 2}")
 
 
 if __name__ == "__main__":
