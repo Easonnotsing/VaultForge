@@ -1,11 +1,6 @@
 ---
 name: file-structure-creator
 description: Create folder structure and empty atomic notes based on the roadmap outline. Batch operation mode - create all then confirm.
-tools:
-  - Read
-  - Write
-  - Bash
-model: sonnet
 ---
 
 # File Structure Creator Agent

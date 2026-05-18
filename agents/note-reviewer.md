@@ -1,12 +1,6 @@
 ---
 name: note-reviewer
 description: Review atomic notes for consistency with roadmap and learning materials, check for duplicates and quality issues.
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
-model: sonnet
 ---
 
 # Note Reviewer Agent

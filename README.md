@@ -20,16 +20,16 @@
 
 ## 安装
 
-### 方法一：Clone 仓库
+### 推荐：Clone 完整仓库
 
 ```bash
 # Clone 到本地 skills 目录
 git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/skills/obsidian-learning
 ```
 
-### 方法二：下载单个文件
+### 不推荐：只下载 SKILL.md
 
-如果只需要核心功能，可以直接下载 [SKILL.md](./SKILL.md) 文件到本地 AI Agent 的 skills 目录。
+只下载 [SKILL.md](./SKILL.md) 只能保留方法论说明；`agents/`、`references/`、`scripts/` 中的子流程、结构规范、双链候选生成器和编辑器不会可用。若要获得完整体验，请安装整个仓库。
 
 ---
 
@@ -38,8 +38,13 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 1. **Obsidian Vault**：确保你有一个 Obsidian 知识库
 2. **AI Agent 客户端**：兼容的 Agent 客户端（Claude Code / Codex / Cursor 等）
 3. **学习材料**：PDF、Markdown 或其他文档格式
-4. **Python 3**（部分脚本需要）：`context-extractor.py`（可选 PyPDF2/pypdf）、`double-link-builder.py`
-5. **deep-research skill**：（可选）用于 Phase 6 深度研究，如未安装则跳过该阶段
+4. **deep-research skill**：（可选）用于 Phase 6 深度研究，如未安装则跳过该阶段
+5. **Playwright**：（可选）仅网页选择器/路线图编辑器需要。安装命令：
+
+```bash
+python3 -m pip install playwright
+python3 -m playwright install chromium
+```
 
 ---
 
@@ -47,9 +52,8 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
 
 ### 调用技能
 
-- **Claude Code / Codex**：若已配置 slash command，可使用例如 `/obsidian-learning`（以你本地的 command 配置为准）。
+- **Claude Code**：若已配置 slash command，可使用例如 `/obsidian-learning`（以你本地的 command 配置为准）。
 - **Cursor**：将本仓库放入 Agent Skills 目录后，用自然语言说明「按 obsidian-learning 流程处理学习材料」即可；亦可在规则中引用本 skill。
-- **其他客户端**：将本仓库放入 Skills 目录后，在对话中显式要求「按 obsidian-learning 流程执行」。
 
 ### 典型工作流程
 
@@ -61,9 +65,9 @@ git clone https://github.com/Easonnotsing/obsidian-learning.git /path/to/your/sk
    - 按工作量分配 agents（每个 agent ≤ 5 个笔记）
    - .tmp 原子写保护（写入中断不损坏已完成的笔记）
    - 失败/未通过的笔记自动重试（最多 2 次）
-5. 建立笔记间双链（三阶段漏斗：结构化亲和 → TF-IDF → LLM 分类）
+5. 生成笔记间双链候选，由主 Agent 确认后应用
 6. 最终审查 + 生成"核心问题"笔记
-7. （可选）深度研究与争议分析 → 生成「争议分析」笔记（需 deep-research）
+7. （可选）深度研究与争议分析 → 生成「争议分析」笔记（需 `deep-research` 或等价检索能力）
 ```
 
 ### 输出产物
@@ -128,8 +132,9 @@ vault/
 
 ### 3. 双链质量
 
-- 技能会自动建立双链，但仍建议人工检查是否符合你的知识结构
-- 如有不需要的双链，可以手动删除
+- `scripts/double-link-builder.py` 默认只生成 `link-candidates.md`，不直接修改原子笔记
+- 主 Agent 应逐条确认候选是否符合五类逻辑关系；确认后可手动应用，或运行脚本 `--apply`
+- 如有不需要的双链，可以在阅读时手动删除或调整
 
 ### 4. 文件管理
 
@@ -143,12 +148,14 @@ vault/
 
 ### 6. Phase 6 深度研究
 
-- **可选**：Phase 5 完成后会询问是否进入 Phase 6。确认后进入，Agent 自动检测可用检索工具（`deep-research` skill / Web Search MCP 等）。
-- 若检测到可用工具 → 执行深度研究，生成争议分析笔记；若未检测到 → 告知用户并跳过，可手动检索后按 `references/templates.md` 的争议分析模板自建笔记。
+- **可选**：仅当已安装并可调用 `deep-research` skill（或等价 MCP）时执行；否则跳过该阶段，不影响 Phase 1–5 产物。
+- Phase 5 与 Phase 6 之间无需额外确认；若跳过 Phase 6，主 Agent 应向用户说明原因。
 
-### 7. 可选本地脚本（路线图编辑器）
+### 7. 可选本地脚本（网页选择器 / 路线图编辑器）
 
-- `scripts/roadmap-editor.py` 用于在本机通过浏览器可视化编辑路线图，**依赖本机已安装的 Python 与浏览器**；若只用对话式流程，可以不安装、不运行。
+- `scripts/run-picker.py`、`scripts/roadmap-editor.py`、`generate-picker.sh` 用于在本机生成简易网页并通过浏览器选择目录或编辑路线图，**依赖本机已安装的 Python、浏览器与 Playwright**；若你只用对话式流程，可以不安装、不运行这些脚本。
+- 脚本不会自动安装依赖；缺少 Playwright 时会给出安装提示。
+- `scripts/roadmap-editor.py` 保存后会写回原路线图文件，并在同目录生成 `.bak` 备份。
 
 ---
 
@@ -158,18 +165,42 @@ vault/
 obsidian-learning/
 ├── README.md                        # 本文件
 ├── SKILL.md                         # 完整技能定义
+├── COMPATIBILITY.md                 # Claude Code / Cursor / Codex 兼容性说明
 ├── agents/
 │   ├── roadmap-generator.md         # 路线图生成
 │   ├── file-structure-creator.md    # 文件结构创建
 │   ├── atomic-note-filler.md        # 原子笔记填充
 │   └── note-reviewer.md             # 笔记审查
 ├── references/
-│   ├── obsidian-structure.md        # Obsidian 结构规范
-│   └── templates.md                 # 生成物格式模板
-└── scripts/
-    ├── double-link-builder.py       # 双链构建（三阶段漏斗 v2）
-    ├── context-extractor.py         # 上下文预提取（Phase 3.0b 自动化）
-    └── roadmap-editor.py            # 可选：路线图网页编辑
+│   └── obsidian-structure.md        # Obsidian 结构规范
+├── scripts/
+│   ├── double-link-builder.py       # 双链候选生成器（默认只输出 link-candidates.md）
+│   ├── roadmap-editor.py            # 可选：路线图网页编辑
+│   ├── run-picker.py                # 可选：vault 选择器网页
+│   └── generate-picker.sh           # 可选：调用选择器
+└── tests/
+    ├── fixtures/                    # 测试夹具说明
+    └── test_scripts.py              # 本地脚本回归测试
+```
+
+---
+
+## 本地验证
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+双链候选生成：
+
+```bash
+python3 scripts/double-link-builder.py /path/to/vault
+```
+
+主 Agent 确认候选后再应用：
+
+```bash
+python3 scripts/double-link-builder.py /path/to/vault --apply
 ```
 
 ---
@@ -178,19 +209,11 @@ obsidian-learning/
 
 ### Q: 技能无法调用怎么办？
 
-确保已将本 skill 安装到对应客户端的 skills 目录：Claude Code / Codex 下可配置 slash command；Cursor 下依赖 Agent Skills 匹配或显式在对话中要求按 `SKILL.md` 执行。
+确保已将本 skill 安装到对应客户端的 skills 目录：Claude Code 下可配置 slash command；Cursor 下依赖 Agent Skills 匹配或显式在对话中要求按 `SKILL.md` 执行。
 
 ### Q: 双链不准确怎么办？
 
-双链采用三阶段漏斗策略：结构化亲和过滤 → TF-IDF 语义检测 → LLM 关系分类。默认路径下 LLM 会做精确分类（覆盖率 60-80%）。若环境不支持 LLM，`double-link-builder.py --mode strict` 只输出确定性链接（覆盖率 40-50%）。两种情况均可在 Obsidian 中手动补全遗漏的链接。
-
-### Q: 任务中断后如何恢复？
-
-流程内置断点恢复机制。每个原子笔记的 frontmatter 含 `status` 字段（draft/filling/filled/reviewed/needs_review），Phase 3 启动时自动扫描状态并提示「从断点继续」或「重新开始」。
-
-### Q: 上下文预提取是什么？
-
-为避免多个 agent 重复读取全文，`context-extractor.py` 根据路线图中的 `source_range` 标注，自动从原 PDF/MD 中提取每个知识点的对应段落。每个 agent 只接收其负责笔记的原文片段，大幅减少 token 消耗。
+双链由主流程按逻辑标准撰写；若使用 `double-link-builder.py`，其仅在满足 SKILL 五类关系对应的**结构化条件**（互引、标题主题重叠、领域词汇与目录关系等）时生成候选，**不**根据全文词面相似度单独建链。脚本默认不会写入原子笔记；主 Agent 确认后再应用。
 
 ### Q: 可以处理非 Markdown 文件吗？
 

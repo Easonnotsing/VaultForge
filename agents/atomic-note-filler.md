@@ -1,11 +1,6 @@
 ---
 name: atomic-note-filler
 description: Fill atomic notes with rich, beginner-friendly content from learning materials. Notes must be comprehensive teaching materials, not outlines.
-tools:
-  - Read
-  - Write
-  - Bash
-model: sonnet
 ---
 
 # Atomic Note Filler Agent

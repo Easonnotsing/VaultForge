@@ -415,6 +415,8 @@ python3 scripts/context-extractor.py <vault_path> <完整版路线图路径> --o
 4. 将 frontmatter 中的 `status` 更新为 `filled`
 5. **立即**向 `.obsidian-learning-progress.md` 追加一行：`[Phase 3] {笔记名}.md → filled`
 
+**环境与降级**：若当前客户端**不支持**真正的多 Agent 并行（无 `Task` / 子 Agent 编排），则改为**顺序执行**：仍按「每批最多 5 篇原子笔记」分组，逐组调用 `atomic-note-filler` 或等价流程，直至全部完成；进度报告格式不变。
+
 ```
 [agent-1] 📝 正在填充: 原子笔记A, 原子笔记B, 原子笔记C
 [agent-2] 📝 正在填充: 原子笔记D, 原子笔记E, 原子笔记F
@@ -490,7 +492,25 @@ python3 scripts/context-extractor.py <vault_path> <完整版路线图路径> --o
 
 ### Phase 4: 双链建立
 
-#### Phase 4 执行策略（三阶段漏斗 + 主 Agent 与脚本协作）
+#### Phase 4 执行策略（主 Agent 与脚本、去重）
+
+1. **默认路径（推荐）**  
+   - **步骤 4.2**：由**主 Agent**依据上文「双链建立标准」五类逻辑关系，在原子笔记的 `## 相关笔记` 中撰写链接；同一对笔记之间**只保留一种最贴切**的关系表述（可用一句括号说明关系类型，可选）。  
+   - **步骤 4.3**：由主 Agent 完成大纲版路线图 ↔ 各 MOC 的双向链接（与 Phase 2.2 已写入的原子列表并存），**插入前扫描**目标文件是否已有等价 `[[...]]`，**禁止重复行**。
+
+2. **可选脚本路径**  
+   - 仅当用户**明确要求**使用 `scripts/double-link-builder.py`，或主 Agent 因权限/篇幅无法稳妥写完 4.2/4.3 时，再运行脚本生成**候选清单**。  
+   - 脚本默认只在 vault 根目录生成 `link-candidates.md`，**不直接修改原子笔记或路线图**。  
+   - 主 Agent 必须逐条确认候选是否符合五类逻辑关系；确认后可手动写入，或在确认无误后运行 `python3 scripts/double-link-builder.py <vault_path> [roadmap_name] --apply` 应用候选与路线图-MOC 链接。
+   - 应用后，主 Agent 须按同一「去重」规则整理 `## 相关笔记` 与路线图：删除重复 wikilink、删除明显不符合五类标准的链，**不得**在未去重的情况下再叠一层全文链接。
+
+3. **禁止**  
+   - 同一 Phase 内「主 Agent 已写满 4.2 + 无清理再跑脚本」导致双倍链接；  
+   - 在 `## 相关笔记` 中重复出现指向同一目标的 `- [[同一目标]]` 多行（合并为一行）。
+
+**步骤 4.1: 读取所有原子笔记**
+- 批量读取所有原子笔记内容
+- 分析笔记间的逻辑关联
 
 **设计意图**：5 类逻辑关系（推导/类比/矛盾/应用/背景）的判定本质上是语义理解任务，纯关键词匹配的召回率约 20-30%。采用"漏斗"策略分层处理：
 
@@ -600,7 +620,20 @@ python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --output cand
 #### 5.1.3 路线图与 MOC 双链检查
 - [ ] 大纲版学习路线图中每个 H3 主题后已添加指向对应 MOC 的链接
 - [ ] 每个 MOC 笔记中已添加指向大纲版学习路线的链接
-- 格式规范见 [references/obsidian-structure.md](./references/obsidian-structure.md) 中「路线图与 MOC 双向链接」章节
+- 示例（层级与 Phase 4.3 一致：`##` 类别 → `###` 主题 → MOC 链接）：
+  ```markdown
+  <!-- 大纲版路线图中 -->
+  ## 02. 客户领域
+
+  ### 客户战略核心
+
+  [[02. 客户领域/客户战略核心/客户战略核心 MOC|客户战略核心]]
+
+  <!-- 对应 MOC 中 -->
+  ## 相关笔记
+
+  - [[../../学习路线图 - Digital Transformation Roadmap|学习路线图]]
+  ```
 
 **步骤 5.2: 生成"核心问题"笔记**
 
@@ -670,16 +703,20 @@ Phase 5 完成后，**必须**询问用户是否进入 Phase 6：
 - **主题名称**：学习材料的核心主题（如"Digital Transformation"）
 - **补充关键词**：关键概念、理论框架名称
 
-#### 6.1.2 检测并执行深度研究
+#### 6.1.2 调用 deep-research（可选）
 
-按以下步骤执行：
+**仅当**环境中已安装并可调用 `deep-research` skill（或等价的网络深度检索 MCP / 工具）时执行本节；**否则**跳过 Phase 6，并向用户说明：「未检测到 deep-research，已跳过深度研究与争议分析自动化；可手动检索后按 6.3 模板自建笔记。」
 
-1. **检测可用能力**：检查当前环境中是否存在深度检索工具（`deep-research` skill、Web Search MCP、`webfetch` 工具等）
-2. **向用户报告检测结果并执行**：
-   - ✅ 检测到可用工具 → 提示 `正在使用 {工具名} 执行深度研究...`，进入步骤 3
-   - ❌ 未检测到 → 告知用户「未检测到深度检索工具，跳过 Phase 6。可手动检索后按 references/templates.md 的争议分析模板自建笔记」，向进度文件追加 `[Phase 6] 跳过 — 未检测到检索工具`，流程结束
-3. **执行检索**：使用可用工具检索以下内容：
-   > {主题}的深度研究，包括：主流观点、争议内容、不同视角、行业共识与分歧、权威来源
+在 Claude Code 等支持 Skill 链式调用的环境中，可使用（示例，以实际工具名为准）：
+
+```
+Skill(
+  skill: "deep-research",
+  args: "{主题}的深度研究，包括：主流观点、争议内容、不同视角、行业共识与分歧、权威来源"
+)
+```
+
+在 Cursor 等环境若无上述调用方式，改用已启用的 **Web 搜索 / 研究类 MCP**，自行归纳出与下表同构的「研究报告」后再进入 6.2。
 
 #### 6.1.3 研究报告接收
 
@@ -756,7 +793,78 @@ Phase 5 完成后，**必须**询问用户是否进入 Phase 6：
 - 争议分析笔记已生成
 - 参考来源列表
 
-> 历史失败案例与改进记录见 [HISTORY.md](./HISTORY.md)
+## 关键交互点
+
+### 步骤 1.1: 文件夹选择
+
+**文字列表方式：**
+```
+📁 请选择要处理的文件夹（回复编号）：
+
+  1. 📂 Digital Transformation/
+  2. 📂 Strategic Management/
+  3. 📂 Leadership/
+
+请回复编号（可多选，如 1,3）：
+```
+
+### 步骤 1.4: 路线图确认
+
+一次性展示完整版路线图（含比例检查）：
+```
+📋 已生成完整版学习路线图
+
+## 01. 数字化转型基础
+
+### 核心概念框架
+
+**数字转型 vs 数字化**
+- 详细解释：...
+- 案例：...
+- 原文引用：...
+
+---
+
+共 4 个类别，12 个主题，48 个知识点
+📊 预计将创建：12 个 MOC，48 个原子笔记
+📄 学习材料共 156 页，平均每页约 0.31 个知识点
+⏱️ 预计耗时：约 15-20 分钟
+
+⚠️ 知识点数量检查：
+- 转型概述：6 个知识点 / 12 页 → ⚠️ 比例偏高（0.5），建议合并
+- 客户战略：3 个知识点 / 28 页 → ✅ 比例合理（0.11）
+
+是否需要修改？回复：
+  - "继续" → 保存并进入下一步
+  - "修改 + 具体意见" → 进行修改
+```
+
+## 失败分析与改进
+
+### 历史失败案例与解决方案
+
+| 失败场景 | 原因分析 | 解决方案 |
+|---------|---------|---------|
+| Sub-agents 无法访问 vault 文件 | 沙箱权限限制 | **直接使用 Python 脚本**而非调用 sub-agents |
+| 逐个确认导致进度缓慢 | 交互模式设计问题 | 改为**批量确认模式** |
+| 长文件分批阅读需要多次确认 | 未考虑自动继续 | 改为**自动分批，无需确认** |
+| 原子笔记内容过于简化 | 未明确内容丰富度要求 | 明确要求**200+ 字详细解释，含案例分析** |
+| 双链标准模糊 | 仅基于术语相似 | 明确**5 种逻辑关联标准**；Phase 4 约定主 Agent 与 `double-link-builder.py` 分工及去重；脚本仅用结构化信号、禁止仅靠词面相似 |
+| 路线图与 MOC 未建立双链 | 步骤遗漏 | 增加**步骤 4.3 专门建立此双链** |
+| MOC 与原子笔记双链遗漏 | 步骤遗漏 | 增加 **Phase 5.1.2 专门检查 MOC 与原子笔记双链** |
+| 学习后缺乏重点引导 | 未提供核心问题框架 | 增加 **Phase 5.2 生成"核心问题"笔记**，用 5 个以内关键问题引导学习 |
+| 缺乏多元视角验证 | 仅依赖单一学习材料 | 增加 **Phase 6 深度研究与争议分析**，识别共识与争议，为深入探讨提供方向 |
+| 并行 agents 数量不合理 | 固定数量，未按工作量计算 | 改为按 **ceil(n/5) 计算**，确保每个 agent 处理不超过 5 个笔记 |
+| 笔记数量过多未预警 | 一次性生成大量笔记难以控制 | 增加**超过 50 个时的预警和建议**机制 |
+| 质量审查被跳过 | 默认可选，容易被忽略 | 改为**默认执行**，除非用户明确跳过 |
+| 失败笔记未处理 | 无重试机制 | 增加**修复与重试机制**，最多重试 2 次，超出标记为待人工审核 |
+
+### 稳定性保障
+
+1. **优先使用 Python 脚本而非 agents** - agents 受限于权限和上下文
+2. **批量操作减少交互** - 减少用户确认次数，提高效率
+3. **自动错误恢复** - 脚本出错时记录日志并继续
+4. **长任务断点（可选，非强制）** - 每完成一个 Phase，可将「已完成步骤编号 + 关键产出文件路径列表」追加写入 vault 根目录的 `.obsidian-learning-progress.md`（纯文本 Markdown 即可，任务结束后可删除）；未写入不影响流程合规性
 
 ## 文件结构
 
@@ -764,18 +872,22 @@ Phase 5 完成后，**必须**询问用户是否进入 Phase 6：
 skill目录/
 ├── SKILL.md                    # 主 skill 文件（含完整流程）
 ├── README.md                   # 安装说明与产品说明
+├── COMPATIBILITY.md            # Claude Code / Cursor / Codex 兼容性说明
 ├── agents/
 │   ├── roadmap-generator.md    # 路线图生成 agent
 │   ├── file-structure-creator.md # 文件结构创建 agent
 │   ├── atomic-note-filler.md    # 原子笔记填充 agent
 │   └── note-reviewer.md         # 笔记审查 agent
 ├── references/
-│   ├── obsidian-structure.md    # Obsidian 结构规范
-│   └── templates.md             # 生成物格式模板（核心问题、争议分析）
-└── scripts/
-    ├── double-link-builder.py   # 双链构建（三阶段漏斗 v2）
-    ├── context-extractor.py     # 上下文预提取（Phase 3.0b）
-    └── roadmap-editor.py        # 可选：路线图可视化编辑
+│   └── obsidian-structure.md    # Obsidian 结构规范
+├── scripts/
+│   ├── double-link-builder.py   # 双链候选生成器（默认只输出 link-candidates.md；确认后 --apply）
+│   ├── roadmap-editor.py        # 可选：路线图可视化编辑（依赖本机浏览器/Playwright）
+│   ├── run-picker.py            # 可选：vault 文件夹选择器网页
+│   └── generate-picker.sh       # 可选：生成并打开选择器的壳脚本
+└── tests/
+    ├── fixtures/
+    └── test_scripts.py
 ```
 
 ## 流程概览
@@ -794,20 +906,47 @@ Phase 5: 最终审查 + 核心问题生成
 Phase 6: 深度研究与争议分析
 ```
 
-### 客户端差异（Codex / Cursor 等）
+### 客户端差异（Claude Code / Cursor 等）
 
-- **Codex**：常见触发方式为 slash command（如 `/obsidian-learning`，以本地配置为准）；子 Agent 与「Skill 调 Skill」依赖当前 harness 是否启用。
+- **Claude Code**：常见触发方式为 slash command（如 `/obsidian-learning`，以本地配置为准）；子 Agent 与「Skill 调 Skill」依赖当前 harness 是否启用。
 - **Cursor**：通常由 **Agent Skills** 根据描述自动匹配，或由用户在对话中显式要求按本 SKILL 执行；若无多 Agent 编排，Phase 3 按上文**降级为顺序分组**即可。
-- **`scripts/double-link-builder.py` (v2)**：执行三阶段漏斗的阶段 1+2（结构化亲和过滤 + TF-IDF + 关键词启发式）。`--mode full`（默认）输出 `candidates.json` 供主 Agent 的 LLM 做阶段 3 分类；`--mode strict`（降级）直接写入确定性链接。脚本保守设计，关键词无法覆盖的关系宁可不建链，由 LLM 阶段 3 或用户在 Obsidian 中补全。
-- **LLM 阶段 3 依赖**：Phase 4.2b 的 LLM 批量分类需要主 Agent 具有调用 LLM 的能力。若不支持（如纯本地环境），使用 `--mode strict` 降级路径。
+- **`scripts/double-link-builder.py`**：笔记间链接仅当同时满足 SKILL 五类关系之一对应的**结构化信号**（互引、标题主题重叠、因果/类比/转折/应用/背景等领域词汇及目录关系）时才生成候选；默认不写入原子笔记。主 Agent 确认后才应用；**不**根据全文词面相似度单独建链。自动无法断言时宁可不建链，可在 Obsidian 中补全。
 
 ## 输出质量标准
 
-| 产出物 | 核心要求 | 详细规范 |
-|--------|----------|----------|
-| 路线图 | 完整版 200+ 字/知识点 + 案例 + 引用 + source_range；大纲版仅 H2/H3/bullet | 见 Phase 1.5 |
-| 原子笔记 | 核心概念 200+ 字 + 案例 150+ 字 + 原文引用 + 2-3 思考问题，无大量重复 | 见 [agents/atomic-note-filler.md](./agents/atomic-note-filler.md) |
-| 双链 | 基于 5 类逻辑关联（非术语相似），路线图 ↔ MOC 双向 | 见 [references/obsidian-structure.md](./references/obsidian-structure.md) |
-| Obsidian 格式 | frontmatter 含 title/date/tags，wikilinks 目标存在，格式统一 | 见 [references/obsidian-structure.md](./references/obsidian-structure.md) |
-| 核心问题 | ≤5 个，含问题背景 + 可选子问题，具有引导性和逻辑层次 | 见 Phase 5.2 + [references/templates.md](./references/templates.md) |
-| 争议分析 | ≥3-5 参考来源，共识/争议/情景依赖三部分客观呈现 | 见 Phase 6.3 + [references/templates.md](./references/templates.md) |
+### 路线图质量
+- 完整版：详细知识点描述（200+ 字）、完整案例说明、准确原文引用
+- 大纲版：严格仅含 H2/H3/bullet
+- 必须基于完整阅读内容
+
+### 原子笔记质量
+- **内容丰富度**：核心概念讲解 200+ 字，案例完整分析
+- **初学者友好**：无基础读者也能理解概念
+- **案例支撑**：必须有来自学习材料的案例
+- **思考引导**：促进深度理解的反思问题
+- 无大量重复内容
+
+### 双链质量
+- 笔记间双链基于逻辑关联（非术语相似）；若曾运行 `double-link-builder.py`，仍建议抽样复核（脚本保守，可能漏链）
+- 路线图与 MOC 双向链接（以 Phase 4.3 为准）
+- MOC 正确链接所有原子笔记
+
+### Obsidian 格式
+- frontmatter 包含 title、date、tags
+- wikilinks 目标笔记存在
+- 格式规范统一
+
+### 核心问题质量
+- 不超过 5 个核心问题
+- 每个问题包含问题背景（可选子问题）
+- 问题涵盖核心知识、原则、方法论
+- 问题具有引导性，能促进深度学习
+- 问题之间有逻辑层次，无明显重复或矛盾
+
+### 争议分析质量
+- 基于深度研究，识别至少 3-5 个有价值的参考来源
+- 共识部分有多个来源支持
+- 争议部分客观呈现各方观点
+- 情景依赖部分说明关键决定变量
+- 探讨问题清单具有开放性和深度
+- 参考来源按相关性排列，附简短评价
