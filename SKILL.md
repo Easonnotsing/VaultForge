@@ -94,25 +94,26 @@ description: >-
 - 进度报告格式：emoji + 百分比条 + 完成/进行中
 - **批量确认原则**：一个阶段完成 → 一次性展示结果 → 一次性征询确认
 
-## 开始前：选择输出语言
+## 开始前：选择输出语言 / Select Output Language
 
 **这是整个 skill 的第一步，在任何其他操作之前必须执行。**
+**This is the first step. It MUST execute before anything else.**
 
 ```
-🌐 请选择输出语言：
+🌐 请选择输出语言 / Please select output language：
 
   1. English
   2. 中文
 
-请回复编号：
+请回复编号 / Reply with number：
 ```
 
-用户选择后，**立即执行以下切换**：
+用户选择后 / After selection，**立即执行以下切换**：
 
-1. **对话语言切换**：此后的所有用户对话、进度报告、确认提示、错误信息**必须**使用所选语言
-2. **生成内容语言**：全部后续生成文本（路线图标题、H2/H3 名称、知识点名称、原子笔记正文、MOC 名称、核心问题、争议分析）使用所选语言
-3. **笔记章节标题**：使用所选语言对应的标签（见下表）
-4. **原文引用**：保留源语言，不翻译
+1. **对话语言切换**：此后的所有用户对话、进度报告、确认提示、错误信息**必须**使用所选语言。The agent MUST use the selected language for ALL subsequent dialogue.
+2. **生成内容语言**：全部后续生成文本使用所选语言。All generated content uses the selected language.
+3. **笔记章节标题**：使用所选语言对应的标签。Section headers use the selected language's labels.
+4. **原文引用**：保留源语言，不翻译。Original citations remain in source language.
 
 | 章节 | English | 中文 |
 |------|---------|------|
