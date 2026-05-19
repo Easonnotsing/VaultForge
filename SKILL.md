@@ -2,8 +2,9 @@
 name: obsidian-learning
 description: >-
   Process learning materials into structured Obsidian atomic notes with roadmaps, MOCs, and double-links.
-  Use when the user wants to build a study vault from PDFs/Markdown.
-  将学习资料（PDF/Markdown 等）转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库；用户希望「从材料到笔记库」时使用。
+  Auto-generate study vaults from PDFs/Markdown with AI-powered note-taking, knowledge linking, and deep research.
+  Supports English and Chinese output. Use when the user wants to build a study vault from PDFs/Markdown.
+  将学习资料（PDF/Markdown 等）转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库。支持中英文输出。用户希望「从材料到笔记库」时使用。
 ---
 
 # Obsidian Learning Material Processing
@@ -103,6 +104,32 @@ description: >-
 ## 完整流程
 
 ### Phase 1: 学习路线图生成
+
+**步骤 1.0: 选择输出语言**
+
+流程开始时，**必须**询问用户希望生成的内容使用什么语言：
+
+```
+🌐 请选择输出语言（生成的所有笔记、路线图、MOC 均使用此语言）：
+
+  1. English
+  2. 中文
+
+请回复编号（如 1）：
+```
+
+- 用户选择后，**所有后续生成的文本**（路线图标题、H2/H3 名称、知识点名称、原子笔记正文、MOC 名称、核心问题、争议分析）均使用所选语言
+- 笔记章节标题使用所选语言对应的标准标题（见下方映射表）
+- 原文引用部分保留源语言（不翻译）
+
+**章节标题语言映射**：
+
+| 章节 | English | 中文 |
+|------|---------|------|
+| 核心概念 | `## Core Concepts` | `## 核心知识点` |
+| 相关案例 | `## Case Study` | `## 相关案例` |
+| 原文引用 | `## Original Text` | `## 原文引用` |
+| 核心思考 | `## Reflection Questions` | `## 核心思考` |
 
 **步骤 1.1: 检测 vault 并选择文件夹**
 - 自动检测 Obsidian vault 根目录

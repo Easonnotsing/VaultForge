@@ -7,6 +7,19 @@ description: Fill atomic notes with rich, beginner-friendly content from learnin
 
 为原子笔记填充**丰富详尽**的学习内容。
 
+## ⚠️ 语言要求
+
+所有生成的笔记正文**必须使用主流程指定的输出语言**（English 或 中文）。章节标题使用以下映射：
+
+| 章节 | English | 中文 |
+|------|---------|------|
+| 核心概念板块 | `## Core Concepts` | `## 核心知识点` |
+| 案例板块 | `## Case Study` | `## 相关案例` |
+| 原文引用板块 | `## Original Text` | `## 原文引用` |
+| 思考问题板块 | `## Reflection Questions` | `## 核心思考` |
+
+原文引用段落保留源语言，不翻译。标签名（`### {案例名称}`）使用输出语言。
+
 ## ⚠️ 核心要求：内容必须丰富，不是提纲
 
 **原子笔记是教学材料，不是提纲。**
@@ -100,57 +113,59 @@ description: Fill atomic notes with rich, beginner-friendly content from learnin
 - 它与其他知识点有什么关联或矛盾？
 - 如何应用于实际工作或决策？
 
-### 格式要求
+### 格式要求（以 English 为例，中文同理替换章节标题）
 
 ```markdown
 ---
-title: {知识点名称}
+title: {知识点的英文/中文标题}
 date: {creation date}
 status: filling
 tags:
-  - 数字转型
+  - {topic tag in output language}
 aliases:
-  - {知识点名称}
+  - {alternative title}
 ---
 
-# {知识点名称}
+# {知识点的英文/中文标题}
 
-## 核心知识点
+## Core Concepts
 
-**背景**：{为什么这个概念重要，它解决了什么问题}
+**Background**：{为什么这个概念重要}
 
-**定义**：{精确的定义，必要时对比相关概念}
+**Definition**：{精确的定义，必要时对比相关概念}
 
-**原理**：{它是如何运作的，核心机制是什么}
+**Principle**：{它如何运作，核心机制是什么}
 
-**应用场景**：{在什么情况下可以使用或应用这个概念}
+**Application**：{在什么场景下使用}
 
-**与其他概念的关系**：{它在整个知识体系中的位置}
+**Relationship to Other Concepts**：{它在整个知识体系中的位置}
 
-## 相关案例
+## Case Study
 
 ### {案例名称}
 
-**背景**：{谁、在哪里、因为什么}
+**Background**：{谁、在哪里、因为什么}
 
-**过程**：{发生了什么，关键决策和行动}
+**Process**：{发生了什么，关键决策和行动}
 
-**结果**：{最终 outcome，成功或失败}
+**Outcome**：{最终 outcome，成功或失败}
 
-**启示**：{从这个案例中可以学到什么}
+**Insight**：{从这个案例中可以学到什么}
 
-## 原文引用
+## Original Text
 
-> {与知识点最核心相关的原文段落，50-150 字，直接引用原文措辞}
+> {与知识点最核心相关的原文段落，50-150 字，保留源语言不翻译}
 
-> — 来源：{文档名}，作者：{作者名}，第{页码段}页
+> — Source: {Document}, Author: {Author}, pp.{Page Range}
 
-## 核心思考
+## Reflection Questions
 
 1. {思考问题1}
 2. {思考问题2}
 3. {思考问题3}
 ```
+
+> 中文输出时，章节标题替换为：`## 核心知识点` / `## 相关案例` / `## 原文引用` / `## 核心思考`，粗体标签对应替换为：`**背景**：` `**定义**：` `**原理**：` `**应用场景**：` `**启示**：` 等。
 
 ## 约束
 

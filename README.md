@@ -1,210 +1,243 @@
 # Obsidian Learning
 
-将 PDF / Markdown 学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
+Automatically transform PDF / Markdown learning materials into structured Obsidian atomic note knowledge bases.
 
-> 这是一个咨询顾问式的学习方法论——在极短时间内掌握一个领域，达到能与专业人士深入交流的水平。你只负责理解、思考、提问，繁琐的整理工作全部由 AI 代为完成。
+> A consultant-style learning methodology — master a new domain quickly and reach a level where you can discuss it with professionals. You focus on understanding, thinking, and asking questions; the AI handles all the tedious organization.
 
----
-
-## 为什么选择 obsidian-learning
-
-| 传统学习流程 | obsidian-learning |
-|-------------|-------------------|
-| 通读材料 → 手动摘录 → 整理大纲 → 写笔记 → 建立关联 | 一句话触发，全自动完成 |
-| 笔记散乱，难以形成知识网络 | 原子笔记 + MOC + 五类逻辑双链，天然形成语义网络 |
-| 学到什么程度？缺少反馈 | 生成核心问题引导学习，争议分析拓展边界 |
-| 中断后前功尽弃 | 5 态状态机自动断点恢复 |
-| 大量 PDF 阅读耗时 | context-extractor 按 source_range 预提取，避免重复阅读 |
+📖 [中文说明](#chinese)
 
 ---
 
-## 核心概念
+## Why obsidian-learning
 
-| 概念 | 一句话解释 |
-|------|-----------|
-| **原子笔记** | 围绕单一知识点的独立笔记，含概念讲解、案例、引用，一篇讲透一件事 |
-| **MOC** (Map of Content) | 一个主题下所有原子笔记的索引页，通过双向链接聚合，提供主题导航 |
-| **学习路线图** | AI 生成的结构化大纲（类别 → 主题 → 知识点），组织全部学习内容 |
-| **双链** | Obsidian `[[笔记名]]` 格式的内部链接，基于逻辑关系而非术语相似建立 |
-| **核心问题** | ≤5 个引导性问题，驱动主动探索式学习，将知识与现实世界连接，提升学习效率和记忆留存 |
-| **争议分析** | 深度研究补充多元视角，呈现领域内的共识、争议、未知与探索方向，不被单一学习材料局限 |
+| Traditional Workflow | obsidian-learning |
+|---------------------|-------------------|
+| Read → extract → outline → write notes → link | One trigger, fully automated |
+| Scattered notes, no knowledge network | Atomic notes + MOC + 5-type logical wikilinks form a semantic network |
+| No feedback on learning depth | Core questions guide learning; controversy analysis expands boundaries |
+| Interruption = start over | 5-state state machine auto-resumes from breakpoint |
+| Repeated full-text reading wastes tokens | context-extractor pre-fetches per source_range, reducing token usage 5×+ |
 
-## 快速开始
+---
+
+## Core Concepts
+
+| Concept | One-liner |
+|---------|-----------|
+| **Atomic Note** | A standalone note centered on a single knowledge point with concept explanation, case study, citation, and reflection questions |
+| **MOC** (Map of Content) | An index page linking all atomic notes under a topic, providing navigation and overview |
+| **Learning Roadmap** | AI-generated structured outline (Category → Topic → Knowledge Point) organizing all content |
+| **Wikilink** | Obsidian `[[note]]` internal links, established via logical relationships (derivation/analogy/contradiction/application/context), not mere term similarity |
+| **Core Questions** | ≤5 guiding questions driving active exploratory learning, connecting knowledge to real-world applications |
+| **Controversy Analysis** | Deep research supplementing diverse perspectives on consensus, disputes, unknowns, and exploration directions |
+
+---
+
+## Quick Start
 
 ```bash
-# 1. Clone 到 skills 目录
+# 1. Clone to skills directory
 git clone https://github.com/Easonnotsing/obsidian-learning.git ~/.agents/skills/obsidian-learning
 
-# 2. （推荐）安装 PDF 提取依赖
+# 2. (Recommended) Install PDF extraction dependency
 pip install pypdf
 ```
 
-在任意 AI Agent 客户端中触发：
+Trigger in any AI Agent client:
 
-| 客户端 | 方式 |
-|--------|------|
-| **Claude Code / Codex** | 配置 slash command 后 `/obsidian-learning`，或在对话中说「按 obsidian-learning 执行」 |
-| **Cursor** | 放入 Agent Skills 目录，用自然语言触发 |
-| **其他客户端** | 放入 Skills 目录，对话中显式要求「按 SKILL.md 流程执行」 |
+| Client | How |
+|--------|-----|
+| **Claude Code / Codex** | Configure a slash command then `/obsidian-learning`, or say "run obsidian-learning" |
+| **Cursor** | Place in Agent Skills directory, trigger with natural language |
+| **Other clients** | Place in Skills directory, explicitly request "follow SKILL.md flow" |
 
-> 详细兼容性说明见 [COMPATIBILITY.md](./COMPATIBILITY.md)
+> See [COMPATIBILITY.md](./COMPATIBILITY.md) for detailed compatibility notes.
 
 ---
 
-## 产物预览
+## What You Get
 
-处理完成后，你的 vault 中会生成：
+After processing, your vault will contain:
 
 ```
 vault/
-├── 学习路线图 - {主题}.md                  # 大纲版（H2/H3/bullet）
-├── 学习路线图（完整版） - {主题}.md         # 详细版（含案例、原文引用、source_range）
-├── 核心问题.md                             # ≤5 个引导性核心问题
-├── {主题} - 争议分析.md                    # 行业共识 vs 争议 vs 情景依赖
+├── Learning Roadmap - {Topic}.md              # Outline version (H2/H3/bullets)
+├── Learning Roadmap (Full) - {Topic}.md       # Detailed version (cases, citations, source_range)
+├── Core Questions.md                          # ≤5 guiding questions
+├── {Topic} - Controversy Analysis.md          # Consensus vs disputes vs context-dependent
 │
-├── 01. 数字化转型/
-│   ├── 转型概述/
-│   │   ├── 转型概述 MOC.md                 # 主题内容地图
-│   │   ├── 数字化vs数字化转型.md            # 原子笔记（粗体标签分段排版）
-│   │   └── 转型核心框架.md
-│   └── 客户领域/
-│       ├── 客户领域 MOC.md
+├── 01. Digital Transformation/
+│   ├── Overview/
+│   │   ├── Overview MOC.md                    # Topic map of content
+│   │   ├── Digitization vs Transformation.md  # Atomic note (bold-labeled sections)
+│   │   └── Transformation Framework.md
+│   └── Customer Domain/
+│       ├── Customer Domain MOC.md
 │       └── ...
-└── 02. 战略管理/
+└── 02. Strategic Management/
     └── ...
 ```
 
 ---
 
-## 核心能力
+## Core Capabilities
 
-### 6 Phase 完整管线
+### 6-Phase Pipeline
 
 ```
-Phase 1: 路线图生成       → 完整阅读 → 结构化大纲 + 详细版
-Phase 2: 文件结构创建     → 批量创建文件夹/MOC/空白原子笔记
-Phase 3: 并行内容填充     → 断点恢复 → 上下文预提取 → 并行代理填充 → 质量审查
-Phase 4: 双链建立         → 三阶段漏斗（结构亲和 → TF-IDF → LLM 分类）
-Phase 5: 最终审查         → 完整性检查 + 核心问题生成
-Phase 6: 深度研究（可选） → 网络检索 → 争议分析笔记
+Phase 1: Roadmap Generation    → Full reading → structured outline + detailed version
+Phase 2: File Structure         → Batch create folders / MOCs / blank atomic notes
+Phase 3: Parallel Content Fill  → Resume check → context pre-extraction → parallel agents → quality review
+Phase 4: Wikilink Building      → Three-stage funnel (structural → TF-IDF → LLM classification)
+Phase 5: Final Review           → Integrity check + core question generation
+Phase 6: Deep Research (opt)    → Web search → controversy analysis notes
 ```
 
-### 工程保障
+### Engineering Guarantees
 
-- **中断恢复**：每个原子笔记含 `status` 字段（draft → filling → filled → reviewed），Phase 3 启动时自动扫描并提示「从断点继续」
-- **原子写保护**：`.md.tmp` → 验证 → rename，Agent 崩溃不损坏已完成笔记
-- **上下文预提取**：`context-extractor.py` 按 `source_range` 提取原文段落，每个 Agent 只收相关片段，Token 消耗降低 5×+
-- **自动重试**：质量审查未通过的笔记进入修复队列，最多重试 2 次
-- **双链精确度**：三阶段漏斗（结构化过滤 + TF-IDF 语义 + LLM 关系分类），覆盖率 ~60-80%
+- **Interruption Recovery**: Each atomic note has a `status` field (draft → filling → filled → reviewed). Phase 3 auto-scans and prompts "resume from breakpoint".
+- **Atomic Write Protection**: `.md.tmp` → verify → rename. Agent crashes never corrupt completed notes.
+- **Context Pre-extraction**: `context-extractor.py` extracts source paragraphs per `source_range` annotation. Each agent receives only relevant snippets — token usage reduced 5×+.
+- **Auto Retry**: Notes failing quality review enter a repair queue with up to 2 retries.
+- **Wikilink Precision**: Three-stage funnel (structural filtering + TF-IDF semantics + LLM classification), ~60-80% coverage.
 
-### 原子笔记结构
+### Atomic Note Structure
 
-每篇原子笔记按**粗体标签分段排版**，清晰可读：
+Every note uses **bold-labeled sections** for readability:
 
 ```markdown
-# 知识点名称
+# Knowledge Point Title
 
-## 核心知识点
-**背景**：...
-**定义**：...
-**原理**：...
-**应用场景**：...
-**与其他概念的关系**：...
+## Core Concepts
+**Background**: ...
+**Definition**: ...
+**Principle**: ...
+**Application**: ...
+**Relationship to Other Concepts**: ...
 
-## 相关案例
-### {案例名称}
-**背景**：...
-**过程**：...
-**结果**：...
-**启示**：...
+## Case Study
+### {Case Name}
+**Background**: ...
+**Process**: ...
+**Outcome**: ...
+**Insight**: ...
 
-## 原文引用
-> {核心原文段落，50-150 字}
+## Original Text
+> {Core original passage, 50-150 words}
 
-> — 来源：{文档名}，作者：{作者名}，第{页码段}页
+> — Source: {Document}, Author: {Author}, pp.{Page Range}
 
-## 核心思考
+## Reflection Questions
 1. ...
 2. ...
 ```
 
----
-
-## 前置要求
-
-| 要求 | 说明 |
-|------|------|
-| **Obsidian Vault** | 安装并初始化 Obsidian |
-| **AI Agent 客户端** | Claude Code / Codex / Cursor 等任意支持 Skill 加载的客户端 |
-| **Python 3** | `context-extractor.py`、`double-link-builder.py` 需要 |
-| **pypdf**（推荐） | PDF 页码提取：`pip install pypdf`（或 `PyPDF2`） |
-| **deep-research skill**（可选） | Phase 6 深度研究，无此 skill 时自动跳过并提示 |
+> Section headers adapt to the user's chosen output language (English / 中文 / etc.).
 
 ---
 
-## 常见问题
+## Prerequisites
 
-### Q: 如何开始？
-
-将学习材料（PDF/MD）放入 vault 文件夹，启动 skill，选择文件夹即可。建议首次在小规模材料（< 50 页）上测试。
-
-### Q: 任务中断后如何恢复？
-
-重新触发 skill，Phase 3 会扫描所有笔记的 `status` 字段，识别已完成/未完成/残骸，提示「从断点继续」或「重新开始」。
-
-### Q: 双链不准怎么办？
-
-默认使用三阶段漏斗：关键词启发式 + TF-IDF 语义 + LLM 分类。若环境不支持 LLM，使用 `--mode strict` 降级为确定性链接（覆盖率 ~40-50%）。两种情况均可在 Obsidian 中手动调整。
-
-### Q: 原子笔记内容不够丰富？
-
-Skill 要求 200+ 字核心讲解、150+ 字案例分析、50-150 字原文引用。质量审查自动检测不达标笔记并触发重写。
-
-### Q: 可以增量添加新学习材料吗？
-
-当前版本对已处理的 vault 添加新材料需重新执行流程。计划在后续版本支持增量模式。
-
-### Q: 如何触发 Phase 6 深度研究？
-
-Phase 5 完成后会弹出确认提示。选择「继续」后 Agent 自动检测可用检索工具（`deep-research` skill、Web Search MCP 等），有则执行、无则告知跳过。
-
-### Q: 支持哪些文件格式？
-
-PDF（需 pypdf/PyPDF2）和 Markdown。TXT 也可提取全文但页码不精确。未来计划支持更多格式。
+| Requirement | Notes |
+|-------------|-------|
+| **Obsidian Vault** | Install and initialize Obsidian |
+| **AI Agent Client** | Claude Code / Codex / Cursor or any client supporting Skill loading |
+| **Python 3** | Required by `context-extractor.py`, `double-link-builder.py` |
+| **pypdf** (recommended) | PDF page extraction: `pip install pypdf` (or `PyPDF2`) |
+| **deep-research skill** (optional) | Phase 6 deep research; auto-skipped with notice if unavailable |
 
 ---
 
-## 项目结构
+## FAQ
+
+### Q: How do I start?
+
+Place learning materials (PDF/MD) in your vault folder, trigger the skill, select the folder. Start with small materials (< 50 pages) for testing.
+
+### Q: What if the task is interrupted?
+
+Re-trigger the skill. Phase 3 scans all notes' `status` fields, identifies completed/incomplete/corrupted, and prompts "resume from breakpoint" or "restart".
+
+### Q: Wikilinks seem inaccurate?
+
+Default uses the three-stage funnel: keyword heuristics + TF-IDF semantics + LLM classification. Without LLM access, use `--mode strict` for deterministic links (~40-50% coverage). Both can be manually adjusted in Obsidian.
+
+### Q: Note content too thin?
+
+The skill requires 200+ word core explanations, 150+ word case analysis, and 50-150 word original citations. Quality review auto-detects substandard notes and triggers rewrites.
+
+### Q: Can I incrementally add new materials?
+
+The current version requires re-running the full flow when adding materials to a processed vault. Incremental mode is planned.
+
+### Q: How to trigger Phase 6 deep research?
+
+Phase 5 completion prompts a confirmation. Choose "continue" and the agent auto-detects available search tools (`deep-research` skill, Web Search MCP, etc.), executes if available or notifies if unavailable.
+
+### Q: What file formats are supported?
+
+PDF (requires pypdf/PyPDF2) and Markdown. TXT can extract full text but page numbering is imprecise.
+
+---
+
+## Project Structure
 
 ```
 obsidian-learning/
 ├── README.md
-├── SKILL.md                         # 完整技能定义
-├── HISTORY.md                       # 失败案例与改进记录
-├── COMPATIBILITY.md                 # 多客户端兼容性说明
+├── SKILL.md                         # Full skill definition
+├── HISTORY.md                       # Failure cases & improvement log
+├── COMPATIBILITY.md                 # Multi-client compatibility guide
 ├── agents/
-│   ├── roadmap-generator.md         # 路线图生成 Agent
-│   ├── file-structure-creator.md    # 文件结构创建 Agent
-│   ├── atomic-note-filler.md        # 原子笔记填充 Agent
-│   └── note-reviewer.md             # 笔记审查 Agent
+│   ├── roadmap-generator.md         # Roadmap generation agent
+│   ├── file-structure-creator.md    # File structure creation agent
+│   ├── atomic-note-filler.md        # Atomic note filling agent
+│   └── note-reviewer.md             # Note review agent
 ├── references/
-│   ├── obsidian-structure.md        # Obsidian 格式规范
-│   └── templates.md                 # 生成物模板（核心问题、争议分析）
+│   ├── obsidian-structure.md        # Obsidian format specification
+│   └── templates.md                 # Output templates (core questions, controversy analysis)
 ├── scripts/
-│   ├── context-extractor.py         # 上下文预提取（Phase 3.0b）
-│   ├── double-link-builder.py       # 双链构建（三阶段漏斗 v2）
-│   └── roadmap-editor.py            # 可选：路线图网页编辑
+│   ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
+│   ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
+│   └── roadmap-editor.py            # Optional: browser-based roadmap editor
 └── tests/
     ├── fixtures/
-    └── test_scripts.py
+    └── test_*.py
 ```
 
 ---
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request。
+Issues and Pull Requests welcome.
 
 ## License
 
 MIT
+
+---
+
+<a name="chinese"></a>
+# Obsidian Learning（中文）
+
+将 PDF / Markdown 学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
+
+> 咨询顾问式的学习方法论——在极短时间内掌握一个领域，达到能与专业人士深入交流的水平。你只负责理解、思考、提问，AI 代为完成繁琐整理。
+
+### 核心概念
+
+| 概念 | 说明 |
+|------|------|
+| **原子笔记** | 围绕单一知识点的独立笔记，含概念讲解、案例、引用、思考问题 |
+| **MOC** | 一个主题下所有原子笔记的索引页，通过双向链接聚合 |
+| **学习路线图** | AI 生成的结构化大纲（类别 → 主题 → 知识点） |
+| **双链** | 基于逻辑关系（推导/类比/矛盾/应用/背景）而非术语相似建立 |
+| **核心问题** | ≤5 个引导性问题，驱动主动探索式学习 |
+| **争议分析** | 深度研究呈现共识、争议、未知与探索方向 |
+
+### 快速开始
+
+```bash
+git clone https://github.com/Easonnotsing/obsidian-learning.git ~/.agents/skills/obsidian-learning
+pip install pypdf
+```

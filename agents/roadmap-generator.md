@@ -182,6 +182,11 @@ source_range: Digital Transformation.pdf:12-15, Strategy.md
 
 ## 任务步骤
 
+### 步骤 1: 确定输出语言
+
+- **必须**使用主流程指定的输出语言（English 或 中文）生成所有 H2/H3 标题和知识点名称
+- 路线图文件名示例：`学习路线图 - {主题}.md`（中文）/ `Learning Roadmap - {Topic}.md`（English）
+
 ### 步骤 1: 读取所有学习材料
 
 **策略：完整读取优先，自动分批**
