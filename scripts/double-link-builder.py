@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-双链构建脚本 (v2) - Obsidian Learning Skill
+双链构建脚本 (v2) - VaultForge
 
 三阶段漏斗策略：
   阶段1: 结构化亲和过滤 — 目录层级、H2/H3 归属关系（零成本，消去 ~80% 无关对）
@@ -481,7 +481,7 @@ def estimate_coverage(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Obsidian Learning 双链构建脚本 v2")
+    parser = argparse.ArgumentParser(description="VaultForge v2")
     parser.add_argument("vault_path", help="Vault 根目录路径")
     parser.add_argument(
         "roadmap_name",

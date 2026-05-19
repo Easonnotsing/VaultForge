@@ -1,6 +1,6 @@
 # Output Format Templates
 
-Contains complete format templates for obsidian-learning skill outputs (non-control-flow artifacts), referenced by Phase 5.2 and Phase 6.3.
+Contains complete format templates for VaultForge skill outputs (non-control-flow artifacts), referenced by Phase 5.2 and Phase 6.3.
 
 ---
 

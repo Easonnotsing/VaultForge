@@ -1,4 +1,4 @@
-# Obsidian Learning
+# VaultForge
 
 Automatically transform PDF / Markdown learning materials into structured Obsidian atomic note knowledge bases.
 
@@ -8,9 +8,9 @@ Automatically transform PDF / Markdown learning materials into structured Obsidi
 
 ---
 
-## Why obsidian-learning
+## Why VaultForge
 
-| Traditional Workflow | obsidian-learning |
+| Traditional Workflow | VaultForge |
 |---------------------|-------------------|
 | Read → extract → outline → write notes → link | One trigger, fully automated |
 | Scattered notes, no knowledge network | Atomic notes + MOC + 5-type logical wikilinks form a semantic network |
@@ -37,7 +37,7 @@ Automatically transform PDF / Markdown learning materials into structured Obsidi
 
 ```bash
 # 1. Clone to skills directory
-git clone https://github.com/Easonnotsing/obsidian-learning.git ~/.agents/skills/obsidian-learning
+git clone https://github.com/Easonnotsing/VaultForge.git ~/.agents/skills/VaultForge
 
 # 2. (Recommended) Install PDF extraction dependency
 pip install pypdf
@@ -47,7 +47,7 @@ Trigger in any AI Agent client:
 
 | Client | How |
 |--------|-----|
-| **Claude Code / Codex** | Configure a slash command then `/obsidian-learning`, or say "run obsidian-learning" |
+| **Claude Code / Codex** | Configure a slash command then `/VaultForge`, or say "run VaultForge" |
 | **Cursor** | Place in Agent Skills directory, trigger with natural language |
 | **Other clients** | Place in Skills directory, explicitly request "follow SKILL.md flow" |
 
@@ -183,7 +183,7 @@ PDF (requires pypdf/PyPDF2) and Markdown. TXT can extract full text but page num
 ## Project Structure
 
 ```
-obsidian-learning/
+VaultForge/
 ├── README.md
 ├── SKILL.md                         # Full skill definition
 ├── HISTORY.md                       # Failure cases & improvement log
@@ -218,7 +218,7 @@ MIT
 ---
 
 <a name="chinese"></a>
-# Obsidian Learning（中文）
+# VaultForge（中文）
 
 将 PDF / Markdown 学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
 
@@ -238,6 +238,6 @@ MIT
 ### 快速开始
 
 ```bash
-git clone https://github.com/Easonnotsing/obsidian-learning.git ~/.agents/skills/obsidian-learning
+git clone https://github.com/Easonnotsing/VaultForge.git ~/.agents/skills/VaultForge
 pip install pypdf
 ```

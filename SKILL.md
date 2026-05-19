@@ -1,5 +1,5 @@
 ---
-name: obsidian-learning
+name: VaultForge
 description: >-
   Process learning materials into structured Obsidian atomic notes with roadmaps, MOCs, and double-links.
   Auto-generate study vaults from PDFs/Markdown with AI-powered note-taking, knowledge linking, and deep research.
@@ -7,7 +7,7 @@ description: >-
   将学习资料（PDF/Markdown 等）转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库。支持中英文输出。用户希望「从材料到笔记库」时使用。
 ---
 
-# Obsidian Learning Material Processing
+# VaultForge
 
 Complete workflow for transforming learning materials into structured Obsidian atomic note knowledge bases.
 
@@ -838,7 +838,7 @@ Phase 6: Deep Research & Controversy Analysis
 
 ### Client Differences (Claude Code / Codex / Cursor etc.)
 
-- **Claude Code / Codex**: Typical trigger via slash command (e.g., `/obsidian-learning`, subject to local command configuration); sub-agents and "skill calling skill" depend on whether the current harness supports them.
+- **Claude Code / Codex**: Typical trigger via slash command (e.g., `/VaultForge`, subject to local command configuration); sub-agents and "skill calling skill" depend on whether the current harness supports them.
 - **Cursor**: Usually auto-matched by **Agent Skills** based on description, or the user explicitly requests execution per this SKILL in conversation; if multi-agent orchestration is unavailable, Phase 3 degrades to **sequential grouping** as described above.
 - **`scripts/double-link-builder.py` (v2)**: Executes stages 1+2 of the three-stage funnel (structural affinity filtering + TF-IDF + keyword heuristics). `--mode full` (default) outputs `candidates.json` for the main agent's LLM to do stage 3 classification; `--mode strict` (degraded) directly writes deterministic links. The script is conservative by design — relationships not covered by keywords are left unlinked, to be completed by LLM stage 3 or by the user in Obsidian.
 - **LLM Stage 3 Dependency**: Phase 4.2b's LLM batch classification requires the main agent to have LLM calling capability. If unsupported (e.g., purely local environment), use the `--mode strict` degraded path.

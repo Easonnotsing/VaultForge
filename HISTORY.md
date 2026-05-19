@@ -1,6 +1,6 @@
 # 失败分析与改进历史
 
-本文档记录 obsidian-learning skill 的历史失败案例及对应的工程改进。
+本文档记录 VaultForge skill 的历史失败案例及对应的工程改进。
 
 ---
 
