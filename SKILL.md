@@ -362,7 +362,7 @@ vault根目录/
      "重新开始" → 所有笔记重置为 draft 后全部重新填充
    ```
 
-**步骤 3.0b: 上下文预提取（P1-3 优化）**
+**步骤 3.0b: 上下文预提取**
 
 **由 `scripts/context-extractor.py` 自动执行。** 替代旧版手工"读取路线图 → 逐知识点提取原文段落"的流程。
 
@@ -416,14 +416,12 @@ python3 scripts/context-extractor.py <vault_path> <完整版路线图路径> --o
 
 **环境与降级**：若当前客户端**不支持**真正的多 Agent 并行（无 `Task` / 子 Agent 编排），则改为**顺序执行**：仍按「每批最多 5 篇原子笔记」分组，逐组调用 `atomic-note-filler` 或等价流程，直至全部完成；进度报告格式不变。
 
-**原子写规范（P0-2）**：
+**原子写规范**：
 1. 填充 agent 先创建 `{笔记名}.md.tmp` 写入完整内容（**注意：扩展名为 `.md.tmp`，非 `.tmp`**）
 2. 写入完成后验证 `.md.tmp` 文件完整性（文件大小 > 0、frontmatter 闭合）
 3. 验证通过后将 `.md.tmp` 文件 rename 为 `.md`（文件系统级别的原子操作）
 4. 将 frontmatter 中的 `status` 更新为 `filled`
 5. **立即**向 `.obsidian-learning-progress.md` 追加一行：`[Phase 3] {笔记名}.md → filled`
-
-**环境与降级**：若当前客户端**不支持**真正的多 Agent 并行（无 `Task` / 子 Agent 编排），则改为**顺序执行**：仍按「每批最多 5 篇原子笔记」分组，逐组调用 `atomic-note-filler` 或等价流程，直至全部完成；进度报告格式不变。
 
 ```
 [agent-1] 📝 正在填充: 原子笔记A, 原子笔记B, 原子笔记C
