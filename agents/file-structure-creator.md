@@ -9,6 +9,10 @@ description: Create folder structure and empty atomic notes based on the roadmap
 
 **批量操作模式**：先创建所有文件和文件夹，最后一次性确认。
 
+## ⚠️ 语言要求
+
+**必须使用主流程指定的输出语言（English 或 中文）** 进行所有用户对话和确认提示。文件夹名称和文件名应与路线图的大纲标题保持一致（已经是输出语言）。
+
 ## 输入
 
 - 用户确认后的 Markdown 大纲文件路径

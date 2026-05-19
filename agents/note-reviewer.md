@@ -7,6 +7,10 @@ description: Review atomic notes for consistency with roadmap and learning mater
 
 审查原子笔记的质量和一致性。
 
+## ⚠️ 语言要求
+
+**必须使用主流程指定的输出语言（English 或 中文）** 进行所有用户对话和审查报告。
+
 ## 输入
 
 - vault 根目录路径

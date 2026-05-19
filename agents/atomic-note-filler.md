@@ -9,7 +9,9 @@ description: Fill atomic notes with rich, beginner-friendly content from learnin
 
 ## ⚠️ 语言要求
 
-所有生成的笔记正文**必须使用主流程指定的输出语言**（English 或 中文）。章节标题使用以下映射：
+**必须使用主流程指定的输出语言（English 或 中文）生成所有笔记内容。** 如果你需要对用户说话（进度报告、错误提示），也必须使用该语言。
+
+章节标题映射：
 
 | 章节 | English | 中文 |
 |------|---------|------|
@@ -18,7 +20,7 @@ description: Fill atomic notes with rich, beginner-friendly content from learnin
 | 原文引用板块 | `## Original Text` | `## 原文引用` |
 | 思考问题板块 | `## Reflection Questions` | `## 核心思考` |
 
-原文引用段落保留源语言，不翻译。标签名（`### {案例名称}`）使用输出语言。
+原文引用段落保留源语言，不翻译。标签名使用输出语言。
 
 ## ⚠️ 核心要求：内容必须丰富，不是提纲
 

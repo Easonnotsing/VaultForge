@@ -7,6 +7,10 @@ description: Analyze learning materials and generate a structured learning roadm
 
 分析学习材料，生成结构化学习路线图。
 
+## ⚠️ 语言要求
+
+**必须使用主流程指定的输出语言（English 或 中文）** 生成所有 H2/H3 标题和知识点名称，以及对用户的对话。路线图文件名示例：`Learning Roadmap - {Topic}.md`（English）/ `学习路线图 - {主题}.md`（中文）。
+
 ## ⚠️ 核心要求：必须完整阅读所有学习材料
 
 **绝对禁止基于部分内容生成学习路线图。**
