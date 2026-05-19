@@ -1,14 +1,67 @@
-# 格式模板参考
+# Output Format Templates
 
-本文档包含 obsidian-learning skill 生成物（非控制流）的完整格式模板，供 Phase 5.2 和 Phase 6.3 参考。
+Contains complete format templates for obsidian-learning skill outputs (non-control-flow artifacts), referenced by Phase 5.2 and Phase 6.3.
 
 ---
 
-## 核心问题模板（Phase 5.2）
+## Core Questions Template (Phase 5.2)
 
-存储位置：`{vault}/学习材料文件夹/核心问题.md`
+Storage location: `{vault}/{learning materials folder}/Core Questions.md`
 
-完整格式：
+### English Format
+
+```markdown
+---
+title: Core Questions
+date: YYYY-MM-DD
+tags:
+  - core-questions
+  - {topic}
+---
+
+# Core Questions
+
+> Curated from the essence of the learning material. Use ≤5 key questions to guide efficient learning.
+
+## Question 1: {Question Title}
+
+**Background**: {Why this question matters, what it addresses, the context}
+
+{Sub-question 1.1}
+{Sub-question 1.2}
+
+---
+
+## Question 2: {Question Title}
+
+**Background**: {...}
+
+---
+
+## Question 3: {Question Title}
+
+**Background**: {...}
+
+---
+
+## Question 4: {Question Title}
+
+**Background**: {...}
+
+---
+
+## Question 5: {Question Title}
+
+**Background**: {...}
+
+---
+
+## Study Tips
+
+Approach the material with these questions in mind. After studying, try answering them to validate your learning.
+```
+
+### 中文格式
 
 ```markdown
 ---
@@ -38,172 +91,183 @@ tags:
 
 ---
 
-## 问题三：{问题标题}
-
-**问题背景**：{...}
-
----
-
-## 问题四：{问题标题}
-
-**问题背景**：{...}
-
----
-
-## 问题五：{问题标题}
-
-**问题背景**：{...}
-
----
-
 ## 学习提示
 
 带着这些问题去学习，当学习完成后，尝试回答这些问题来验证学习效果。
 ```
 
-**生成要求**：
-- 数量限制：不超过 5 个核心问题
-- 精华性：涵盖最核心的知识、原则、方法论
-- 引导性：问题应引导高效学习，而非简单信息检索
-- 逻辑性：问题之间应有逻辑层次，无明显重复和矛盾
-- 每个问题包含：问题标题 + 问题背景 + 可选子问题（2-3 个）
+### Generation Requirements
 
-**问题列表示例**（主题"平台战略"）：
+- Quantity limit: ≤5 core questions
+- Essential: covers the most essential knowledge, principles, and methodologies
+- Guiding: questions should guide efficient learning, not simple information retrieval
+- Logical: questions should have logical progression; no repetition or contradiction
+- Each question includes: title + background + optional sub-questions (2-3)
+
+### Question List Example (Topic: "Platform Strategy")
 
 ```
-1. 平台商业模式的核心要素是什么？如何区分平台与传统管道商业模式？
-   - 子问题：网络效应有哪几种类型？如何相互叠加？
+1. What are the core elements of a platform business model? How do platforms differ from traditional pipeline models?
+   - Sub: What types of network effects exist? How do they compound?
 
-2. 平台企业如何创造和获取价值？价值创造与价值捕获的区别是什么？
-   - 子问题：平台定价策略与管道模式有何不同？
+2. How do platform companies create and capture value? What is the difference between value creation and value capture?
+   - Sub: How does platform pricing differ from pipeline pricing?
 
-3. 平台生态系统的治理机制有哪些？如何平衡平台控制与生态参与者的自主性？
-   - 子问题：双边市场中的定价结构如何影响平台成功？
+3. What governance mechanisms exist for platform ecosystems? How to balance platform control with participant autonomy?
+   - Sub: How does pricing structure in two-sided markets affect platform success?
 ```
 
 ---
 
-## 争议分析模板（Phase 6.3）
+## Controversy Analysis Template (Phase 6.3)
 
-存储位置：`{vault}/学习材料文件夹/{主题} - 争议分析.md`
+Storage location: `{vault}/{learning materials folder}/{Topic} - Controversy Analysis.md`
 
-完整格式：
+### English Format
 
 ```markdown
 ---
-title: {主题} - 争议分析
+title: {Topic} - Controversy Analysis
 date: YYYY-MM-DD
 tags:
-  - 争议分析
-  - {主题}
+  - controversy-analysis
+  - {topic}
 ---
 
-# {主题} - 争议分析
+# {Topic} - Controversy Analysis
 
-> 本笔记通过深度研究，识别学习材料中的行业共识与争议内容，帮助学习者了解领域边界，为与资深人士深入探讨提供方向。
+> Through deep research, this note identifies industry consensus and controversies within the learning material. It helps learners understand the boundaries of the field and provides direction for in-depth discussions with experts.
 
-## 摘要
+## Summary
 
-{简要说明本领域的基本格局：主流观点是什么，存在哪些主要争议，分歧的根源在哪里。200-300 字。}
-
----
-
-## 毋庸置疑的部分（行业共识）
-
-{列出学习材料中已经被广泛接受、很少有人质疑的内容。}
-
-### 共识 1：{标题}
-
-- **内容**：{具体共识内容}
-- **为何无争议**：{解释为什么这个观点没有争议}
-- **来源佐证**：{来自深度研究的支持证据}
+{Briefly describe the landscape of this field: what the mainstream view is, what major controversies exist, and where the points of divergence lie. 200-300 words.}
 
 ---
 
-## 存在争议的内容（不同观点）
+## Undisputed (Industry Consensus)
 
-{列出学习材料中存在的争议、分歧或不同观点。}
+{List content from the learning material that is widely accepted and rarely questioned.}
 
-### 争议 1：{标题}
+### Consensus 1: {Title}
 
-- **学习材料观点**：{学习材料中的观点}
-- **对立观点**：{深度研究中发现的反对或不同观点}
-- **争议焦点**：{争议的核心是什么，分歧的根源}
-- **各方论据**：
-  - 支持方：{支持学习材料观点的论据}
-  - 反对方：{反对或质疑的论据}
-- **参考来源**：{相关原文链接}
+- **Content**: {Specific consensus content}
+- **Why Undisputed**: {Explain why this view is uncontroversial}
+- **Supporting Evidence**: {Evidence from deep research}
+
+### Consensus 2: {...}
 
 ---
 
-## 因情景而异的内容（无标准答案）
+## Controversial (Different Views)
 
-{列出学习材料中提到的方法、策略或观点，但实际应用取决于具体情境，没有 universally correct 的答案。}
+{List controversies, divergences, or differing viewpoints present in the learning material.}
 
-### 情景依赖 1：{标题}
+### Controversy 1: {Title}
 
-- **学习材料描述**：{学习材料中的观点或建议}
-- **适用情景 A**：{在什么情况下这个观点成立}
-- **适用情景 B**：{在什么情况下可能不适用或需要调整}
-- **关键变量**：{决定适用情景的核心变量是什么}
+- **Learning Material View**: {The view in the learning material}
+- **Opposing View**: {Opposing or differing views found through deep research}
+- **Core of Controversy**: {What the controversy is about, the root of the divergence}
+- **Arguments**:
+  - Pro: {Arguments supporting the learning material's view}
+  - Con: {Arguments opposing or questioning it}
+- **Reference**: {Relevant source link}
 
----
-
-## 与资深人士深入探讨的问题清单
-
-{基于争议分析和不同观点，整理出有深度、有价值探讨的问题。}
-
-### 关于共识的深化问题
-
-1. {问题} - {为什么这个问题有价值探讨}
-
-### 关于争议的厘清问题
-
-1. {问题} - {为什么这个问题重要，争议的背景是什么}
-
-### 关于实践的探索问题
-
-1. {问题} - {实际应用中遇到的困惑}
+### Controversy 2: {...}
 
 ---
 
-## 关键结论
+## Context-Dependent (No Universal Answer)
 
-{基于深度研究，整理出最重要的结论。}
+{List methods, strategies, or views mentioned in the learning material whose applicability depends on specific context, with no universally correct answer.}
 
-1. **{结论标题}**：{具体结论内容}
-2. **{结论标题}**：{...}
-3. **{结论标题}**：{...}
+### Context-Dependency 1: {Title}
 
----
+- **Learning Material Description**: {The view or suggestion in the learning material}
+- **Applicable Context A**: {When this view holds true}
+- **Applicable Context B**: {When it may not apply or needs adjustment}
+- **Key Variables**: {Core variables determining which context applies}
 
-## 参考来源
-
-{按相关性和价值排列，列出深度研究中发现的最有价值的参考来源。}
-
-1. [{来源标题}](URL) - {为什么这个来源有价值，简短评价}
-2. [{来源标题}](URL) - {...}
-3. [{来源标题}](URL) - {...}
-4. [{来源标题}](URL) - {...}
-5. [{来源标题}](URL) - {...}
+### Context-Dependency 2: {...}
 
 ---
 
-## 学习建议
+## Deep Discussion Questions for Experts
 
-- 对于**行业共识**：可以作为基础框架，但仍需结合实践验证
-- 对于**争议内容**：保持开放心态，理解各方观点的合理性，批判性思考
-- 对于**情景依赖**：重点理解背后的原理，根据实际情境灵活应用
-- 与资深人士探讨时，可以从"问题清单"中选择最相关的问题
+{Based on the controversy analysis and different perspectives, compile deep, valuable discussion questions to help learners engage in meaningful dialogue with domain experts.}
+
+### Deeper Questions on Consensus
+
+1. {Question} — {Why this question is valuable to explore}
+
+### Clarifying Questions on Controversies
+
+1. {Question} — {Why this question matters, background of the controversy}
+
+### Exploratory Questions on Practice
+
+1. {Question} — {Confusions encountered in real-world application}
+
+---
+
+## Key Conclusions
+
+{Based on the deep research, compile the most important conclusions.}
+
+1. **{Conclusion Title}**: {Specific conclusion}
+2. **{Conclusion Title}**: {...}
+3. **{Conclusion Title}**: {...}
+
+---
+
+## Reference Sources
+
+{Ranked by relevance and value, list the most valuable reference sources discovered through deep research.}
+
+1. [{Source Title}](URL) — {Why this source is valuable, brief evaluation}
+2. [{Source Title}](URL) — {...}
+3. [{Source Title}](URL) — {...}
+4. [{Source Title}](URL) — {...}
+5. [{Source Title}](URL) — {...}
+
+---
+
+## Study Suggestions
+
+- For **Industry Consensus**: can serve as a foundational framework, but still validate through practice
+- For **Controversial Content**: maintain an open mind, understand the reasonableness of all perspectives, think critically
+- For **Context-Dependent**: focus on understanding the underlying principles, apply flexibly based on actual context
+- When **discussing with experts**, select the most relevant questions from the "Discussion Questions" list
 ```
 
-**内容填充指南**：
+### Content Filling Guide
 
-| 章节 | 填充原则 |
-|------|----------|
-| 摘要 | 200-300 字，概括本领域基本格局、主流观点、主要争议 |
-| 毋庸置疑 | 寻找多个来源一致认可的观点，解释为何被广泛接受，引用权威来源 |
-| 存在争议 | 识别学习材料与其他来源的分歧点，客观呈现各方观点，指出争议核心 |
-| 情景依赖 | 识别方法论层面的建议，解释不同情景下的适用性差异，找出关键决定变量 |
-| 问题清单 | 问题应具有开放性和深度，避免 yes/no 类问题，选择核心议题 |
-| 参考来源 | 按相关性和价值排列 5-10 个最有价值的参考来源，附简短评价 |
+| Section | Filling Principle |
+|---------|-------------------|
+| Summary | 200-300 words, outline the field's basic landscape, mainstream views, major controversies |
+| Undisputed | Find views consistently recognized across multiple sources; explain why widely accepted; cite authoritative sources |
+| Controversial | Identify divergence points between the learning material and other sources; objectively present all views; point out the controversy's core |
+| Context-Dependent | Identify methodology-level suggestions; explain applicability differences across contexts; identify key determining variables |
+| Question List | Questions should be open-ended and deep; avoid yes/no; choose core topics frequently discussed by experts |
+| Reference Sources | Rank 5-10 most valuable reference sources by relevance and value; include brief evaluations |
+
+### Principles
+
+**For Undisputed**:
+- Find views consistently recognized across multiple sources
+- Explain why these views are widely accepted
+- Cite authoritative sources as support
+
+**For Controversial**:
+- Identify divergence points between the learning material and other sources
+- Objectively present all views without bias
+- Point out the controversy's core and roots
+
+**For Context-Dependent**:
+- Identify methodology-level suggestions
+- Explain applicability differences across different contexts
+- Identify key determining variables
+
+**For Question Lists**:
+- Questions should be open-ended and deep
+- Avoid yes/no type questions
+- Prioritize core topics frequently discussed by experts

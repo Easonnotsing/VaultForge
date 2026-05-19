@@ -5,255 +5,255 @@ description: Analyze learning materials and generate a structured learning roadm
 
 # Roadmap Generator Agent
 
-分析学习材料，生成结构化学习路线图。
+Analyzes learning materials and generates a structured learning roadmap.
 
-## ⚠️ 语言要求
+## ⚠️ Language Requirement
 
-**必须使用主流程指定的输出语言（English 或 中文）** 生成所有 H2/H3 标题和知识点名称，以及对用户的对话。路线图文件名示例：`Learning Roadmap - {Topic}.md`（English）/ `学习路线图 - {主题}.md`（中文）。
+**Must generate all H2/H3 titles and knowledge point names in the output language (English or 中文) specified by the main workflow**, as well as all dialogue with the user. Roadmap filename examples: `Learning Roadmap - {Topic}.md` (English) / `学习路线图 - {主题}.md` (中文).
 
-## ⚠️ 核心要求：必须完整阅读所有学习材料
+## ⚠️ Core Requirement: Must Read All Learning Materials Completely
 
-**绝对禁止基于部分内容生成学习路线图。**
+**Absolutely forbidden to generate a learning roadmap based on partial content.**
 
-### 阅读策略（优先级排序）
+### Reading Strategy (Priority Order)
 
-1. **优先一次性完整读取**
-   - 直接读取整个文件内容
-   - 报告文件总大小/总页数
-   - 仅在遇到技术限制时才考虑分批
+1. **Prefer single-pass full reads**
+   - Directly read the entire file content
+   - Report total file size / total page count
+   - Only consider batching when encountering technical limits
 
-2. **自动分批（无需用户确认）**
-   - 如果文件过大（如 PDF > 100 页），自动按 50 页/批读取
-   - **自动继续，无需用户每次确认**
-   - 每批完成后报告进度
+2. **Auto-batch (no user confirmation needed)**
+   - If a file is too large (e.g., PDF > 100 pages), auto-batch at 50 pages per batch
+   - **Auto-continue; do not require user confirmation per batch**
+   - Report progress after each batch
 
-3. **报告格式**
+3. **Progress report format**
    ```
-   📖 正在阅读：文件名.pdf
+   📖 Reading: filename.pdf
 
-   进度：[████████░░░░░░░░░░░░] 150/329 页 (46%)
+   Progress: [████████░░░░░░░░░░░░] 150/329 pages (46%)
 
-   ✅ 阅读完成！共读取 329/329 页 (100%)
+   ✅ Reading complete! 329/329 pages (100%)
    ```
 
-## 输入
+## Input
 
-- 用户确认的 vault 路径
-- 用户选择的学习文件列表（文件名和路径）
+- User-confirmed vault path
+- User-selected learning file list (filenames and paths)
 
-## 阅读流程
+## Reading Flow
 
-### Markdown 文件
-- 直接 `Read` 工具读取完整内容
-- 报告文件行数和大小
+### Markdown Files
+- Directly `Read` tool read of full content
+- Report file line count and size
 
-### PDF 文件
-- **优先一次性读取**（使用 pages 参数指定全部范围）
-- 如果失败（超出限制），自动分批：
-  - 每批 50 页
-  - 自动继续读取下一批
-  - 每批报告进度
-- 完成时汇总所有内容
+### PDF Files
+- **Prefer single-pass read** (specify full page range)
+- If it fails (exceeds limit), auto-batch:
+  - 50 pages per batch
+  - Auto-continue reading the next batch
+  - Report progress per batch
+- Aggregate all content on completion
 
-### 报告格式
+### Progress Report Format
 
 ```
-📖 正在阅读：Digital Transformation Roadmap.pdf
+📖 Reading: Digital Transformation Roadmap.pdf
 
-进度：[████████████████████] 329/329 页 (100%)
-✅ 阅读完成！
+Progress: [████████████████████] 329/329 pages (100%)
+✅ Reading complete!
 
 ---
 
-📖 正在阅读：Strategic Management.md
-✅ 阅读完成！共 156 页
+📖 Reading: Strategic Management.md
+✅ Reading complete! 156 pages
 
 ---
 
-📖 已读取全部学习材料：
-- Digital Transformation Roadmap.pdf - 329 页
-- Strategic Management.md - 156 页
-总计：2 个文件，485 页
+📖 All learning materials read:
+- Digital Transformation Roadmap.pdf - 329 pages
+- Strategic Management.md - 156 pages
+Total: 2 files, 485 pages
 ```
 
-## 输出文件
+## Output Files
 
-Phase 1 完成后必须保存**两份**学习路线图：
+After Phase 1 completes, **two** learning roadmap files must be saved:
 
-### 1. 完整版（必须保存）
+### 1. Full Version (Must Save)
 
-文件：`学习路线图（完整版） - {主题名}.md`
+File: `Learning Roadmap (Full) - {Topic}.md` (English) / `学习路线图（完整版） - {主题}.md` (中文)
 
-包含：
-- 所有知识点的**详细描述**（200+ 字）
-- 完整案例说明
-- 准确原文引用
-- 来源页码
-- **`source_range` 标记**（每个知识点标注源文件+页码范围，用于 Phase 3 `context-extractor.py` 自动提取）
+Contains:
+- **Detailed description** of all knowledge points (200+ words)
+- Complete case descriptions
+- Accurate original citations
+- Source page numbers
+- **`source_range` annotation** (each knowledge point tagged with source file + page ranges, used by Phase 3's `context-extractor.py`)
 
-`source_range` 格式规范：
+`source_range` format specification:
 ```
-source_range: {文件名}:{页码段1}, {页码段2}, ...
+source_range: {filename}:{page_range}, {page_range}, ...
 ```
 
-**页码范围支持三种形式**：
-- 单页：`102`
-- 连续区间：`12-15`
-- 混合：`12-15, 45-48, 102`
+**Page range supports three forms**:
+- Single page: `102`
+- Continuous range: `12-15`
+- Mixed: `12-15, 45-48, 102`
 
-**多文件共存**（一个知识点涉及多个源文件）：
+**Multi-file coexistence** (one knowledge point spans multiple source files):
 ```
 source_range: Digital Transformation.pdf:12-15, Strategy.md
 ```
-`.md` / `.txt` 文件不写页码时表示**全文**（因非 PDF 文件无页码概念）。
+`.md` / `.txt` files without page numbers indicate **full text** (non-PDF files have no page concept).
 
-**复杂示例**：
+**Complex example**:
 ```
-**平台治理机制**
+**Platform Governance Mechanisms**
   source_range: Platform Strategy.pdf:156-162, 203-205, Appendix.md
 ```
-→ 表示该知识点覆盖 PDF 的 pp.156-162 和 pp.203-205，以及 Appendix.md 全文。
+→ Indicates this knowledge point covers PDF pp.156-162 and pp.203-205, plus the full Appendix.md.
 
-**⚠️ 必须标注 source_range**：每个知识点必须标注，不可省略。此标记供 `scripts/context-extractor.py` 自动化提取原文段落。
+**⚠️ source_range is mandatory**: every knowledge point must have one. This annotation is used by `scripts/context-extractor.py` for automated extraction.
 
-格式：
+Format:
 ```markdown
-# 学习路线图（完整版）：{主题名称}
+# Learning Roadmap (Full): {Topic Name}
 
-这是一份关于{主题名称}的学习材料，基于{文件数量}份学习资料整理。
+This is a learning roadmap on {Topic Name}, compiled from {N} learning resources.
 
-**学习资料来源：**
-- {文件名1} - {页数/字数}
-- {文件名2} - {页数/字数}
+**Source Materials:**
+- {Filename 1} - {pages/word count}
+- {Filename 2} - {pages/word count}
 
 ---
 
-## 01. 第一类别
+## 01. First Category
 
-### 主题一
+### Topic One
 
-**知识点1**  `source_range: {文件名}:{起始页}-{结束页}`
-- 详细解释：这是关于...的核心概念，需要让初学者能理解...
-- 案例：例如学习材料中的XX案例说明...
-- 原文引用：学习材料中指出"...（原文摘要）" [[来源：文档名, 第X页]]
+**Knowledge Point 1**  `source_range: {filename}:{start_page}-{end_page}`
+- Detailed explanation: this is the core concept of..., to be understood by beginners...
+- Case: for example, the XX case from the learning material illustrates...
+- Original citation: the learning material states "..." [[Source: Document Name, p.X]]
 
-**知识点2**  `source_range: {文件名}:{起始页}-{结束页}, {起始页}-{结束页}`
-- 详细解释：...
-- 案例：...
-- 原文引用：...
+**Knowledge Point 2**  `source_range: {filename}:{start_page}-{end_page}, {start_page}-{end_page}`
+- Detailed explanation: ...
+- Case: ...
+- Original citation: ...
 ```
 
-### 2. 大纲版
+### 2. Outline Version
 
-文件：`学习路线图 - {主题名}.md`
+File: `Learning Roadmap - {Topic}.md` (English) / `学习路线图 - {主题}.md` (中文)
 
-**⚠️ 必须保留完整的三层结构：H2 → H3 → bullet points**
+**⚠️ Must preserve the complete three-level structure: H2 → H3 → bullet points**
 
-大纲版必须从完整版提取**所有知识点**，不能丢失任何 bullet：
+The outline version must extract **all knowledge points** from the full version; no bullet can be lost:
 
 ```markdown
-# 学习路线图 - {主题名称}
+# Learning Roadmap - {Topic Name}
 
-## 01. 第一类别
+## 01. First Category
 
-### 主题一
+### Topic One
 
-- 知识点1
-- 知识点2
-- 知识点3
+- Knowledge Point 1
+- Knowledge Point 2
+- Knowledge Point 3
 
-### 主题二
+### Topic Two
 
-- 知识点1
-- 知识点2
+- Knowledge Point 1
+- Knowledge Point 2
 ```
 
-**⚠️ 大纲版 bullet 规则**：
-- 只包含知识点**名称/标题**，禁止包含描述、引用或解释
-- 正确：`- 知识点名称`
-- 错误：`- 知识点名称：解释文字` （包含解释）
-- 错误：`- 知识点名称 [[来源：文档，第5页]]` （包含引用）
+**⚠️ Outline bullet rules**:
+- Bullets contain only knowledge point **names/titles**; descriptions, citations, or explanations are forbidden
+- Correct: `- Knowledge Point Name`
+- Wrong: `- Knowledge Point Name: explanatory text` (contains explanation)
+- Wrong: `- Knowledge Point Name [[Source: Document, p.5]]` (contains citation)
 
-**错误示例（知识点丢失，禁止）**：
+**Incorrect example (knowledge points lost, forbidden)**:
 ```markdown
-## 01. 第一类别
+## 01. First Category
 
-### 主题一
+### Topic One
 
-### 主题二
-<!-- ❌ 错误：缺少 bullet points，会导致后续创建文件结构时缺少知识点 -->
+### Topic Two
+<!-- ❌ Error: missing bullet points → subsequent file structure creation will lack knowledge points -->
 ```
 
-## 任务步骤
+## Task Steps
 
-### 步骤 1: 读取所有学习材料
+### Step 1: Read All Learning Materials
 
-**策略：完整读取优先，自动分批**
+**Strategy: full read first, auto-batch as fallback**
 
-1. 对每个文件尝试一次性完整读取
-2. 如果失败，自动分批（每批 50 页），自动继续
-3. 记录每批的核心内容摘要
-4. 完成时汇总
+1. Try single-pass full read for each file
+2. If it fails, auto-batch (50 pages/batch), auto-continue
+3. Record core content summary for each batch
+4. Aggregate on completion
 
-**错误处理：**
-| 情况 | 处理方式 |
-|------|----------|
-| 部分页面无法读取 | 记录跳过，继续读取其余内容 |
-| 文件损坏 | 告知用户，尝试读取其他文件 |
-| 内容不足以生成路线图 | 明确告知用户哪些内容缺失 |
+**Error handling:**
+| Situation | Handling |
+|-----------|----------|
+| Some pages unreadable | Record skip, continue reading remaining content |
+| File corrupted | Inform user, try reading other files |
+| Content insufficient for roadmap | Clearly inform user which content is missing |
 
-### 步骤 2: 生成完整版路线图
+### Step 2: Generate Full Version Roadmap
 
-只有在**确认已读取全部内容**后才生成。
+Only generate after **confirming all content has been read**.
 
-**完整版格式要求：**
+**Full version format requirements:**
 
-1. **知识点详细描述**（200+ 字）
-   - 每个知识点有详细的解释文字
-   - 让初学者能理解概念含义
-   - 包含背景、定义、原理、应用
+1. **Detailed knowledge point descriptions** (200+ words)
+   - Each knowledge point has detailed explanatory text
+   - Enables beginners to understand the concept
+   - Includes background, definition, principle, application
 
-2. **案例说明**
-   - 来自学习材料的实际案例
-   - 说明案例如何体现该知识点
+2. **Case descriptions**
+   - Actual cases from the learning material
+   - Explain how the case illustrates the knowledge point
 
-3. **原文引用**
-   - 标注文档名和页码
-   - 简短引用关键原文
+3. **Original citations**
+   - Tag document name and page number
+   - Briefly quote key original text
 
-4. **source_range 标记**（⚠️ 必须）
-    - 每个知识点后标注 `source_range: {文件名}:{页码段}, {页码段}, ...`
-    - 页码基于阅读时的实际分页；多页码段用逗号分隔
-    - 跨多个文件的用空格或逗号分隔第二个文件：`source_range: A.pdf:12-15, B.md`
-    - 非 PDF 文件（`.md` / `.txt`）省略页码表示全文
-    - 此标记供 `scripts/context-extractor.py` 自动化提取，不可省略
-    - 单条示例：`source_range: Digital Transformation Roadmap.pdf:12-15`
-    - 多段示例：`source_range: Platform Strategy.pdf:34-41, 78-82, 156`
+4. **source_range annotation** (⚠️ Mandatory)
+   - Tag each knowledge point with `source_range: {filename}:{page_range}, {page_range}, ...`
+   - Page numbers based on actual pagination during reading; multiple page ranges separated by commas
+   - For multi-file: `source_range: A.pdf:12-15, B.md`
+   - Non-PDF files (`.md` / `.txt`): omit page numbers to indicate full text
+   - This annotation is used by `scripts/context-extractor.py` for automation; must not be omitted
+   - Single example: `source_range: Digital Transformation Roadmap.pdf:12-15`
+   - Multi-range example: `source_range: Platform Strategy.pdf:34-41, 78-82, 156`
 
-5. **H2 层级下行规则**（⚠️ 必须）
-    - 每个 H2（类别）**必须包含至少 2 个 H3**（主题）
-    - 若材料中某内容板块自然只形成一个 H3，按以下优先级处理：
-      a. **拆分**：将 H3 下的知识点重组成多个独立 H3（如"平台定价" + "平台治理"从"平台战略"中拆出）
-      b. **合并**：将内容合并到语义最接近的其他 H2 下（原 H2 消除，其知识点分配到相邻 H2）
-      c. **整体升级**：去掉该 H2 层级，H3 升级为 H2（当 H2 标题与唯一 H3 标题几乎相同时适用）
-    - **禁止** H2 下只有 1 个 H3 的冗余层级
+5. **H2 Hierarchy Descent Rule** (⚠️ Mandatory)
+   - Each H2 (category) **must contain at least 2 H3 topics**
+   - If a content block in the material naturally forms only one H3, handle by priority:
+     a. **Split**: reorganize the H3's knowledge points into multiple independent H3s (e.g., split "Platform Pricing" + "Platform Governance" out of "Platform Strategy")
+     b. **Merge**: merge the content into the semantically closest other H2 (eliminate the original H2, distribute its knowledge points to adjacent H2s)
+     c. **Elevate**: remove the H2 level, upgrade H3 to H2 (applicable when the H2 title and sole H3 title are nearly identical)
+   - **Forbidden**: redundant hierarchy with only 1 H3 under an H2
 
-### 步骤 3: 生成大纲版
+### Step 3: Generate Outline Version
 
-从完整版自动提取，仅保留：
-- H2 标题
-- H3 标题
-- 无序列表项
+Auto-extract from the full version, keeping only:
+- H2 titles
+- H3 titles
+- Unordered list items
 
-### 步骤 4: 保存两份文件
+### Step 4: Save Two Files
 
-1. 保存完整版到 vault
-2. 保存大纲版到 vault
-3. 报告保存结果
+1. Save full version to vault
+2. Save outline version to vault
+3. Report save results
 
-## 约束
+## Constraints
 
-- **必须使用学习材料中实际存在的内容**
-- **不要编造或推测不存在的知识点**
-- 保持客观，不要添加学习材料中没有的观点
-- **禁止基于部分内容生成路线图**
+- **Must use content actually present in the learning materials**
+- **Do not fabricate or infer non-existent knowledge points**
+- Remain objective; do not add viewpoints not in the learning materials
+- **Forbidden: generating a roadmap based on partial content**

@@ -9,90 +9,90 @@ description: >-
 
 # Obsidian Learning Material Processing
 
-将学习资料转化为 Obsidian 结构化原子笔记知识库的完整流程。
+Complete workflow for transforming learning materials into structured Obsidian atomic note knowledge bases.
 
-## 核心原则
+## Core Principles
 
-### ⚠️ 重要：必须完整阅读所有指定文件
+### ⚠️ CRITICAL: Must Read All Designated Files Completely
 
-**绝对禁止基于部分内容生成学习路线图或笔记。**
+**Absolutely forbidden to generate a learning roadmap or notes based on partial content.**
 
-- 必须读取用户选择的**所有**学习文件
-- **优先一次性完整读取整个文件**，仅在遇到技术限制时才分批
-- 如果必须分批读取（例如 PDF 每批 50 页），**自动继续无需用户确认**
-- 只有在确认已读取全部内容后，才能生成学习路线图
+- Must read **all** learning files selected by the user
+- **Prefer single-pass full reads** of entire files; use batched reading only when encountering technical limits
+- If batched reading is necessary (e.g., PDF at 50 pages/batch), **auto-continue without user confirmation**
+- Only generate the learning roadmap after confirming all content has been read
 
-### ⚠️ 重要：原子笔记与知识点的对应关系（默认一对一 + 篇幅校准）
+### ⚠️ CRITICAL: Atomic Notes to Knowledge Points — Default 1:1 + Proportion Calibration
 
-**默认**：大纲版中每个 bullet 知识点对应**一篇**原子笔记；笔记标题与 bullet 文案一致（或为其规范化文件名）。
+**Default**: Each bullet knowledge point in the outline maps to **one** atomic note; note titles match bullet text (or are normalized filenames).
 
-**允许例外**（须与下一节「篇幅成正比」规则**同时**满足，并在路线图确认信息中**简短说明**合并或拆分理由）：
+**Allowed exceptions** (must satisfy the "proportional to source material" rule below **simultaneously**, and include a **brief rationale** during roadmap confirmation):
 
-- 材料中某知识点篇幅极少：可与相邻 bullet **合并**为一篇原子笔记（大纲需同步：合并 bullet 或标注「已合并」）。
-- 某知识点在材料中篇幅很大：可**拆分**为多篇原子笔记（大纲拆成多个 bullet，或子编号）。
+- Knowledge point with very little source material: may **merge** with adjacent bullet into one atomic note (outline must sync: merge bullets or mark "merged")
+- Knowledge point with extensive source material: may **split** into multiple atomic notes (outline splits into multiple bullets or sub-numbering)
 
-**禁止**：无材料依据的随意合并/拆分；禁止大纲与将要创建的原子笔记数量不一致。
-
----
-
-### ⚠️ 重要：知识点划分与学习材料篇幅成正比
-
-**避免过度拆解或内容被忽略：**
-
-| 情况 | 原则 | 示例 |
-|------|------|------|
-| 学习材料中某知识点内容稀少 | 合并到相关主题，不单独创建原子笔记 | 1页内容 → 与相邻知识点合并 |
-| 学习材料中某知识点内容丰富 | 拆分为多个独立原子笔记 | 10页内容 → 拆为2-3个知识点 |
-| 内容跨度大但逻辑完整 | 保持为一个知识点，确保论述完整 | 15页连贯内容 → 1个详细原子笔记 |
-
-**判断标准**：
-- 单个原子笔记的内容量应与学习材料中对应部分的篇幅成正比
-- 内容稀少的知识点可考虑合并，内容丰富的知识点应拆分为多个
-- 目标是每个原子笔记都有**足够丰富的内容**支撑 200+ 字的详细解释
+**Forbidden**: Arbitrary merging/splitting without material evidence; mismatch between outline bullet count and atomic note count.
 
 ---
 
-### ⚠️ 重要：原子笔记内容必须丰富详尽
+### ⚠️ CRITICAL: Knowledge Point Granularity Proportional to Source Material
 
-**原子笔记不是提纲，而是要让初学者能够完整理解和学习的教学材料。**
+**Avoid over-fragmentation or content neglect:**
 
-每个原子笔记必须包含：
-- **详细解释**：不少于 200 字的核心概念讲解，背景、定义、原理、应用场景
-- **案例说明**：来自学习材料的完整案例，附带背景、过程、结果分析
-- **原文引用**：引用与该知识点最核心相关的原文段落（50-150 字），并完整标注出处（文档名、作者、页码段）
-- **核心思考**：促进深度理解的思考问题，而非简单提问
+| Situation | Principle | Example |
+|-----------|-----------|---------|
+| Source material on a knowledge point is sparse | Merge into a related topic; do not create a standalone atomic note | 1 page → merge with adjacent knowledge point |
+| Source material on a knowledge point is rich | Split into multiple standalone atomic notes | 10 pages → split into 2-3 knowledge points |
+| Large content span but logically complete | Keep as one knowledge point; ensure discussion is complete | 15 coherent pages → 1 detailed atomic note |
 
-如果笔记内容过于简化（如仅有 bullet points），必须返工重写。
+**Judgment criteria**:
+- Content volume of a single atomic note should be proportional to the corresponding section in the source material
+- Sparse knowledge points may be merged; rich ones may be split
+- Goal: each atomic note has **sufficiently rich content** to support a 200+ word detailed explanation
 
-### 批量确认原则
+---
 
-**避免逐个确认，采用批量确认模式：**
-- Phase 1：路线图生成后，一次性展示完整版，征询"继续"或"修改意见"
-- Phase 2：文件结构创建完成后，一次性展示所有创建的文件夹和文件
-- Phase 3：内容填充完成后，一次性展示填充结果摘要
-- Phase 4：双链建立完成后，一次性展示链接摘要
+### ⚠️ CRITICAL: Atomic Note Content Must Be Rich and Thorough
 
-### 双链建立标准
+**Atomic notes are teaching materials, not outlines. They must enable a complete beginner to understand the knowledge point.**
 
-**双链不只是关键词关联，而是基于逻辑相关性：**
+Every atomic note must contain:
+- **Detailed explanation**: no less than 200 words of core concept exposition — background, definition, principle, application scenarios
+- **Case study**: a complete case from the learning materials, with background, process, outcome analysis
+- **Original citation**: quote the most relevant original passage (50-150 words), with complete source attribution (document name, author, page range)
+- **Reflection questions**: thought-provoking questions that promote deep understanding, not superficial queries
 
-1. **推导关系**：一篇笔记的结论由另一篇推导而出
-2. **原理相似**：两篇笔记的原理可以类比借鉴、触类旁通
-3. **结论矛盾**：两篇笔记的结论存在矛盾，需要深入辩论对比
-4. **应用关联**：一篇笔记的应用场景涉及另一篇的概念
-5. **背景关联**：两篇笔记属于同一领域的不同发展阶段或不同方面
+If a note is overly simplified (e.g., bullet points only), it must be reworked.
 
-**禁止基于纯粹术语相似而建立双链。**
+### Batch Confirmation Principle
 
-## 交互约定
+**Avoid one-by-one confirmation; use batch confirmation mode:**
+- Phase 1: After roadmap generation, present the full version once, ask "continue" or "modify"
+- Phase 2: After file structure creation, present all created folders and files once
+- Phase 3: After content filling, present a fill result summary once
+- Phase 4: After wikilink establishment, present a link summary once
 
-所有用户确认环节遵循统一模式：
-- 回复 "继续" / "确认" → 进入下一步
-- 回复 "修改 + 具体意见" → 调整后重新展示确认
-- 回复数字编号（如 "1,3"）→ 选择对应选项
-- 文件列表格式：编号 + [✓/ ] + emoji + 文件名 + 元信息
-- 进度报告格式：emoji + 百分比条 + 完成/进行中
-- **批量确认原则**：一个阶段完成 → 一次性展示结果 → 一次性征询确认
+### Wikilink Standard
+
+**Wikilinks are not keyword associations — they are based on logical relevance:**
+
+1. **Derivation**: one note's conclusion is derived from another
+2. **Analogy**: the principles of two notes can be analogized
+3. **Contradiction**: two notes reach contradictory conclusions requiring debate
+4. **Application**: one note's application scenario involves another's concept
+5. **Context**: two notes belong to different aspects or development stages of the same domain
+
+**Forbidden: establishing wikilinks based purely on term similarity.**
+
+## Interaction Conventions
+
+All user confirmation points follow a uniform pattern:
+- Reply "continue" / "confirm" → proceed to next step
+- Reply "modify + specific feedback" → revise and re-present for confirmation
+- Reply with numbers (e.g., "1,3") → select corresponding options
+- File list format: number + [✓/ ] + emoji + filename + meta info
+- Progress report format: emoji + percentage bar + completed/in-progress status
+- **Batch confirmation principle**: complete a phase → present results once → request confirmation once
 
 ## 开始前：选择输出语言 / Select Output Language
 
@@ -115,781 +115,741 @@ description: >-
 3. **笔记章节标题**：使用所选语言对应的标签。Section headers use the selected language's labels.
 4. **原文引用**：保留源语言，不翻译。Original citations remain in source language.
 
-| 章节 | English | 中文 |
+| Section / 章节 | English | 中文 |
 |------|---------|------|
-| 核心概念 | `## Core Concepts` | `## 核心知识点` |
-| 相关案例 | `## Case Study` | `## 相关案例` |
-| 原文引用 | `## Original Text` | `## 原文引用` |
-| 核心思考 | `## Reflection Questions` | `## 核心思考` |
+| Core Concepts / 核心概念 | `## Core Concepts` | `## 核心知识点` |
+| Case Study / 相关案例 | `## Case Study` | `## 相关案例` |
+| Original Text / 原文引用 | `## Original Text` | `## 原文引用` |
+| Reflection Questions / 核心思考 | `## Reflection Questions` | `## 核心思考` |
 
 如果用户选择了 English，你在此之后对用户说的**每一句话**都必须是 English。
 
-## 使用场景
+## Use Cases
 
-- 用户提供学习材料（PDF、文档等）
-- 需要生成学习路线图
-- 需要创建原子笔记和 MOC
-- 需要建立笔记间双链
+- User provides learning materials (PDF, Markdown, etc.)
+- Need to generate a learning roadmap
+- Need to create atomic notes and MOCs
+- Need to establish inter-note wikilinks
 
-## 完整流程
+## Complete Workflow
 
-### Phase 1: 学习路线图生成
+### Phase 1: Learning Roadmap Generation
 
-**步骤 1.1: 检测 vault 并选择文件夹**
-- 自动检测 Obsidian vault 根目录
-- 使用文字列表让用户选择文件夹
-- 用户确认选择后进入下一步
+**Step 1.1: Detect Vault and Select Folder**
+- Auto-detect the Obsidian vault root directory
+- Present a text list for the user to select a folder
+- Proceed after user confirmation
 
-**步骤 1.2: 自动检测文件列表**
-- 自动检测所选文件夹下的所有学习文件（PDF、Markdown、TXT 等）
-- 展示文件列表，包含：文件名、大小、页数（PDF）/字数（文档）
-- 允许用户多选需要学习的文件
-- 格式示例：
+**Step 1.2: Auto-Detect File List**
+- Auto-detect all learning files (PDF, Markdown, TXT, etc.) in the selected folder
+- Display file list with: filename, size, page count (PDF) / word count (document)
+- Allow the user to multi-select files to process
+- Format example:
   ```
-  📁 已选择文件夹：Digital Transformation/
-  
-  检测到以下学习文件：
-  
-  1. [ ] 📄 数字化转型指南.pdf     - 329 页 - 12.5 MB
-  2. [✓] 📄 客户战略核心.pdf        - 156 页 - 5.2 MB
-  3. [ ] 📄 技术架构概述.md         - 3,200 字
-  4. [ ] 📄 平台模式研究.pdf        - 89 页 - 3.8 MB
-  
-  已选择：1 个文件
-  
-  请确认后进入阅读（回复"继续"），或输入编号调整选择（如"1,3"）：
+  📁 Selected folder: Digital Transformation/
+
+  Detected learning files:
+
+  1. [ ] 📄 Digital Transformation Guide.pdf     - 329 pages - 12.5 MB
+  2. [✓] 📄 Customer Strategy Core.pdf           - 156 pages - 5.2 MB
+  3. [ ] 📄 Tech Architecture Overview.md         - 3,200 words
+  4. [ ] 📄 Platform Model Research.pdf           - 89 pages - 3.8 MB
+
+  Selected: 1 file
+
+  Confirm to start reading (reply "continue"), or enter numbers to adjust selection (e.g., "1,3"):
   ```
-- 用户确认后进入步骤 1.3
+- Proceed to Step 1.3 after user confirmation
 
-**步骤 1.3: 完整阅读学习材料**
-- 优先**一次性完整读取**每个文件
-- 如果文件过大（如 PDF），自动分批读取（每批 50 页），**无需用户确认**
-- 实时报告进度：`📖 正在读取：文件名.pdf - [150/329 页] (46%)`
-- 完成后报告：`✅ 阅读完成！共 X/Y 页 (100%)`
+**Step 1.3: Complete Reading of Learning Materials**
+- Prefer **single-pass full reads** of each file
+- If a file is too large (e.g., PDF), auto-batch (50 pages/batch), **no user confirmation needed**
+- Real-time progress: `📖 Reading: filename.pdf - [150/329 pages] (46%)`
+- Completion report: `✅ Reading complete! X/Y pages (100%)`
 
-**步骤 1.4: 生成并确认路线图**
-- 基于完整阅读内容生成学习路线图
-- 展示**完整版**路线图（含详细知识点、案例、原文引用）
-- **展示知识点统计**：X 个类别，Y 个主题，Z 个知识点
-- 预览**原子笔记数量**和预计耗时（如"预计生成 32 个原子笔记"）
-- **⚠️ 知识点数量与材料篇幅比例检查**：显示每个主题的知识点数量与材料页数比例
-- **⚠️ 层级结构检查**：验证每个 H2 类别是否包含至少 2 个 H3 主题（禁止单子类冗余层级）
-- 用户回复"继续"则进入保存；回复"修改+具体意见"则修改后再确认
+**Step 1.4: Generate and Confirm Roadmap**
+- Generate the learning roadmap based on the complete reading
+- Present the **full version** roadmap (with detailed knowledge points, cases, original citations) for user preview
+- User replies "continue" to proceed to saving; replies "modify + feedback" to revise and re-confirm
 
-**展示格式示例**：
+**Display format example**:
 ```
-📋 已生成完整版学习路线图
+📋 Generated full learning roadmap
 
-## 01. 数字化转型基础
+## 01. Digital Transformation Fundamentals
 
-### 核心概念框架
+### Core Concept Framework
 
-**数字转型 vs 数字化**
-- 详细解释：...
-- 案例：...
-- 原文引用：...
+**Digitization vs Transformation**
+- Detailed explanation: ...
+- Case: ...
+- Original citation: ...
 
 ---
 
-共 4 个类别，12 个主题，48 个知识点
-📊 预计将创建：12 个 MOC，48 个原子笔记
-📄 学习材料共 156 页，平均每页约 0.31 个知识点
-⏱️ 预计耗时：约 15-20 分钟
-
-⚠️ 知识点数量检查：
-- 转型概述：6 个知识点 / 12 页 → ⚠️ 比例偏高（0.5），建议合并
-- 客户战略：3 个知识点 / 28 页 → ✅ 比例合理（0.11）
-
-⚠️ 层级结构检查（H2 至少含 2 个 H3）：
-- 转型概述：4 个 H3 → ✅ 结构合理
-- 战略管理：1 个 H3 → ❌ 层级冗余
-  建议：按 a)拆分 b)合并到相邻类别 c)整体升级 三种策略之一修复
-
-是否需要修改？回复：
-  - "继续" → 保存并进入下一步
-  - "修改 + 具体意见" → 进行修改
+Would you like to modify? Reply:
+  - "continue" → save and proceed to next step
+  - "modify + specific feedback" → revise
 ```
 
-**比例检查标准**：
-| 比例（知识点/页） | 评估 | 建议 |
-|-------------------|------|------|
-| > 1.0 | ⚠️ 过度拆解 | 合并相邻知识点 |
-| 0.1 - 1.0 | ✅ 合理 | 无需调整 |
-| < 0.1 | ⚠️ 可能内容稀少 | 考虑合并或扩展 |
+**Step 1.5: Save Two Files**
 
-**比例超标时的处理**：
-- 标记该主题为"⚠️ 比例偏高"
-- 在统计后列出需要关注的主题
-- **不自动修改**，由用户决定是否调整
+**⚠️ The outline version MUST contain knowledge points (bullet points). Only keeping H2/H3 is forbidden.**
 
-**层级结构检查标准**：
-| H2 下的 H3 数量 | 评估 | 建议 |
-|-----------------|------|------|
-| 0 | ❌ 致命 | H2 下必须有 H3 主题 |
-| 1 | ❌ 层级冗余 | a) 拆分为多个 H3 b) 合并到相邻 H2 c) 整体升级（H3 → H2） |
-| ≥ 2 | ✅ 合理 | 无需调整 |
+Save two files:
+- `Learning Roadmap (Full) - {Topic}.md` — detailed version (with full descriptions, cases, original citations)
+- `Learning Roadmap - {Topic}.md` — outline version (**must contain H2/H3/bullet three-level structure**)
 
-**层级超标时的处理**：
-- 标记该 H2 为"❌ 层级冗余"
-- 列出 3 种修复策略供用户选择
-- **不自动修改**，由用户决定是否调整及采用哪种策略
-- 用户可以回复"修改 + 建议合并第X节和第Y节"等具体意见
-
-**步骤 1.5: 保存两份文件**
-
-**⚠️ 大纲版必须包含知识点（bullet points），禁止只保留 H2/H3**
-
-保存两份文件：
-- `学习路线图（完整版） - {主题名}.md` - 详细版（含完整描述、案例、原文引用）
-- `学习路线图 - {主题名}.md` - 大纲版（**必须包含 H2/H3/bullet 三层结构**）
-
-**大纲版正确格式示例**：
+**Correct outline format example**:
 ```markdown
-# 学习路线图 - 数字化转型
+# Learning Roadmap - Digital Transformation
 
-## 01. 数字化转型基础
+## 01. Digital Transformation Fundamentals
 
-### 数字转型 vs 数字化
+### Digitization vs Transformation
 
-- 数字化与转型的定义区分
-- 核心差异：增量改变 vs 根本性变革
-- 转型三要素
+- Definition of digitization and transformation
+- Core difference: incremental change vs fundamental change
+- Three elements of transformation
 
-### 转型框架
+### Transformation Framework
 
-- Five Stage 模型
-- 数字化成熟度评估
-- 转型路线图绘制
+- Five Stage model
+- Digital maturity assessment
+- Transformation roadmap design
 ```
 
-**⚠️ 大纲版 bullet 规则**：
-- 只包含知识点**名称/标题**，禁止包含描述、引用或解释
-- 正确：`- 数字化与转型的定义区分`
-- 错误：含解释文字或原文引用
-- 大纲版**必须包含 H2/H3/bullet 三层结构**，丢失 bullet = 文件结构创建缺少知识点
+**⚠️ Outline bullet rules**:
+- Bullets contain only knowledge point **names/titles**; descriptions, citations, or explanations are forbidden
+- Correct: `- Definition of digitization and transformation`
+- Wrong: contains explanatory text or original citation references
+- The outline **must contain the H2/H3/bullet three-level structure**; missing bullets = missing knowledge points during file structure creation
 
-**步骤 1.5b: 解析路线图统计（保存后自动执行）**
+**Step 1.5b: Parse Roadmap Statistics (auto-executed after save)**
 
-**由 Agent 读取已保存的完整版路线图文件做结构解析，而非模型自报数字。** 这是确定性操作，不受模型规模影响。
+**The Agent reads the saved complete roadmap file to parse structure — NOT model self-reported numbers.** This is a deterministic operation, unaffected by model size.
 
-操作流程：
-1. 用 Read 工具打开已保存的完整版路线图 `.md` 文件
-2. 逐行解析：
-   - `^## ` → H2 类别计数 +1
-   - `^### ` → H3 主题计数 +1
-   - `^- ` → 知识点 bullet 计数 +1
-3. 汇总并报告实际统计：
+Procedure:
+1. Use the Read tool to open the saved complete roadmap `.md` file
+2. Parse line by line:
+   - `^## ` → H2 category count +1
+   - `^### ` → H3 topic count +1
+   - `^- ` → knowledge point bullet count +1
+3. Aggregate and report actual statistics:
 
 ```
-📊 路线图统计（基于已保存文件解析）：
+📊 Roadmap statistics (parsed from saved file):
 
-   H2 类别：4 个
-   H3 主题：12 个
-   知识点（bullet）：48 个
-   📊 预计原子笔记：48 个，MOC：12 个
-   ⏱️ 预计耗时：约 15-20 分钟
+   H2 categories: 4
+   H3 topics: 12
+   Knowledge points (bullets): 48
+   📊 Estimated atomic notes: 48, MOCs: 12
+   ⏱️ Estimated time: ~15-20 minutes
 
-⚠️ 知识点数量与材料篇幅比例检查：
-   - 转型概述：6 个知识点 / 12 页 → ⚠️ 比例偏高（0.5），建议合并
-   - 客户战略：3 个知识点 / 28 页 → ✅ 比例合理（0.11）
+⚠️ Knowledge point / page proportion check:
+   - Transformation Overview: 6 points / 12 pages → ⚠️ high ratio (0.5), suggest merge
+   - Customer Strategy: 3 points / 28 pages → ✅ reasonable ratio (0.11)
 
-⚠️ 层级结构检查（H2 至少含 2 个 H3）：
-   - 转型概述：4 个 H3 → ✅ 结构合理
-   - 战略管理：1 个 H3 → ❌ 层级冗余
-     建议：按 a)拆分 b)合并到相邻类别 c)整体升级 三种策略之一修复
+⚠️ Hierarchy structure check (each H2 must have ≥2 H3):
+   - Transformation Overview: 4 H3s → ✅ structure is reasonable
+   - Strategic Management: 1 H3 → ❌ redundant hierarchy
+     Suggestions: a) split b) merge into adjacent H2 c) elevate H3 to H2
 
-是否需要修改路线图？
-  - "继续" → 进入 Phase 2
-  - "修改 + 具体意见" → 返回步骤 1.4 修改后重新保存并解析
+Would you like to modify the roadmap?
+  - "continue" → proceed to Phase 2
+  - "modify + specific feedback" → return to Step 1.4 to revise, re-save, and re-parse
 ```
 
-**比例检查标准**：
-| 比例（知识点/页） | 评估 | 建议 |
-|-------------------|------|------|
-| > 1.0 | ⚠️ 过度拆解 | 合并相邻知识点 |
-| 0.1 - 1.0 | ✅ 合理 | 无需调整 |
-| < 0.1 | ⚠️ 可能内容稀少 | 考虑合并或扩展 |
+**Proportion check standards**:
+| Ratio (points/pages) | Assessment | Suggestion |
+|----------------------|------------|------------|
+| > 1.0 | ⚠️ Over-fragmented | Merge adjacent knowledge points |
+| 0.1 - 1.0 | ✅ Reasonable | No adjustment needed |
+| < 0.1 | ⚠️ Content may be sparse | Consider merging or expanding |
 
-**层级结构检查标准**：
-| H2 下的 H3 数量 | 评估 | 建议 |
-|-----------------|------|------|
-| 0 | ❌ 致命 | H2 下必须有 H3 主题 |
-| 1 | ❌ 层级冗余 | a) 拆分为多个 H3 b) 合并到相邻 H2 c) 整体升级（H3 → H2） |
-| ≥ 2 | ✅ 合理 | 无需调整 |
+**Hierarchy check standards**:
+| H3s under H2 | Assessment | Suggestion |
+|-------------|------------|------------|
+| 0 | ❌ Fatal | H2 must have H3 topics |
+| 1 | ❌ Redundant hierarchy | a) Split into multiple H3s b) Merge into adjacent H2 c) Elevate H3 to H2 |
+| ≥ 2 | ✅ Reasonable | No adjustment needed |
 
-> 统计来源从"模型自报"改为"文件解析"的原因：避免中等规模模型（如 Minimax-M2.7）对自身生成内容计数不准导致的用户困惑。
+> Reason for switching statistics source from "model self-report" to "file parse": to avoid counting inaccuracies caused by medium-scale models (e.g., Minimax-M2.7) estimating their own generation.
 
-### Phase 2: 文件结构创建
+### Phase 2: File Structure Creation
 
-**步骤 2.1: 批量创建文件夹和文件**
+**Step 2.1: Batch Create Folders and Files**
 
-**文件夹结构规则**：
-- H2 → 第一层文件夹（格式：`XX. 类别名称`）
-- H3 → H2 下面的第二层文件夹（直接放在 H2 文件夹内）
-- MOC → **必须放在 H3 文件夹内**，不是 H2 文件夹内
-- 原子笔记 → 放在对应的 H3 文件夹内
+**Folder structure rules**:
+- H2 → first-level folder (format: `XX. Category Name`)
+- H3 → second-level folder under H2 (placed directly inside the H2 folder)
+- MOC → **must be placed inside the H3 folder**, not the H2 folder
+- Atomic notes → placed in the corresponding H3 folder
 
-**正确结构示例**：
+**Correct structure example**:
 ```
-vault根目录/
-├── 01. 数字化转型/
-│   ├── 转型概述/              ← H3 主题文件夹
-│   │   ├── 转型概述 MOC.md    ← ✅ MOC 在 H3 文件夹内
-│   │   ├── 数字化vs数字化转型.md
-│   │   └── 转型核心框架.md
-│   └── 客户领域/
-│       ├── 客户领域 MOC.md    ← ✅ MOC 在 H3 文件夹内
+vault/
+├── 01. Digital Transformation/
+│   ├── Overview/              ← H3 topic folder
+│   │   ├── Overview MOC.md    ← ✅ MOC inside H3 folder
+│   │   ├── Digitization vs Transformation.md
+│   │   └── Transformation Framework.md
+│   └── Customer Domain/
+│       ├── Customer Domain MOC.md    ← ✅ MOC inside H3 folder
 │       └── ...
-├── 02. 战略管理/
-│   ├── 战略分析/
-│   │   ├── 战略分析 MOC.md    ← ✅ MOC 在 H3 文件夹内
+├── 02. Strategic Management/
+│   ├── Strategic Analysis/
+│   │   ├── Strategic Analysis MOC.md    ← ✅ MOC inside H3 folder
 │   │   └── ...
 ```
 
-**错误结构示例**（MOC 在 H2 文件夹内，**必须避免**）：
+**Incorrect structure example** (MOC in H2 folder, **must avoid**):
 ```
-vault根目录/
-├── 01. 数字化转型/
-│   ├── 转型概述 MOC.md        ← ❌ 错误！MOC 不应放在 H2 层级
-│   ├── 转型概述/              ← H3 主题文件夹
+vault/
+├── 01. Digital Transformation/
+│   ├── Overview MOC.md        ← ❌ Wrong! MOC must not be at H2 level
+│   ├── Overview/              ← H3 topic folder
 │   │   └── ...
 ```
 
-**创建步骤**：
-0. **创建前校验**：先读取大纲版路线图，解析 H2/H3/bullet 层级结构，与计划创建的文件夹结构进行一致性校验
-1. 按 H2/H3 层级创建文件夹结构
-2. 在**每个 H3 主题文件夹内**创建 MOC 笔记（空白模板）
-3. 为每个 bullet 知识点创建**空白原子笔记文件**（仅含 frontmatter 和标题，**不含正文内容**）
-4. 创建完成后**一次性展示**所有创建的文件列表
+**Creation steps**:
+0. **Pre-creation validation**: first read the outline roadmap, parse the H2/H3/bullet hierarchy, and cross-validate with the planned folder structure
+1. Create folder structure following H2/H3 hierarchy
+2. Create MOC notes (blank template) **inside each H3 topic folder**
+3. Create **blank atomic note files** for each bullet knowledge point (frontmatter and title only, **no body content**)
+4. **Present all created files at once** after creation
 
-**⚠️ 重要：Step 2 只创建空文件，不填充内容**
-- MOC 笔记：仅包含 frontmatter 和标题，正文为空
-- 原子笔记文件：仅包含 frontmatter（含 `status: draft`）和标题，`## 核心知识点`、`## 相关案例` 等章节为空白
-- **内容填充在步骤 3 中完成**，步骤 2 严禁写入任何正文内容
+**⚠️ Important: Step 2 only creates empty files, does not fill content**
+- MOC notes: frontmatter and title only, body empty
+- Atomic note files: frontmatter (with `status: draft`) and title only; sections like `## Core Concepts`, `## Case Study` etc. are blank
+- **Content filling is done in Phase 3**; Step 2 strictly forbids writing any body content
 
-**步骤 2.1 校验与确认**：
+**Step 2.1 Validation and Confirmation**:
 
-**校验内容**：
-- H2 类别数量与大纲是否一致
-- H3 主题数量与大纲是否一致
-- 知识点（bullet）数量与大纲是否一致
-- 文件夹命名是否与大纲标题匹配
+**Validated items**:
+- H2 category count matches the outline
+- H3 topic count matches the outline
+- Knowledge point (bullet) count matches the outline
+- Folder naming matches outline titles
 
-**展示确认格式**：
+**Confirmation display**:
 ```
-📋 Phase 2 文件结构创建预览
+📋 Phase 2 File Structure Creation Preview
 
-📁 将创建的文件夹结构：
-├── 01. 数字化转型/
-│   ├── 转型概述/
-│   │   ├── 转型概述 MOC.md
-│   │   ├── 数字化vs数字化转型.md
+📁 Folder structure to be created:
+├── 01. Digital Transformation/
+│   ├── Overview/
+│   │   ├── Overview MOC.md
+│   │   ├── Digitization vs Transformation.md
 │   │   └── ...
 │   └── ...
 
-📊 统计：
-- H2 类别：4 个
-- H3 主题：12 个
-- 原子笔记：48 个
+📊 Statistics:
+- H2 categories: 4
+- H3 topics: 12
+- Atomic notes: 48
 
-是否确认创建？回复：
-  - "确认" → 开始创建
-  - "取消" → 返回修改路线图
+Confirm creation? Reply:
+  - "confirm" → start creating
+  - "cancel" → return to modify roadmap
 ```
 
-**步骤 2.2: 填充 MOC 内容（仅原子笔记链接）**
-- 将各 H3 主题文件夹下原子笔记的 wikilink 写入对应 MOC 的 `## 相关笔记`（或等价小节）
-- **不在此步骤**修改大纲版路线图：路线图大纲中「H3 ↔ MOC」及「MOC ↔ 路线图」的双向链接**统一在 Phase 4.3** 完成（或由 `scripts/double-link-builder.py` 的路线图-MOC 逻辑执行），避免与 Phase 4 重复插入
+**Step 2.2: Fill MOC Content (Atomic Note Links Only)**
+- Write each atomic note's wikilink from the H3 topic folder into the corresponding MOC's `## Related Notes` (or equivalent section)
+- **Do not modify the outline roadmap in this step**: bidirectional links between the outline roadmap's "H3 ↔ MOC" and "MOC ↔ Roadmap" are **unified in Phase 4.3** (or via the `scripts/double-link-builder.py` roadmap-MOC logic), avoiding duplicate insertion with Phase 4
 
-**步骤 2.3: 验证结构**
-- 检查文件夹结构、笔记数量与路线图是否一致
-- 如有不一致，修复后再进入 Phase 3
+**Step 2.3: Validate Structure**
+- Check that folder structure and note counts match the roadmap
+- If discrepancies exist, fix before proceeding to Phase 3
 
-### Phase 3: 内容生成（并行）
+### Phase 3: Content Generation (Parallel)
 
-**步骤 3.0: 断点恢复检查（强制）**
+**Step 3.0: Breakpoint Recovery Check (Mandatory)**
 
-进入 Phase 3 前必须执行：
+Must execute before entering Phase 3:
 
-1. 扫描 vault 中所有原子笔记文件的 frontmatter `status` 字段：
-   - `status: draft` → 未填充，可进入填充队列
-   - `status: filling` → 上次中断的残骸，分两种情况：
-     - **存在 `{笔记名}.md.tmp`**：rename 前崩溃。若 .tmp 内容完整（文件大小 > 0、frontmatter 闭合）则 rename 为 `.md` 并将 status 改为 `filled`；否则删除 .tmp，原 `.md` 保持 `draft`
-     - **不存在 `{笔记名}.md.tmp`**：rename 成功但 status 更新前崩溃。`.md` 文件内容已完整，直接将 status 从 `filling` 改为 `filled`
-   - `status: filled` → 已填充，跳过
-   - `status: reviewed` → 已审查，跳过
-   - `status: needs_review` → 超过最大重试次数，报告用户手动处理，不进入填充队列
-2. 清理孤儿 `.tmp` 文件（对应 `.md` 不存在，或对应 `.md` 的 status 既非 `filling` 也非 `draft`）
-3. 读取 `.obsidian-learning-progress.md`，确认上次中断位置
-4. 向用户报告断点恢复状态：
+1. Scan the frontmatter `status` field of all atomic note files in the vault:
+   - `status: draft` → unfilled, eligible for fill queue
+   - `status: filling` → crashed residue, two cases:
+     - **`{note}.md.tmp` exists**: crashed before rename. If .tmp content is complete (file size > 0, frontmatter closed), rename to `.md` and set status to `filled`; otherwise delete .tmp, keep original `.md` as `draft`
+     - **`{note}.md.tmp` does not exist**: rename succeeded but status update crashed. The `.md` file content is complete; directly change status from `filling` to `filled`
+   - `status: filled` → already filled, skip
+   - `status: reviewed` → already reviewed, skip
+   - `status: needs_review` → exceeded max retries, report to user for manual handling, do not enter fill queue
+2. Clean orphan `.md.tmp` files (no corresponding `.md` exists, or the corresponding `.md` status is neither `filling` nor `draft`)
+3. Read `.obsidian-learning-progress.md` to confirm the last interruption point
+4. Report breakpoint recovery status to user:
    ```
-   📊 断点恢复检查
-   
-   总计 48 个原子笔记:
-     ✅ 已完成 (filled/reviewed): 25 个
-     ⏳ 待填充 (draft): 21 个
-     ⚠️ 待人工审核 (needs_review): 2 个
-     🗑️ 已清理残骸: 0 个
-   
-   是否从断点继续？
-     "继续" → 仅填充 21 个未完成的笔记
-     "重新开始" → 所有笔记重置为 draft 后全部重新填充
+   📊 Breakpoint Recovery Check
+
+   Total 48 atomic notes:
+     ✅ Completed (filled/reviewed): 25
+     ⏳ Pending fill (draft): 21
+     ⚠️ Needs manual review (needs_review): 2
+     🗑️ Residue cleaned: 0
+
+   Resume from breakpoint?
+     "continue" → fill only 21 incomplete notes
+     "restart" → reset all notes to draft and refill all
    ```
 
-**步骤 3.0b: 上下文预提取**
+**Step 3.0b: Context Pre-Extraction**
 
-**由 `scripts/context-extractor.py` 自动执行。** 替代旧版手工"读取路线图 → 逐知识点提取原文段落"的流程。
+**Automatically executed by `scripts/context-extractor.py`.** Replaces the old manual "read roadmap → extract source paragraphs per knowledge point" workflow.
 
-**运行方式**：
+**Execution**:
 ```
-python3 scripts/context-extractor.py <vault_path> <完整版路线图路径> --output context_packets.json
-```
-
-**脚本功能**：
-1. 解析完整版路线图中的 `source_range` 标注（支持多页码段：`file.pdf:12-15, 45-48, 102`）
-2. 对 PDF 源文件：使用 PyPDF2 提取指定页码（含 ±1 页缓冲区），逐页拼接
-3. 对 Markdown / TXT 源文件：提取全文件内容（如标注了页码则按比例截取对应段落）
-4. 输出结构化上下文包 JSON（顶层字段：`vault_path`, `buffer`, `total_knowledge_points`, `packets`）：
-   - 每个 packet 包含 `note_file`, `title`, `source_excerpts`（数组，每项 `{source, pages, text}`）
-
-**降级策略**：若 PDF 源文件缺少 PyPDF2 依赖或文件不可读，脚本向 stderr 输出警告并跳过该文件，在 packets 中将对应 excerpt 的 `text` 设为空字符串，由填充 agent 降级为从全量材料中自行查找。
-
-**仅当**完整版路线图中不存在任何 `source_range` 标注时（极旧的遗留路线图），跳过本步骤，回到旧版降级方案（将全量材料连同笔记列表一并传给 agent）。
-
-**步骤 3.1: 计算并行任务分配**
-
-根据**待填充的**原子笔记数量（即 status=draft 的数量）计算所需 agents 数量：
-
-```
-所需 agents 数量 = ceil(待填充原子笔记总数 / 5)
+python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --output context_packets.json
 ```
 
-**示例**：
-- 原子笔记 8 个 → ceil(8/5) = 2 个 agents
-- 原子笔记 15 个 → ceil(15/5) = 3 个 agents
-- 原子笔记 35 个 → ceil(35/5) = 7 个 agents
-- 原子笔记 60 个 → ceil(60/5) = 12 个 agents
+**Script capabilities**:
+1. Parse `source_range` annotations in the complete roadmap (supports multi-range: `file.pdf:12-15, 45-48, 102`)
+2. For PDF sources: use PyPDF2 to extract specified pages (with ±1 page buffer), stitch page-by-page
+3. For Markdown/TXT sources: extract full file content (proportional extraction if page numbers are annotated)
+4. Output structured context packet JSON (top-level fields: `vault_path`, `buffer`, `total_knowledge_points`, `packets`):
+   - Each packet contains `note_file`, `title`, `source_excerpts` (array, each item `{source, pages, text}`)
 
-**分配原则**：
-- 每个 agent 负责处理 **不超过 5 个**原子笔记
-- 尽量均匀分配，使得单个 agent 工作量均衡
-- 每个 agent 只获得其负责笔记对应的**上下文包**（而非全量学习材料）
-- 记录每个 agent 负责的笔记列表
+**Degradation strategy**: If PDF source lacks PyPDF2 dependency or file is unreadable, the script outputs a stderr warning, skips that file, and sets the corresponding excerpt's `text` to an empty string. The filling agent then degrades to locating content from the full material.
 
-**⚠️ 原子笔记超过 50 个时的处理**：
-- 系统提示：`📢 检测到 {N} 个原子笔记，数量较大`
-- 建议用户考虑：
-  1. 是否需要精简学习路线图，减少知识点？
-  2. 是否可以分批次处理（先处理核心章节）？
-  3. 是否继续当前流程？
-- **默认继续**，除非用户明确要求返回修改路线图
+**Only when** no `source_range` annotations exist in the complete roadmap (extremely old legacy roadmaps), skip this step and fall back to the old degradation approach (pass full material along with the note list to the agent).
 
-**步骤 3.2: 并行填充内容**
+**Step 3.1: Compute Parallel Task Distribution**
 
-启动指定数量的 agents **并行执行**填充任务，每个 agent 必须遵守**原子写规范**：
-
-**环境与降级**：若当前客户端**不支持**真正的多 Agent 并行（无 `Task` / 子 Agent 编排），则改为**顺序执行**：仍按「每批最多 5 篇原子笔记」分组，逐组调用 `atomic-note-filler` 或等价流程，直至全部完成；进度报告格式不变。
-
-**原子写规范**：
-1. 填充 agent 先创建 `{笔记名}.md.tmp` 写入完整内容（**注意：扩展名为 `.md.tmp`，非 `.tmp`**）
-2. 写入完成后验证 `.md.tmp` 文件完整性（文件大小 > 0、frontmatter 闭合）
-3. 验证通过后将 `.md.tmp` 文件 rename 为 `.md`（文件系统级别的原子操作）
-4. 将 frontmatter 中的 `status` 更新为 `filled`
-5. **立即**向 `.obsidian-learning-progress.md` 追加一行：`[Phase 3] {笔记名}.md → filled`
+Calculate required agent count based on **pending** atomic note count (i.e., status=draft count):
 
 ```
-[agent-1] 📝 正在填充: 原子笔记A, 原子笔记B, 原子笔记C
-[agent-2] 📝 正在填充: 原子笔记D, 原子笔记E, 原子笔记F
-[agent-3] 📝 正在填充: 原子笔记G, 原子笔记H
+Required agents = ceil(pending note count / 5)
+```
+
+**Examples**:
+- 8 notes → ceil(8/5) = 2 agents
+- 15 notes → ceil(15/5) = 3 agents
+- 35 notes → ceil(35/5) = 7 agents
+- 60 notes → ceil(60/5) = 12 agents
+
+**Distribution principles**:
+- Each agent handles **no more than 5** atomic notes
+- Distribute as evenly as possible for balanced workload per agent
+- Each agent receives only the **context packets** for its assigned notes (not the full learning material)
+- Record each agent's assigned note list
+
+**⚠️ When atomic notes exceed 50**:
+- System prompt: `📢 Detected {N} atomic notes — a large count`
+- Suggest the user consider:
+  1. Should the learning roadmap be streamlined to reduce knowledge points?
+  2. Should processing be batched (handle core chapters first)?
+  3. Continue with the current flow?
+- **Default to continue**, unless the user explicitly requests returning to modify the roadmap
+
+**Step 3.2: Parallel Content Fill**
+
+Launch the specified number of agents **in parallel** to execute the fill task. Each agent must follow the **atomic write specification**:
+
+**Environment and degradation**: If the current client **does not support** true multi-agent parallelism (no `Task` / sub-agent orchestration), fall back to **sequential execution**: still group in batches of ≤5 atomic notes, invoke `atomic-note-filler` or equivalent flow group by group until all are complete; progress report format remains unchanged.
+
+**Atomic write specification**:
+1. The filling agent first creates `{note}.md.tmp` with the complete content (**note: extension is `.md.tmp`, not `.tmp`**)
+2. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
+3. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
+4. Update frontmatter `status` to `filled`
+5. **Immediately** append to `.obsidian-learning-progress.md`: `[Phase 3] {note}.md → filled`
+
+```
+[agent-1] 📝 Filling: NoteA, NoteB, NoteC
+[agent-2] 📝 Filling: NoteD, NoteE, NoteF
+[agent-3] 📝 Filling: NoteG, NoteH
 ...
 ```
 
-**进度报告**（实时展示）：
+**Progress report** (real-time display):
 ```
-📊 Phase 3 进度: [████░░░░░░] 40% (4/10 个笔记已填充)
-  ✅ 完成: 笔记A, 笔记B, 笔记C, 笔记D
-  ⏳ 进行中: agent-2 (笔记E, 笔记F)
-  ⏳ 进行中: agent-3 (笔记G, 笔记H, 笔记I, 笔记J)
-```
-
-**步骤 3.3: 审查质量（默认执行）**
-
-**默认执行质量审查**，除非用户明确提出跳过：
-- 使用 `note-reviewer` agent 审查所有**已填充**的原子笔记（跳过 `status: draft` 和 `.tmp` 文件）
-- 检查内容丰富度（200+ 字、案例、原文引用）
-- 检查无大量重复或明显错误
-- 检查格式规范性
-
-**审查输出格式**：
-```
-📋 质量审查报告
-
-## 审查结果
-✅ 通过: 8 个笔记
-⚠️ 需要修复: 2 个笔记
-
-## 需要修复的笔记
-- [HIGH] 原子笔记X: 内容过于简化，缺少案例
-- [MEDIUM] 原子笔记Y: 缺少原文引用
-
-## 建议
-请针对上述问题修复后重新提交审查
+📊 Phase 3 Progress: [████░░░░░░] 40% (4/10 notes filled)
+  ✅ Done: NoteA, NoteB, NoteC, NoteD
+  ⏳ In progress: agent-2 (NoteE, NoteF)
+  ⏳ In progress: agent-3 (NoteG, NoteH, NoteI, NoteJ)
 ```
 
-**步骤 3.4: 修复与重试**
+**Step 3.3: Quality Review (Default On)**
 
-如果有任何笔记未通过质量审查或 agent 执行失败：
+**Quality review is executed by default**, unless the user explicitly requests skipping:
+- Use the `note-reviewer` agent to review all **filled** atomic notes (skip `status: draft` and `.tmp` files)
+- Check content richness (200+ words, case study, original citation)
+- Check for no significant duplication
+- Check for no obvious errors
+- Check format compliance
 
-**未通过的笔记进入修复队列**：
+**Review output format**:
 ```
-🔧 进入修复队列: 原子笔记X, 原子笔记Y
-```
+📋 Quality Review Report
 
-**重新分配任务**：
-- 将未通过的笔记重新分配给 agents（优先分配给之前负责该笔记的 agent）
-- 修复前将 status 重置为 `draft`（确保断点恢复能识别）
-- 重新执行填充
-- 再次提交审查
+## Results
+✅ Pass: 8 notes
+⚠️ Needs Fix: 2 notes
 
-**重试限制**：最多重试 **2 次**，超过次数仍未通过的笔记：
-- 在最终报告中标记为"待人工审核"
-- status 标记为 `needs_review`
+## Notes Needing Fixes
+- [HIGH] NoteX: content too simplified, missing case study
+- [MEDIUM] NoteY: missing original citation
 
-**步骤 3.5: 批量报告结果**
-
-完成后一次性展示：
-```
-📊 Phase 3 完成报告
-
-总计: 12 个原子笔记
-  ✅ 直接通过: 10 个
-  🔧 修复后通过: 1 个
-  ⚠️ 待人工审核: 1 个 (原子笔记Z - 超过最大重试次数)
-
-📋 进度文件已更新: .obsidian-learning-progress.md
-耗时: X 分钟
+## Suggestions
+Fix the above issues and resubmit for review
 ```
 
-### Phase 4: 双链建立
+**Step 3.4: Repair and Retry**
 
-#### Phase 4 执行策略（三阶段漏斗 + 主 Agent 与脚本协作）
+If any notes fail quality review or an agent execution fails:
 
-**设计意图**：5 类逻辑关系（推导/类比/矛盾/应用/背景）的判定本质上是语义理解任务，纯关键词匹配的召回率约 20-30%。采用"漏斗"策略分层处理：
-
+**Failed notes enter the repair queue**:
 ```
-全部笔记对 (n*(n-1)/2)
-    ↓ 阶段1: 结构化亲和过滤（零成本，消去 80-85%）
-结构亲和候选 (~n*3 to n*5)
-    ↓ 阶段2: TF-IDF 语义相似 + 关键词启发式（低成本）
-高相似候选 (~n/2 to n)
-    ↓ 阶段3: LLM 批量分类（可控 token 成本）
-最终链接
+🔧 Repair queue: NoteX, NoteY
 ```
 
-**详细流程**：
+**Reassign tasks**:
+- Reassign failed notes to agents (prefer the agent that previously handled that note)
+- Reset status to `draft` before repair (ensures breakpoint recovery can identify)
+- Re-execute fill
+- Re-submit for review
 
-1. **默认路径（推荐）**  
-   - **步骤 4.2a**：运行 `scripts/double-link-builder.py`，执行阶段 1+2（结构化过滤 + TF-IDF + 关键词启发式），产出**候选对列表**（`candidates.json`）。
-   - **步骤 4.2b**：主 Agent 读取候选对列表，对每对候选用 LLM 进行五类关系分类（可批处理，每批 5-10 对），只在判定为某类关系时才写入 `## 相关笔记`。
-   - **步骤 4.3**：由主 Agent 完成大纲版路线图 ↔ 各 MOC 的双向链接（与 Phase 2.2 已写入的原子列表并存），**插入前扫描**目标文件是否已有等价 `[[...]]`，**禁止重复行**。
+**Retry limit**: maximum **2 retries**. Notes exceeding this limit:
+- Marked as "needs manual review" in the final report
+- Status set to `needs_review`
 
-2. **纯脚本路径（非 LLM 降级）**  
-   - 当环境不支持 LLM 调用时：`double-link-builder.py` 以 `--mode strict` 运行，仅使用阶段 1+2 的确定性规则（结构化过滤 + TF-IDF > 阈值 + 关键词触发），产出的链接**高精度但低召回**（覆盖约 40-50% 的逻辑关联），脚本在输出中标注预估覆盖率。
-   - 用户可在 Obsidian 中手动补全遗漏的链接。
+**Step 3.5: Batch Report Results**
 
-3. **完全 Agent 路径**  
-   - 当笔记数量 ≤ 20 时：可跳过脚本，主 Agent 直接读取全量笔记 + 路线图，一次性完成关系分类。这在 token 上仍然可控（~400 对，批处理约 40 次调用）。
+Present once after completion:
+```
+📊 Phase 3 Completion Report
 
-4. **禁止**  
-   - 同一 Phase 内「主 Agent 已写满 4.2 + 无清理再跑脚本」导致双倍链接；  
-   - 在 `## 相关笔记` 中重复出现指向同一目标的 `- [[同一目标]]` 多行（合并为一行）。
-   - 阶段 3 LLM 输出「none」（无关）时仍然建链。
+Total: 12 atomic notes
+  ✅ Direct pass: 10
+  🔧 Passed after repair: 1
+  ⚠️ Needs manual review: 1 (NoteZ - exceeded max retries)
 
-**步骤 4.1: 运行 double-link-builder.py（阶段 1+2）**
+📋 Progress file updated: .obsidian-learning-progress.md
+Duration: X minutes
+```
+
+### Phase 4: Wikilink Building
+
+#### Phase 4 Execution Strategy (Three-Stage Funnel — Main Agent & Script Collaboration)
+
+**Design intent**: Classifying the 5 logical relationship types (derivation/analogy/contradiction/application/context) is fundamentally a semantic understanding task. Pure keyword matching achieves only ~20-30% recall. Use a "funnel" strategy for layered processing:
+
+```
+All note pairs (n*(n-1)/2)
+    ↓ Stage 1: Structural affinity filter (zero cost, eliminates 80-85%)
+Structurally affine candidates (~n*3 to n*5)
+    ↓ Stage 2: TF-IDF semantic similarity + keyword heuristics (low cost)
+High-similarity candidates (~n/2 to n)
+    ↓ Stage 3: LLM batch classification (controlled token cost)
+Final links
+```
+
+**Detailed flow**:
+
+1. **Default path (recommended)**
+   - **Step 4.2a**: Run `scripts/double-link-builder.py`, executing stage 1+2 (structural filtering + TF-IDF + keyword heuristics), producing a **candidate pair list** (`candidates.json`).
+   - **Step 4.2b**: The main agent reads the candidate pair list and uses LLM to classify each candidate pair into the 5 relationship types (can batch process, 5-10 pairs per batch). Only writes to `## Related Notes` when a relationship type is positively identified.
+   - **Step 4.3**: The main agent completes bidirectional links between the outline roadmap ↔ each MOC (coexisting with the atomic note list already written in Phase 2.2), **scanning before insertion** for existing equivalent `[[...]]` links; **duplicate lines forbidden**.
+
+2. **Script-only path (non-LLM degradation)**
+   - When the environment does not support LLM calls: `double-link-builder.py` runs with `--mode strict`, using only stage 1+2 deterministic rules (structural filtering + TF-IDF > threshold + keyword triggers). Produced links have **high precision but low recall** (covering ~40-50% of logical relationships). The script outputs an estimated coverage percentage.
+   - Users can manually complete missing links in Obsidian.
+
+3. **Fully agent-driven path**
+   - When note count ≤ 20: the script can be skipped; the main agent directly reads all notes + roadmap and completes relationship classification in one pass. Token-wise this remains manageable (~400 pairs, batch processing ~40 calls).
+
+4. **Forbidden**
+   - Double-linking from "main agent already wrote 4.2 + uncleaned script run" within the same Phase;
+   - Duplicate lines of `- [[same target]]` in `## Related Notes` (merge into one line).
+   - Building links when stage 3 LLM outputs "none" (unrelated).
+
+**Step 4.1: Run double-link-builder.py (Stages 1+2)**
 
 ```
 python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --output candidates.json
 ```
 
-脚本输出 `candidates.json`，顶层含 `pairs` 数组，每个元素包含 `note_a`, `note_b`, `title_a`, `title_b`, `scores`（`{structural, tfidf_cosine, keyword_rules}`）, `preview_a`, `preview_b`。
+The script outputs `candidates.json`, with a top-level `pairs` array. Each element contains `note_a`, `note_b`, `title_a`, `title_b`, `scores` (`{structural, tfidf_cosine, keyword_rules}`), `preview_a`, `preview_b`.
 
-脚本同时输出预估覆盖率（基于 structural 亲和力计算）。
+The script also outputs an estimated coverage percentage (based on structural affinity calculations).
 
-**步骤 4.2: LLM 批量分类（阶段 3）**
+**Step 4.2: LLM Batch Classification (Stage 3)**
 
-主 Agent 读取 `candidates.json`，将候选对分批（每批 5-10 对）送入 LLM 判定：
+The main agent reads `candidates.json`, batches candidate pairs (5-10 pairs per batch), and sends them to an LLM for classification:
 
-**LLM 分类 Prompt 要素**（主 Agent 构建）：
+**LLM Classification Prompt Elements** (constructed by the main agent):
 
-- 上下文：告知 LLM 扮演知识图谱构建助手
-- 关系定义：逐一列出 5 类关系 + `none`（必须有 `none` 选项约束宁缺毋滥）
-- 输入：批量填入候选笔记对（每对含标题 + preview）
-- 输出格式：`<id>|<relation>|<reason>`（管道符分隔，reason 限一句话）
-- 示例：`1|derivation|数字化是转型的技术前提` / `2|none|`
+- Context: tell the LLM to act as a knowledge graph builder
+- Relationship definitions: list the 5 relationship types + `none` (must have `none` to enforce "when in doubt, link nothing")
+- Input: batch-filled candidate note pairs (each pair includes title + preview)
+- Output format: `<id>|<relation>|<reason>` (pipe-delimited, reason limited to one sentence)
+- Example: `1|derivation|Digitization is a technical prerequisite for transformation` / `2|none|`
 
-**分类结果处理**：
-- `none` → 跳过，不建链
-- 五类之一 → 在 `note_a` 和 `note_b` 的 `## 相关笔记` 中分别添加双向 wikilink，可附括号注明关系类型（如 `[[转型核心框架]]（推导关系）`）
-- 插入前检查去重（已有等价 wikilink 则跳过）
+**Classification result handling**:
+- `none` → skip, do not build a link
+- One of the 5 types → add bidirectional wikilinks to both `note_a`'s and `note_b`'s `## Related Notes`, optionally annotating the relationship type in parentheses (e.g., `[[Transformation Framework]] (derivation)`)
+- Dedup check before insertion (skip if an equivalent wikilink already exists)
 
-**步骤 4.3: 建立路线图与 MOC 的双链**
-- 本步为**唯一规范入口**：在大纲版路线图中为每个 H3 添加指向对应 MOC 的 wikilink，并在各 MOC 的 `## 相关笔记` 中回链大纲版路线图（与 Phase 2.2 已写入的「原子笔记列表」并存，**勿重复插入**已有链接）
-- 若已存在等价链接，仅做查漏补缺
-- 示例（`##` = H2 类别，`###` = H3 主题；MOC 链接紧跟对应 **H3** 标题行之后）：
+**Step 4.3: Build Roadmap ↔ MOC Bidirectional Links**
+- This is the **single canonical entry point**: in the outline roadmap, add a wikilink pointing to the corresponding MOC after each H3; in each MOC's `## Related Notes`, add a backlink to the outline roadmap (coexisting with the atomic note list already written in Phase 2.2; **do not re-insert** existing links)
+- If equivalent links already exist, only fill in gaps
+- Example (`##` = H2 category, `###` = H3 topic; MOC link immediately follows the corresponding **H3** title line):
   ```markdown
-  <!-- 路线图大纲中 -->
-  ## 02. 客户领域
+  <!-- In the outline roadmap -->
+  ## 02. Customer Domain
 
-  ### 客户战略核心
+  ### Customer Strategy Core
 
-  [[02. 客户领域/客户战略核心/客户战略核心 MOC|客户战略核心]]
+  [[02. Customer Domain/Customer Strategy Core/Customer Strategy Core MOC|Customer Strategy Core]]
 
-  - 知识点一
-  - 知识点二
+  - Knowledge Point 1
+  - Knowledge Point 2
 
-  <!-- 对应 MOC 中 -->
-  ## 相关笔记
+  <!-- In the corresponding MOC -->
+  ## Related Notes
 
-  - [[../../学习路线图 - Digital Transformation Roadmap|学习路线图]]
+  - [[../../Learning Roadmap - Digital Transformation Roadmap|Learning Roadmap]]
   ```
 
-**步骤 4.4: 批量报告结果**
-- 展示所有添加的双链摘要
-- 确认完成
+**Step 4.4: Batch Report Results**
+- Present a summary of all added wikilinks
+- Confirm completion
 
-### Phase 5: 最终审查与核心问题生成
+### Phase 5: Final Review and Core Question Generation
 
-**步骤 5.1: 审查所有原子笔记**
+**Step 5.1: Review All Atomic Notes**
 
-必须逐项检查以下内容，**发现问题必须修复**：
+Must check the following items item by item; **issues found must be fixed**:
 
-#### 5.1.1 原子笔记完整性检查
-- [ ] 原子笔记数量与路线图知识点数量一致
-- [ ] 每个原子笔记文件都已创建
-- [ ] **所有原子笔记 `status` 为 `filled` 或 `reviewed`**（无残留 `draft` / `filling`）
-- [ ] `needs_review` 笔记已列出并确认：共计 N 篇需人工审核
-- [ ] 无孤儿 `.md.tmp` 文件残留
-- [ ] 笔记内容符合丰富度要求（核心概念 200+ 字、案例完整、原文引用准确）
-- [ ] 笔记内容无大量重复
-- [ ] 笔记内容无明显错误或曲解
+#### 5.1.1 Atomic Note Integrity Check
+- [ ] Atomic note count matches roadmap knowledge point count
+- [ ] Every atomic note file has been created
+- [ ] **All atomic notes have `status` of `filled` or `reviewed`** (no residual `draft` / `filling`)
+- [ ] `needs_review` notes have been listed and acknowledged: N total require manual review
+- [ ] No orphan `.md.tmp` files remain
+- [ ] Note content meets richness requirements (Core Concepts 200+ words, case study complete, original citation accurate)
+- [ ] No significant content duplication
+- [ ] No obvious errors or misinterpretations
 
-#### 5.1.2 MOC 与原子笔记双链检查
-- [ ] 每个 MOC 文件中已添加 `## 相关笔记` 部分
-- [ ] 该 MOC 文件夹下的所有原子笔记都已用 wikilink 链接到 MOC
-- [ ] 链接格式正确：`[[filename|显示文本]]`
-- 格式规范见 [references/obsidian-structure.md](./references/obsidian-structure.md) 中「MOC 与原子笔记」章节
+#### 5.1.2 MOC ↔ Atomic Note Wikilink Check
+- [ ] Every MOC file has a `## Related Notes` section
+- [ ] All atomic notes under that MOC's folder have been wikilinked to the MOC
+- [ ] Link format is correct: `[[filename|display text]]`
+- See [references/obsidian-structure.md](./references/obsidian-structure.md) "MOC and Atomic Notes" section for format specification
 
-#### 5.1.3 路线图与 MOC 双链检查
-- [ ] 大纲版学习路线图中每个 H3 主题后已添加指向对应 MOC 的链接
-- [ ] 每个 MOC 笔记中已添加指向大纲版学习路线的链接
-- 格式规范见 [references/obsidian-structure.md](./references/obsidian-structure.md) 中「路线图与 MOC 双向链接」章节
+#### 5.1.3 Roadmap ↔ MOC Wikilink Check
+- [ ] Each H3 topic in the outline roadmap has been linked to the corresponding MOC
+- [ ] Each MOC note has a backlink to the outline roadmap
+- See [references/obsidian-structure.md](./references/obsidian-structure.md) "Roadmap and MOC Bidirectional Links" section for format specification
 
-**步骤 5.2: 生成"核心问题"笔记**
+**Step 5.2: Generate "Core Questions" Note**
 
-**存储位置**：`{vault根目录}/{学习材料所在文件夹}/核心问题.md`
+**Storage location**: `{vault}/{learning materials folder}/Core Questions.md`
 
-即：与学习材料 PDF/MD 文件**相同的文件夹下**，直接创建 `核心问题.md` 文件。
+Create the `Core Questions.md` file directly in the same folder as the learning materials (PDF/MD files).
 
-#### 5.2.1 问题要求
+#### 5.2.1 Question Requirements
 
-**数量限制**：不超过 5 个核心问题
+**Quantity limit**: no more than 5 core questions
 
-**问题质量标准**：
-1. **精华性**：问题应涵盖学习材料最核心的知识、原则、方法论等精华内容
-2. **引导性**：问题应引导用户更高效地带着问题去学习，而非简单的信息检索
-3. **逻辑性**：问题之间应有逻辑层次，不应有明显的重复和矛盾
+**Quality standards**:
+1. **Essential**: questions should cover the most essential knowledge, principles, and methodologies from the learning material
+2. **Guiding**: questions should guide the user to learn more efficiently with a purpose, not simply retrieve information
+3. **Logical**: questions should have logical progression among them; no obvious repetition or contradiction
 
-#### 5.2.2 问题结构
+#### 5.2.2 Question Structure
 
-每个问题应包含：
-- **问题标题**：简明扼要的核心问题
-- **问题背景**：解释这个问题的背景、重要性、要解决什么
-- **子问题**（可选）：将复杂问题拆分为 2-3 个子问题
+Each question should include:
+- **Question title**: a concise core question
+- **Question background**: explain why this question matters, what it addresses, the context
+- **Sub-questions** (optional): break complex questions into 2-3 sub-questions
 
-#### 5.2.3 输出格式
+#### 5.2.3 Output Format
 
-完整 Markdown 模板见 [references/templates.md](./references/templates.md) 中的 `核心问题模板`。关键格式要素：
+See [references/templates.md](./references/templates.md) for the complete `Core Questions Template`. Key format elements:
 
-- 不超过 5 个核心问题，每个含问题标题 + 问题背景 + 可选 2-3 个子问题
-- 末尾含 `## 学习提示` 引导主动学习
-- 存储位置：`{学习材料所在文件夹}/核心问题.md`
+- No more than 5 core questions, each with question title + background + optional 2-3 sub-questions
+- End with a `## Study Tips` section to guide active learning
+- Storage location: `{learning materials folder}/Core Questions.md`
 
-**步骤 5.3: 批量报告最终结果**
+**Step 5.3: Batch Report Final Results**
 
-一次性展示：
-- 原子笔记总数、创建状态、内容质量审查结果
-- MOC 与原子笔记双链建立情况
-- 路线图与 MOC 双向链接建立情况
-- "核心问题"笔记已生成
+Present once:
+- Total atomic notes, creation status, content quality review results
+- MOC ↔ atomic note wikilink status
+- Roadmap ↔ MOC bidirectional link status
+- "Core Questions" note generated
 
-如有任何检查项未通过，修复后再报告最终结果。
+If any check item is not passed, fix it before reporting the final results.
 
-**完成后**：向 `.obsidian-learning-progress.md` 追加 `[Phase 5] 最终审查完成`。
+**After completion**: append `[Phase 5] Final review complete` to `.obsidian-learning-progress.md`.
 
-**步骤 5.4: Phase 6 执行确认**
+**Step 5.4: Phase 6 Execution Confirmation**
 
-Phase 5 完成后，**必须**询问用户是否进入 Phase 6：
-
-```
-📋 Phase 5 最终审查完成。核心问题笔记已生成。
-
-是否进入 Phase 6（深度研究与争议分析）？
-  需要：deep-research skill 或等价 MCP / Web 检索工具
-  - "继续" → 进入 Phase 6
-  - "跳过" → 结束流程
-```
-
-- 用户选择"跳过" → 向进度文件追加 `[Phase 5] 完成 — Phase 6 用户跳过`，流程结束
-- 用户选择"继续" → 进入 Phase 6
-
-### Phase 6: 深度研究与争议分析
-
-**步骤 6.1: 执行深度研究**
-
-#### 6.1.1 研究主题提取
-
-从学习路线图中提取：
-- **主题名称**：学习材料的核心主题（如"Digital Transformation"）
-- **补充关键词**：关键概念、理论框架名称
-
-#### 6.1.2 检测并执行深度研究
-
-按以下步骤执行：
-
-1. **检测可用能力**：检查当前环境中是否存在深度检索工具（`deep-research` skill、Web Search MCP、`webfetch` 工具等）
-2. **向用户报告检测结果并执行**：
-   - ✅ 检测到可用工具 → 提示 `正在使用 {工具名} 执行深度研究...`，进入步骤 3
-   - ❌ 未检测到 → 告知用户「未检测到深度检索工具，跳过 Phase 6。可手动检索后按 references/templates.md 的争议分析模板自建笔记」，向进度文件追加 `[Phase 6] 跳过 — 未检测到检索工具`，流程结束
-3. **执行检索**：使用可用工具检索以下内容：
-   > {主题}的深度研究，包括：主流观点、争议内容、不同视角、行业共识与分歧、权威来源
-
-#### 6.1.3 研究报告接收
-
-从 deep-research（或等价研究输出）返回的结果中提取：
-- **Executive Summary**：用于争议分析笔记的摘要部分
-- **Sources**：用于参考来源列表
-- **各主题 Findings**：用于识别共识与争议
-
-将研究报告完整保存到：
-`{vault根目录}/{学习材料所在文件夹}/{主题} - 深度研究.md`
-
-**步骤 6.2: 解析研究结果**
-
-#### 6.2.1 研究结果到笔记内容的映射
-
-| 争议分析笔记部分 | 对应研究报告输出 |
-|-----------------|----------------------|
-| 摘要 | Executive Summary |
-| 毋庸置疑（行业共识） | 多个主题 findings 中多来源一致认可的内容 |
-| 存在争议（不同观点） | 各主题 findings 中观点分歧的内容 |
-| 因情景而已 | Key Takeaways 中提到"取决于具体情况"的内容 |
-| 参考来源 | Sources 列表（提取最有价值的 5-10 个） |
-| 探讨问题 | 基于争议内容生成 |
-
-#### 6.2.2 解析原则
-
-- **提取而非重写**：从研究报告中提取相关内容
-- **保留来源**：所有内容必须标注来源
-- **对比学习材料**：识别与学习材料观点一致/分歧的内容
-
-**步骤 6.3: 生成"争议分析"笔记**
-
-**存储位置**：`{vault根目录}/{学习材料所在文件夹}/{主题} - 争议分析.md`
-
-即：与学习材料 PDF/MD 文件**相同的文件夹下**，直接创建 `{主题} - 争议分析.md` 文件。
-
-#### 6.3.1 笔记结构
-
-完整 Markdown 模板见 [references/templates.md](./references/templates.md) 中的 `争议分析模板`。包含六个章节：
-
-- 摘要（200-300 字）
-- 毋庸置疑的部分（行业共识）
-- 存在争议的内容（不同观点）
-- 因情景而异的内容（无标准答案）
-- 与资深人士深入探讨的问题清单
-- 关键结论 + 参考来源 + 学习建议
-
-#### 6.3.2 内容填充指南
-
-**毋庸置疑部分**：
-- 寻找多个来源一致认可的观点
-- 解释为何这些观点被广泛接受
-- 引用权威来源支持
-
-**争议部分**：
-- 识别学习材料与其他来源的分歧点
-- 客观呈现各方观点，不偏袒任何一方
-- 指出争议的核心和根源
-
-**情景依赖部分**：
-- 识别方法论层面的建议
-- 解释不同情景下的适用性差异
-- 找出关键决定变量
-
-**问题清单**：
-- 问题应具有开放性和深度
-- 避免 yes/no 类问题
-- 优先选择 expert 们经常讨论的核心议题
-
-**步骤 6.4: 批量报告结果**
-
-一次性展示：
-- 深度研究执行摘要（研究了多少来源、覆盖了哪些方面）
-- 争议分析笔记已生成
-- 参考来源列表
-
-> 历史失败案例与改进记录见 [HISTORY.md](./HISTORY.md)
-
-## 文件结构
+After Phase 5 completes, **must** ask the user whether to enter Phase 6:
 
 ```
-skill目录/
-├── SKILL.md                    # 主 skill 文件（含完整流程）
-├── README.md                   # 安装说明与产品说明
+📋 Phase 5 final review complete. Core Questions note generated.
+
+Enter Phase 6 (Deep Research & Controversy Analysis)?
+  Requires: deep-research skill or equivalent MCP / Web search tool
+  - "continue" → enter Phase 6
+  - "skip" → end workflow
+```
+
+- User selects "skip" → append `[Phase 5] Complete — Phase 6 skipped by user` to progress file, workflow ends
+- User selects "continue" → enter Phase 6
+
+### Phase 6: Deep Research & Controversy Analysis
+
+**Step 6.1: Execute Deep Research**
+
+#### 6.1.1 Research Topic Extraction
+
+Extract from the learning roadmap:
+- **Topic name**: the core topic of the learning material (e.g., "Digital Transformation")
+- **Supplementary keywords**: key concepts, theoretical framework names
+
+#### 6.1.2 Detect and Execute Deep Research
+
+Execute the following steps:
+
+1. **Detect available capabilities**: check whether deep search tools exist in the current environment (`deep-research` skill, Web Search MCP, `webfetch` tool, etc.)
+2. **Report detection results to user and execute**:
+   - ✅ Tools detected → prompt `Using {tool name} to execute deep research...`, proceed to step 3
+   - ❌ Not detected → inform user "No deep search tools detected. Skipping Phase 6. You can manually search and create a Controversy Analysis note following the template in references/templates.md.", append `[Phase 6] Skipped — No search tools detected` to progress file, workflow ends
+3. **Execute search**: use available tools to search for:
+   > Deep research on {topic}: mainstream views, controversies, different perspectives, industry consensus and divergence, authoritative sources
+
+#### 6.1.3 Research Report Reception
+
+Extract from the deep research (or equivalent research output):
+- **Executive Summary**: used for the summary section of the controversy analysis note
+- **Sources**: used for the reference source list
+- **Findings by topic**: used to identify consensus and controversies
+
+Save the complete research report to:
+`{vault}/{learning materials folder}/{Topic} - Deep Research.md`
+
+**Step 6.2: Parse Research Results**
+
+#### 6.2.1 Mapping Research Output to Note Content
+
+| Controversy Analysis Section | Corresponding Research Output |
+|------------------------------|-------------------------------|
+| Summary | Executive Summary |
+| Undisputed (industry consensus) | Content consistently recognized across multiple sources in topic findings |
+| Controversial (different views) | Content with divergent views across topic findings |
+| Context-dependent | Content in Key Takeaways mentioning "depends on context" |
+| Reference Sources | Sources list (extract the most valuable 5-10) |
+| Discussion Questions | Generated based on controversial content |
+
+#### 6.2.2 Parsing Principles
+
+- **Extract rather than rewrite**: extract relevant content from the research report
+- **Preserve sources**: all content must be source-attributed
+- **Compare with learning material**: identify content that agrees or diverges from the learning material's views
+
+**Step 6.3: Generate "Controversy Analysis" Note**
+
+**Storage location**: `{vault}/{learning materials folder}/{Topic} - Controversy Analysis.md`
+
+Create the `{Topic} - Controversy Analysis.md` file directly in the same folder as the learning materials (PDF/MD files).
+
+#### 6.3.1 Note Structure
+
+See [references/templates.md](./references/templates.md) for the complete `Controversy Analysis Template`. Contains six sections:
+
+- Summary (200-300 words)
+- Undisputed (Industry Consensus)
+- Controversial (Different Views)
+- Context-Dependent (No Universal Answer)
+- Deep Discussion Questions for Experts
+- Key Conclusions + Reference Sources + Study Suggestions
+
+#### 6.3.2 Content Filling Guide
+
+**Undisputed section**:
+- Find views consistently recognized across multiple sources
+- Explain why these views are widely accepted
+- Cite authoritative sources as support
+
+**Controversial section**:
+- Identify divergence points between the learning material and other sources
+- Objectively present all perspectives without bias
+- Point out the core of the controversy and its roots
+
+**Context-dependent section**:
+- Identify methodology-level suggestions
+- Explain applicability differences across different contexts
+- Identify key determining variables
+
+**Question list**:
+- Questions should be open-ended and deep
+- Avoid yes/no type questions
+- Prioritize core topics frequently discussed by experts
+
+**Step 6.4: Batch Report Results**
+
+Present once:
+- Deep research executive summary (how many sources researched, which aspects covered)
+- Controversy Analysis note generated
+- Reference source list
+
+> Historical failure cases and improvement records: see [HISTORY.md](./HISTORY.md)
+
+## File Structure
+
+```
+skill directory/
+├── SKILL.md                         # Main skill file (complete workflow)
+├── README.md                        # Installation and product description
+├── HISTORY.md                       # Failure cases & improvement log
+├── COMPATIBILITY.md                 # Multi-client compatibility guide
 ├── agents/
-│   ├── roadmap-generator.md    # 路线图生成 agent
-│   ├── file-structure-creator.md # 文件结构创建 agent
-│   ├── atomic-note-filler.md    # 原子笔记填充 agent
-│   └── note-reviewer.md         # 笔记审查 agent
+│   ├── roadmap-generator.md         # Roadmap generation agent
+│   ├── file-structure-creator.md    # File structure creation agent
+│   ├── atomic-note-filler.md        # Atomic note filling agent
+│   └── note-reviewer.md             # Note review agent
 ├── references/
-│   ├── obsidian-structure.md    # Obsidian 结构规范
-│   └── templates.md             # 生成物格式模板（核心问题、争议分析）
+│   ├── obsidian-structure.md        # Obsidian format specification
+│   └── templates.md                 # Output templates (core questions, controversy analysis)
 └── scripts/
-    ├── double-link-builder.py   # 双链构建（三阶段漏斗 v2）
-    ├── context-extractor.py     # 上下文预提取（Phase 3.0b）
-    └── roadmap-editor.py        # 可选：路线图可视化编辑
+    ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
+    ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
+    └── roadmap-editor.py            # Optional: browser-based roadmap editor
 ```
 
-## 流程概览
+## Flow Overview
 
 ```
-Phase 1: 路线图生成
+Phase 1: Roadmap Generation
     ↓
-Phase 2: 文件结构创建
+Phase 2: File Structure Creation
     ↓
-Phase 3: 内容生成（并行）
+Phase 3: Content Generation (Parallel)
     ↓
-Phase 4: 双链建立
+Phase 4: Wikilink Building
     ↓
-Phase 5: 最终审查 + 核心问题生成
+Phase 5: Final Review + Core Question Generation
     ↓
-Phase 6: 深度研究与争议分析
+Phase 6: Deep Research & Controversy Analysis
 ```
 
-### 客户端差异（Codex / Cursor 等）
+### Client Differences (Claude Code / Codex / Cursor etc.)
 
-- **Codex**：常见触发方式为 slash command（如 `/obsidian-learning`，以本地配置为准）；子 Agent 与「Skill 调 Skill」依赖当前 harness 是否启用。
-- **Cursor**：通常由 **Agent Skills** 根据描述自动匹配，或由用户在对话中显式要求按本 SKILL 执行；若无多 Agent 编排，Phase 3 按上文**降级为顺序分组**即可。
-- **`scripts/double-link-builder.py` (v2)**：执行三阶段漏斗的阶段 1+2（结构化亲和过滤 + TF-IDF + 关键词启发式）。`--mode full`（默认）输出 `candidates.json` 供主 Agent 的 LLM 做阶段 3 分类；`--mode strict`（降级）直接写入确定性链接。脚本保守设计，关键词无法覆盖的关系宁可不建链，由 LLM 阶段 3 或用户在 Obsidian 中补全。
-- **LLM 阶段 3 依赖**：Phase 4.2b 的 LLM 批量分类需要主 Agent 具有调用 LLM 的能力。若不支持（如纯本地环境），使用 `--mode strict` 降级路径。
+- **Claude Code / Codex**: Typical trigger via slash command (e.g., `/obsidian-learning`, subject to local command configuration); sub-agents and "skill calling skill" depend on whether the current harness supports them.
+- **Cursor**: Usually auto-matched by **Agent Skills** based on description, or the user explicitly requests execution per this SKILL in conversation; if multi-agent orchestration is unavailable, Phase 3 degrades to **sequential grouping** as described above.
+- **`scripts/double-link-builder.py` (v2)**: Executes stages 1+2 of the three-stage funnel (structural affinity filtering + TF-IDF + keyword heuristics). `--mode full` (default) outputs `candidates.json` for the main agent's LLM to do stage 3 classification; `--mode strict` (degraded) directly writes deterministic links. The script is conservative by design — relationships not covered by keywords are left unlinked, to be completed by LLM stage 3 or by the user in Obsidian.
+- **LLM Stage 3 Dependency**: Phase 4.2b's LLM batch classification requires the main agent to have LLM calling capability. If unsupported (e.g., purely local environment), use the `--mode strict` degraded path.
 
-## 输出质量标准
+## Output Quality Standards
 
-| 产出物 | 核心要求 | 详细规范 |
-|--------|----------|----------|
-| 路线图 | 完整版 200+ 字/知识点 + 案例 + 引用 + source_range；大纲版仅 H2/H3/bullet | 见 Phase 1.5 |
-| 原子笔记 | 核心概念 200+ 字 + 案例 150+ 字 + 原文引用 + 2-3 思考问题，无大量重复 | 见 [agents/atomic-note-filler.md](./agents/atomic-note-filler.md) |
-| 双链 | 基于 5 类逻辑关联（非术语相似），路线图 ↔ MOC 双向 | 见 [references/obsidian-structure.md](./references/obsidian-structure.md) |
-| Obsidian 格式 | frontmatter 含 title/date/tags，wikilinks 目标存在，格式统一 | 见 [references/obsidian-structure.md](./references/obsidian-structure.md) |
-| 核心问题 | ≤5 个，含问题背景 + 可选子问题，具有引导性和逻辑层次 | 见 Phase 5.2 + [references/templates.md](./references/templates.md) |
-| 争议分析 | ≥3-5 参考来源，共识/争议/情景依赖三部分客观呈现 | 见 Phase 6.3 + [references/templates.md](./references/templates.md) |
+| Artifact | Core Requirements | Detailed Specification |
+|----------|------------------|----------------------|
+| Roadmap | Full version: 200+ words per knowledge point + cases + citations + source_range; Outline: strictly H2/H3/bullets only | See Phase 1.5 |
+| Atomic Notes | Core concepts 200+ words + case study 150+ words + original citation + 2-3 reflection questions, no significant duplication | See [agents/atomic-note-filler.md](./agents/atomic-note-filler.md) |
+| Wikilinks | Based on 5 logical relationship types (not term similarity), roadmap ↔ MOC bidirectional | See [references/obsidian-structure.md](./references/obsidian-structure.md) |
+| Obsidian Format | Frontmatter includes title/date/tags, wikilinks target existing notes, format is consistent | See [references/obsidian-structure.md](./references/obsidian-structure.md) |
+| Core Questions | ≤5 questions, each with background + optional sub-questions, guiding and logically structured | See Phase 5.2 + [references/templates.md](./references/templates.md) |
+| Controversy Analysis | ≥3-5 valuable reference sources, consensus/controversy/context-dependent sections presented objectively | See Phase 6.3 + [references/templates.md](./references/templates.md) |

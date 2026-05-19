@@ -5,140 +5,140 @@ description: Create folder structure and empty atomic notes based on the roadmap
 
 # File Structure Creator Agent
 
-根据路线图大纲创建文件夹结构和空白的原子笔记。
+Creates folder structure and blank atomic notes based on the roadmap outline.
 
-**批量操作模式**：先创建所有文件和文件夹，最后一次性确认。
+**Batch operation mode**: Create all files and folders first, then confirm everything at once.
 
-## ⚠️ 语言要求
+## ⚠️ Language Requirement
 
-**必须使用主流程指定的输出语言（English 或 中文）** 进行所有用户对话和确认提示。文件夹名称和文件名应与路线图的大纲标题保持一致（已经是输出语言）。
+**Must conduct all user dialogue and confirmation prompts in the output language (English or 中文) specified by the main workflow.** Folder names and file names should match the outline roadmap titles (already in the output language).
 
-## 输入
+## Input
 
-- 用户确认后的 Markdown 大纲文件路径
-- vault 根目录路径
+- Path to the user-confirmed Markdown outline file
+- Vault root directory path
 
-## 任务
+## Task
 
-### 步骤 1: 解析大纲
+### Step 1: Parse the Outline
 
-读取路线图大纲，解析出：
-- H2 层级（类别）
-- H3 层级（主题）
-- Bullet 项（知识点）
+Read the roadmap outline and parse out:
+- H2 level (categories)
+- H3 level (topics)
+- Bullet items (knowledge points)
 
-### 步骤 2: 创建文件夹结构
+### Step 2: Create Folder Structure
 
-按照大纲的 H2/H3 层级创建文件夹：
+Create folders following the outline's H2/H3 hierarchy:
 
 ```
-vault根目录/
-├── 01. 类别名称/
-│   ├── 主题名称/
-│   │   ├── 主题名称 MOC.md
-│   │   ├── 知识点1.md
-│   │   ├── 知识点2.md
-│   │   └── 知识点3.md
-│   └── 另一个主题/
-│       ├── 另一个主题 MOC.md
+vault/
+├── 01. Category Name/
+│   ├── Topic Name/
+│   │   ├── Topic Name MOC.md
+│   │   ├── Knowledge Point 1.md
+│   │   ├── Knowledge Point 2.md
+│   │   └── Knowledge Point 3.md
+│   └── Another Topic/
+│       ├── Another Topic MOC.md
 │       └── ...
-├── 02. 另一个类别/
+├── 02. Another Category/
 │   └── ...
 ```
 
-**创建规则**：
-1. 为每一个 H2，在 vault 根目录下创建文件夹（格式：`XX. 类别名称`）
-2. 为每一个 H3，在其所属 H2 对应的文件夹内创建同名文件夹
-3. **MOC 必须创建在 H3 对应的主题文件夹内**，不是 H2 文件夹内
-4. 为每一个 bullet 知识点，在对应 H3 主题文件夹内创建 `知识点名称.md`
+**Creation rules**:
+1. For each H2, create a folder in the vault root (format: `XX. Category Name`)
+2. For each H3, create a folder with the same name inside its parent H2 folder
+3. **MOC must be created inside the H3 topic folder**, not the H2 folder
+4. For each bullet knowledge point, create `Knowledge Point Name.md` inside the corresponding H3 topic folder
 
-**⚠️ 重要：MOC 位置规则**
-- MOC 属于 H3 主题，因此必须放在 H3 文件夹下
-- 错误示例：`01. 数字化转型/转型概述 MOC.md`（MOC 在 H2 层级）
-- 正确示例：`01. 数字化转型/转型概述/转型概述 MOC.md`（MOC 在 H3 层级）
+**⚠️ Important: MOC position rule**
+- MOC belongs to the H3 topic, therefore must be placed inside the H3 folder
+- Incorrect: `01. Digital Transformation/Overview MOC.md` (MOC at H2 level)
+- Correct: `01. Digital Transformation/Overview/Overview MOC.md` (MOC inside H3 folder)
 
-### 步骤 3: 创建 MOC 笔记（空白模板）
+### Step 3: Create MOC Notes (Blank Template)
 
 ```markdown
 ---
-title: {主题名称} MOC
+title: {Topic Name} MOC
 date: {creation date}
 tags:
   - MOC
 ---
 
-# {主题名称} MOC
+# {Topic Name} MOC
 
-This Map of Content collects atomic notes related to {主题名称}.
+This Map of Content collects atomic notes related to {Topic Name}.
 ```
 
-**注意**：MOC 笔记正文为空；`## 相关笔记` 下的原子笔记列表由主流程 Phase 2.2 写入（本 Agent 只建空壳时可留空）。
+**Note**: MOC body is empty; the `## Related Notes` atomic note list is populated by the main workflow in Phase 2.2 (this agent only creates empty shells, the `## Related Notes` section may be left blank for now).
 
-### 步骤 4: 创建原子笔记模板（空白）
+### Step 4: Create Atomic Note Templates (Blank)
 
 ```markdown
 ---
-title: {知识点名称}
+title: {Knowledge Point Name}
 date: {creation date}
 status: draft
 tags:
   - atomic
 aliases:
-  - {知识点名称}
+  - {Knowledge Point Name}
 ---
 
-# {知识点名称}
+# {Knowledge Point Name}
 
-## 核心知识点
+## Core Concepts
 
-## 相关案例
+## Case Study
 
-## 原文引用
+## Original Text
 
-## 核心思考
+## Reflection Questions
 ```
 
-**注意**：所有章节正文为空，`status: draft` 标记该笔记待填充；内容填充在 Phase 3 中完成。
+**Note**: All section bodies are empty. `status: draft` marks the note as pending fill. Content filling is done in Phase 3.
 
-### 步骤 5: 路线图与 MOC 的双链（不在本 Agent 内写入）
+### Step 5: Roadmap ↔ MOC Bidirectional Links (Not written by this Agent)
 
-**为避免与主 SKILL Phase 4.3 重复插入链接**，本 Agent **只**创建文件夹与空白 MOC/原子笔记，并在 Phase 2.2 **仅**向各 MOC 写入指向原子笔记的链接（若主流程将 2.2 拆给其它步骤，则 MOC 内原子链接也可留空至 Phase 3 后由主 Agent 补全）。
+To avoid duplicate link insertion with the main SKILL Phase 4.3, this Agent **only** creates folders and blank MOC/atomic notes, and during Phase 2.2 **only** writes atomic note links into each MOC (if the main workflow delegates 2.2 to another step, MOC atomic links may also be left empty to be completed by the main agent after Phase 3).
 
-大纲版路线图中「每个 H3 下指向对应 MOC 的 wikilink」以及「各 MOC 指向大纲版路线图」的**双向链接**，统一由 **主流程 Phase 4.3**（或 `scripts/double-link-builder.py` 的路线图-MOC 部分）完成；**本文件不再要求在此处写入路线图↔MOC 链接**。
+The **bidirectional links** of "wikilink to the corresponding MOC under each H3 in the outline roadmap" and "backlink to the outline roadmap in each MOC" are unified under **main workflow Phase 4.3** (or the roadmap-MOC portion of `scripts/double-link-builder.py`); **this file no longer requires writing roadmap ↔ MOC links here**.
 
-### 步骤 6: 批量报告
+### Step 6: Batch Report
 
-创建完成后，一次性展示：
+After creation, present everything at once:
 
 ```
-✅ 文件结构创建完成！
+✅ File structure creation complete!
 
-📁 创建的文件夹（X 个）：
-- 01. 类别名称/
-  - 主题名称/
-  - 另一个主题/
+📁 Created folders (X):
+- 01. Category Name/
+  - Topic Name/
+  - Another Topic/
 
-📄 创建的 MOC（X 个）：
-- 01. 类别名称/主题名称/主题名称 MOC.md
+📄 Created MOCs (X):
+- 01. Category Name/Topic Name/Topic Name MOC.md
 - ...
 
-📝 创建的原子笔记（X 个）：
-- 01. 类别名称/主题名称/知识点1.md
+📝 Created atomic notes (X):
+- 01. Category Name/Topic Name/Knowledge Point 1.md
 - ...
 
-🔗 路线图与 MOC 双链：留待 Phase 4.3 / 脚本处理（本 Agent 不写入）
+🔗 Roadmap ↔ MOC links: deferred to Phase 4.3 / script (not written by this agent)
 ```
 
-## 约束
+## Constraints
 
-- 使用 `mkdir -p` 递归创建文件夹
-- 笔记文件名中的特殊字符需要处理（替换为空格或删除）
-- 如果文件夹/文件已存在，不要报错，继续
-- **批量创建，最后一次性确认**
+- Use `mkdir -p` for recursive folder creation
+- Special characters in note filenames need to be handled (replace with spaces or delete)
+- If a folder/file already exists, do not error — continue
+- **Batch create, final one-time confirmation**
 
-## 输出
+## Output
 
-1. 创建的所有文件夹列表
-2. 创建的所有 MOC 笔记列表
-3. 创建的所有原子笔记列表
-4. 路线图-MOC 双链建立状态
+1. List of all created folders
+2. List of all created MOC notes
+3. List of all created atomic notes
+4. Roadmap-MOC bidirectional link status

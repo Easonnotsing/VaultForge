@@ -1,206 +1,206 @@
-# Obsidian 笔记结构规范
+# Obsidian Note Structure Specification
 
-本文档定义了 Obsidian 知识库的标准化结构，用于学习材料处理流程。
+Defines the standardized structure for the Obsidian knowledge base used in the learning material processing workflow.
 
-## 目录结构
+## Directory Structure
 
 ```
-vault根目录/
-├── 01. 类别名称/                    # H2 对应文件夹（数字编号 + 类别名）
-│   ├── 主题名称/                    # H3 对应文件夹（主题名）
-│   │   ├── 主题名称 MOC.md         # MOC 笔记
-│   │   ├── 知识点1.md              # 原子笔记
-│   │   ├── 知识点2.md
-│   │   └── 知识点3.md
-│   └── 另一个主题/
-│       ├── 另一个主题 MOC.md
+vault/
+├── 01. Category Name/                     # H2 corresponding folder (numbered + category name)
+│   ├── Topic Name/                        # H3 corresponding folder (topic name)
+│   │   ├── Topic Name MOC.md              # MOC note
+│   │   ├── Knowledge Point 1.md           # Atomic note
+│   │   ├── Knowledge Point 2.md
+│   │   └── Knowledge Point 3.md
+│   └── Another Topic/
+│       ├── Another Topic MOC.md
 │       └── ...
-├── 02. 另一个类别/
+├── 02. Another Category/
 │   └── ...
-├── 学习路线图（完整版） - 主题名.md  # 完整版路线图
-└── 学习路线图 - 主题名.md          # 大纲版路线图
+├── Learning Roadmap (Full) - Topic Name.md  # Full version roadmap
+└── Learning Roadmap - Topic Name.md          # Outline version roadmap
 ```
 
-## 命名规范
+## Naming Conventions
 
-### 文件夹命名
+### Folder Naming
 
-- H2 文件夹：`XX. 类别名称`（数字编号 + 点 + 空格 + 类别名）
-- H3 文件夹：`主题名称`（与 H3 标题一致）
-- 不包含特殊字符（`/`、`\`、`*`、`?`、`"`、`<`、`>`、`|`）
+- H2 folder: `XX. Category Name` (number + period + space + category name)
+- H3 folder: `Topic Name` (matches the H3 title)
+- No special characters (`/`, `\`, `*`, `?`, `"`, `<`, `>`, `|`)
 
-### 文件命名
+### File Naming
 
-- MOC 笔记：`主题名称 MOC.md`
-- 原子笔记：`知识点名称.md`
-- 学习路线图完整版：`学习路线图（完整版） - 主题名.md`
-- 学习路线图大纲版：`学习路线图 - 主题名.md`
+- MOC note: `Topic Name MOC.md`
+- Atomic note: `Knowledge Point Name.md`
+- Full version roadmap: `Learning Roadmap (Full) - Topic Name.md`
+- Outline roadmap: `Learning Roadmap - Topic Name.md`
 
-## Frontmatter 规范
+## Frontmatter Specification
 
-### MOC 笔记
+### MOC Note
 
 ```yaml
 ---
-title: 主题名称 MOC
+title: Topic Name MOC
 date: 2024-01-15
 tags:
   - MOC
 ---
 ```
 
-### 原子笔记
+### Atomic Note
 
 ```yaml
 ---
-title: 知识点名称
+title: Knowledge Point Name
 date: 2024-01-15
 status: draft
 tags:
-  - 数字转型
+  - digital-transformation
 aliases:
-  - 知识点名称
+  - Knowledge Point Name
   - Alternative Name
 ---
 ```
 
-**status 字段说明**：
+**`status` field description**:
 
-| 值 | 含义 | 由谁写入 |
-|----|------|----------|
-| `draft` | 空壳文件，待填充内容 | Phase 2 文件结构创建 |
-| `filling` | 正在填充中（.tmp 文件已写入） | Phase 3 填充 agent（写入 .tmp 时） |
-| `filled` | 内容已填充完成（.tmp → .md rename 后） | Phase 3 填充 agent（rename 时更新） |
-| `reviewed` | 已通过质量审查 | Phase 3 审查 agent |
-| `needs_review` | 超过最大重试次数，待人工审核 | Phase 3 主流程 |
+| Value | Meaning | Set By |
+|-------|---------|--------|
+| `draft` | Empty shell file, content pending | Phase 2 file structure creation |
+| `filling` | Currently being filled (.tmp file written) | Phase 3 filling agent (when writing .tmp) |
+| `filled` | Content filled completely (.tmp → .md rename complete) | Phase 3 filling agent (on rename, status update) |
+| `reviewed` | Passed quality review | Phase 3 review agent |
+| `needs_review` | Exceeded max retries, needs manual review | Phase 3 main workflow |
 
-## 双链规范
+## Wikilink Specification
 
-### 双链建立标准（重要）
+### Wikilink Standard (Important)
 
-双链必须基于**逻辑相关性**，而非纯粹的术语相似。
+Wikilinks must be based on **logical relevance**, not pure term similarity.
 
-| 关联类型 | 定义 | 示例 |
-|---------|------|------|
-| 推导关系 | 一篇笔记的结论由另一篇推导而出 | "网络效应" → "平台商业模式" |
-| 原理相似 | 两篇笔记的原理可以类比借鉴、触类旁通 | "冰箱制冷原理" → "空调制冷原理" |
-| 结论矛盾 | 两篇笔记的结论存在矛盾，需要深入辩论对比 | "渐进式创新" vs "颠覆式创新" |
-| 应用关联 | 一篇笔记的应用涉及另一篇的概念 | "数据分析" 应用了 "数据收集" 的概念 |
-| 背景关联 | 两篇笔记属于同一领域的不同发展阶段或方面 | "敏捷开发" 与 "传统开发" |
+| Relationship Type | Definition | Example |
+|-------------------|------------|---------|
+| Derivation | One note's conclusion is derived from another | "Network Effects" → "Platform Business Model" |
+| Analogy | The principles of two notes can be analogized | "Refrigeration Principle" → "Air Conditioning Principle" |
+| Contradiction | Two notes' conclusions contradict, requiring debate | "Incremental Innovation" vs "Disruptive Innovation" |
+| Application | One note's application involves another's concept | "Data Analysis" applies concepts from "Data Collection" |
+| Context | Two notes belong to different aspects or stages of the same domain | "Agile Development" and "Traditional Development" |
 
-**禁止基于纯粹术语相似而建立双链。**
+**Forbidden: establishing wikilinks based purely on term similarity.**
 
-### MOC 与原子笔记
+### MOC and Atomic Notes
 
-在 MOC 笔记中使用无序列表链接原子笔记（章节名与主流程 SKILL 保持一致）：
-
-```markdown
-## 相关笔记
-
-- [[主题名称/知识点1]]
-- [[主题名称/知识点2]]
-```
-
-### 路线图与 MOC 双向链接
-
-**在路线图大纲中**：
+Use an unordered list in the MOC note to link atomic notes:
 
 ```markdown
-## 02. 主题名称
+## Related Notes
 
-[[02. 主题名称/主题名称 MOC|主题名称]]
-
-- 知识点1
-- 知识点2
+- [[Topic Name/Knowledge Point 1]]
+- [[Topic Name/Knowledge Point 2]]
 ```
 
-**在 MOC 中**：
+### Roadmap and MOC Bidirectional Links
+
+**In the outline roadmap**:
 
 ```markdown
-## 相关笔记
+## 02. Topic Name
 
-- [[../../学习路线图 - Digital Transformation Roadmap|学习路线图]]
+[[02. Topic Name/Topic Name MOC|Topic Name]]
+
+- Knowledge Point 1
+- Knowledge Point 2
 ```
 
-### 原子笔记间关联
-
-在相关笔记末尾添加 `## 相关笔记` 部分：
+**In the MOC**:
 
 ```markdown
-## 相关笔记
+## Related Notes
 
-- [[推导关系笔记]]
-- [[原理相似笔记]]
-- [[结论矛盾笔记]]
+- [[../../Learning Roadmap - Digital Transformation Roadmap|Learning Roadmap]]
 ```
 
-## 原子笔记内容结构
+### Inter-Note Atomic Note Links
 
-每个原子笔记必须包含以下四个部分，且内容详尽（200+ 字）：
+Add a `## Related Notes` section at the end of the relevant note:
+
+```markdown
+## Related Notes
+
+- [[Derivation Note]]
+- [[Analogy Note]]
+- [[Contradiction Note]]
+```
+
+## Atomic Note Content Structure
+
+Each atomic note must contain the following four sections, with thorough content:
 
 ```markdown
 ---
-title: 知识点名称
+title: Knowledge Point Name
 date: 2024-01-15
 status: filled
 tags:
-  - 数字转型
+  - digital-transformation
 aliases:
-  - 知识点名称
+  - Knowledge Point Name
 ---
 
-# 知识点名称
+# Knowledge Point Name
 
 ## Core Concepts
 
-**Background**：{为什么这个概念重要}
+**Background**: {Why this concept matters}
 
-**Definition**：{精确的定义，必要时对比相关概念}
+**Definition**: {Precise definition, comparing related concepts when necessary}
 
-**Principle**：{它如何运作，核心机制是什么}
+**Principle**: {How it works, core mechanism}
 
-**Application**：{在什么场景下使用}
+**Application**: {In what scenarios to use it}
 
-**Relationship to Other Concepts**：{它在整个知识体系中的位置}
+**Relationship to Other Concepts**: {Its position in the overall knowledge system}
 
 ## Case Study
 
-### {案例名称}
+### {Case Name}
 
-**Background**：{谁、在哪里、因为什么}
+**Background**: {Who, where, why}
 
-**Process**：{发生了什么，关键决策和行动}
+**Process**: {What happened, key decisions and actions}
 
-**Outcome**：{最终 outcome，成功或失败}
+**Outcome**: {Final outcome, success or failure}
 
-**Insight**：{从这个案例中可以学到什么}
+**Insight**: {What can be learned from this case}
 
 ## Original Text
 
-> {与知识点最核心相关的原文段落，50-150 字，保留源语言}
+> {Core original passage, 50-150 words, retain source language}
 
 > — Source: {Document}, Author: {Author}, pp.{Page Range}
 
 ## Reflection Questions
 
-1. {促进深度理解的思考问题1}
-2. {思考问题2}
-3. {思考问题3}
+1. {Deep reflection question 1}
+2. {Reflection question 2}
+3. {Reflection question 3}
 ```
 
-## 知识点划分原则
+## Knowledge Point Division Principles
 
-1. **原子性**：每个知识点应该是独立的、不可再分的
-2. **相关性**：同一主题下的知识点应该相互关联
-3. **可理解性**：每个知识点应该能够让初学者通过阅读笔记理解
-4. **引用清晰**：知识点应该有明确的来源引用
-5. **内容丰富**：不是提纲，而是详尽的教学材料
+1. **Atomicity**: Each knowledge point should be independent and indivisible
+2. **Relevance**: Knowledge points under the same topic should be interrelated
+3. **Comprehensibility**: Each knowledge point should enable a beginner to understand it by reading the note
+4. **Clear citation**: Knowledge points should have clear source citations
+5. **Rich content**: Not an outline — thorough teaching material
 
-## MOC 作用
+## MOC Purpose
 
-MOC（Map of Content）作为主题索引：
-- 聚合该主题下的所有原子笔记
-- 提供主题层面的概览
-- 方便导航和关联发现
-- 体现知识点间的层次结构
-- **与路线图建立双向链接**
+MOC (Map of Content) serves as a topic index:
+- Aggregates all atomic notes under that topic
+- Provides a topic-level overview
+- Facilitates navigation and relationship discovery
+- Reflects the hierarchical structure of knowledge points
+- **Establishes bidirectional links with the roadmap**
