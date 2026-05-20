@@ -506,9 +506,16 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 4. Output structured context packet JSON (top-level fields: `vault_path`, `buffer`, `total_knowledge_points`, `packets`):
    - Each packet contains `note_file`, `title`, `source_excerpts` (array, each item `{source, pages, text}`)
 
-**Degradation strategy**: If PDF source lacks PyPDF2 dependency or file is unreadable, the script outputs a stderr warning, skips that file, and sets the corresponding excerpt's `text` to an empty string. The filling agent then degrades to locating content from the full material.
+**Degradation strategy**: If PDF source lacks PyPDF2 dependency or file is unreadable, the script outputs a stderr warning, skips that file, and sets the corresponding excerpt's `text` to an empty string. The filling agent then degrades to locating content from the full source material.
 
-**Only when** no `source_range` annotations exist in the complete roadmap (extremely old legacy roadmaps), skip this step and fall back to the old degradation approach (pass full material along with the note list to the agent).
+**Only when** no `source_range` annotations exist in the complete roadmap (extremely old legacy roadmaps), skip this step and fall back to passing the **full original source files** (PDFs, Markdown) directly to the filler agent.
+
+> ⚠️ **Critical: the degradation source is the original learning material (PDF/Markdown files), NEVER the roadmap.** The roadmap is a structural outline — it has been condensed, summarized, and may not contain case studies or detailed exposition. If the filling agent receives only the roadmap as input, the resulting notes will be lossy (information decay), miss case studies, and potentially introduce hallucinations.
+
+**When context-extractor.py cannot extract context, the filler must:**
+1. Receive the **full text of all selected source files** (not the roadmap)
+2. Read the relevant sections from those source files to fill each note
+3. **Never** use the roadmap's descriptive text as a replacement for source content
 
 **Step 3.1: Compute Parallel Task Distribution**
 
@@ -963,7 +970,18 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Detect available capabilities**: check whether deep search tools exist in the current environment (`deep-research` skill, Web Search MCP, `webfetch` tool, etc.)
+1. **Detect available capabilities in priority order**:
+
+   Check for search tools in this sequence — use the **first available** from the highest tier:
+
+   | Priority | Tool | Description |
+   |----------|------|-------------|
+   | 1 (best) | `deep-research` skill | Multi-source deep research with Firecrawl + Exa, produces structured cited reports |
+   | 2 | Web Search MCP (e.g., Exa, Brave Search) | Neural or API-based web search with source attribution |
+   | 3 (fallback) | `webfetch` tool | Fetches content from individual URLs; lower coverage, manual discovery |
+
+   If multiple tiers are available, prefer the highest tier. Do not skip tier 1 in favor of tier 3 simply because tier 3 is simpler to invoke.
+
 2. **Report detection results to user and execute**:
    - ✅ Tools detected → prompt `Using {tool name} to execute deep research...`, proceed to step 3
    - ❌ Not detected → inform user "No deep search tools detected. Skipping Phase 6. You can manually search and create a Controversy Analysis note following the template in references/templates.md.", append `[Phase 6] Skipped — No search tools detected` to progress file, workflow ends

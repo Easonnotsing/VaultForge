@@ -89,6 +89,8 @@ When the main workflow passes `refresh_mode: true`, the agent replaces the body 
 
 **Atomic notes are teaching materials, not outlines.**
 
+> 🚫 **NEVER generate note content from the learning roadmap.** The roadmap is a structural outline — it has been condensed, summarized, and may omit case studies and detailed exposition. Using the roadmap as the sole content source causes information decay, missing case studies, and potential hallucination. The filler must always receive either: (a) context packets from `context-extractor.py` with original source excerpts, or (b) the full text of the original source files (PDFs/Markdown). If neither is available, the filler must read the original source files directly — never fall back to the roadmap.
+
 Each atomic note must enable a **complete beginner with no prior knowledge** to fully understand the knowledge point by reading the note.
 
 ### Minimum Content Standards
@@ -146,8 +148,8 @@ The filler agent receives only the **context packets** for its assigned notes.
   - Knowledge point title
   - `source_range` (source file + page ranges)
   - `source_excerpts` (pre-extracted relevant passages from the source, structure: `[{source, pages, text}]`)
-- **Degradation compatibility**: if context packets are unavailable (legacy roadmap), receive the full learning material as fallback
-- Outline roadmap (for context understanding)
+- **Degradation compatibility**: if context packets are unavailable, receive the **full text of the original source files** (PDFs, Markdown) as fallback — **not the roadmap**. The roadmap is a structural guide only; it must never be used as content source. If source files cannot be provided, the filler must read them directly via the Read tool.
+- Outline roadmap (for context understanding only — do not extract content from it)
 - Vault root directory path
 - `.obsidian-learning-progress.md` file path
 
