@@ -970,21 +970,25 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Detect available capabilities in priority order**:
+1. **Load deep-research skill first**. Do NOT start by searching for generic "web search" or "webfetch" tools. The `deep-research` skill is a separate capability loaded via the skill mechanism — it is not a standard tool. Check if it can be invoked:
 
-   Check for search tools in this sequence — use the **first available** from the highest tier:
+   ```
+   skill("deep-research")
+   ```
+
+   If the skill loads successfully, use it. Do NOT fall back to websearch just because websearch is also available — deep-research produces structured, multi-source, cited reports that generic websearch cannot match.
+
+2. **Only if deep-research fails to load**, check for fallback tools in this order:
 
    | Priority | Tool | Description |
    |----------|------|-------------|
-   | 1 (best) | `deep-research` skill | Multi-source deep research with Firecrawl + Exa, produces structured cited reports |
    | 2 | Web Search MCP (e.g., Exa, Brave Search) | Neural or API-based web search with source attribution |
-   | 3 (fallback) | `webfetch` tool | Fetches content from individual URLs; lower coverage, manual discovery |
+   | 3 (last) | `webfetch` tool | Fetches content from individual URLs; lower coverage |
 
-   If multiple tiers are available, prefer the highest tier. Do not skip tier 1 in favor of tier 3 simply because tier 3 is simpler to invoke.
-
-2. **Report detection results to user and execute**:
-   - ✅ Tools detected → prompt `Using {tool name} to execute deep research...`, proceed to step 3
-   - ❌ Not detected → inform user "No deep search tools detected. Skipping Phase 6. You can manually search and create a Controversy Analysis note following the template in references/templates.md.", append `[Phase 6] Skipped — No search tools detected` to progress file, workflow ends
+2. **Report and execute**:
+   - ✅ `deep-research` skill loaded → prompt `Using deep-research skill...`, proceed to step 3
+   - ⚠️ `deep-research` unavailable, but fallback found → prompt `deep-research not available, using {fallback} instead...`, proceed to step 3
+   - ❌ Nothing available → inform user and skip Phase 6
 3. **Execute search**: use available tools to search for:
    > Deep research on {topic}: mainstream views, controversies, different perspectives, industry consensus and divergence, authoritative sources
 
