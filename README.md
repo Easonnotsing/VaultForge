@@ -1,6 +1,8 @@
 # VaultForge
 
-Automatically transform PDF / Markdown learning materials into structured Obsidian atomic note knowledge bases.
+AI agent skill for Obsidian — transforms PDFs and Markdown files into structured knowledge bases with atomic notes, bi-directional wikilinks, Maps of Content (MOCs), and learning roadmaps. Supports English and Chinese. Works with Claude Code, Codex, and Cursor.
+
+> **Note:** This is an **AI agent skill** (installed in `~/.agents/skills/`), not an MCP server or Obsidian plugin. Use it with Claude Code, Codex, or Cursor.
 
 > A consultant-style learning methodology — master a new domain quickly and reach a level where you can discuss it with professionals. You focus on understanding, thinking, and asking questions; the AI handles all the tedious organization.
 
