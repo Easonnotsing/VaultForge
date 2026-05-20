@@ -517,7 +517,24 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 2. Read the relevant sections from those source files to fill each note
 3. **Never** use the roadmap's descriptive text as a replacement for source content
 
-**Step 3.1: Compute Parallel Task Distribution**
+**Step 3.0c: Detect Parallel Dispatch Capability**
+
+Before computing agent distribution, determine whether the current environment supports true multi-agent parallel dispatch. Do NOT attempt parallel dispatch speculatively — detect first.
+
+1. Check if the environment provides a `Task` tool or equivalent sub-agent orchestration primitive
+2. If the tool exists, attempt a **single** lightweight probe: dispatch one sub-agent that immediately returns "ok". If the probe succeeds within 10 seconds, parallel dispatch is available
+3. Present the result to the user:
+
+```
+🔧 Environment check:
+
+   Parallel sub-agent dispatch: ✅ supported (or ❌ not supported)
+   Estimated agents needed: ceil({pending}/10) = {N}
+```
+
+If parallel is **not supported**, skip Step 3.1 entirely and proceed directly to sequential fill (Step 3.2, sequential path). The user does not need to intervene — this is a silent fallback.
+
+**Step 3.1: Compute Parallel Task Distribution** (only if parallel supported)
 
 Calculate required agent count based on **pending** atomic note count (i.e., status=draft count):
 
@@ -549,7 +566,7 @@ Required agents = ceil(pending note count / 10)
 
 Launch the specified number of agents **in parallel** to execute the fill task. Each agent must follow the **atomic write specification**:
 
-**Environment and degradation**: If the current client does not support multi-agent parallelism (no `Task` / sub-agent orchestration), fall back to sequential execution. Group notes in batches of ≤10 and invoke `atomic-note-filler` batch by batch until all are complete. The progress report format remains unchanged. In sequential mode, context packets are still used — context-extractor.py always runs as part of Phase 3.0b.
+**Environment and degradation**: If Step 3.0c determined that parallel dispatch is not supported, proceed with sequential fill directly — no parallel attempt is made. The user does not see a timeout or need to intervene.
 
 **Atomic write specification (vf_ frontmatter)**:
 1. The filling agent first creates `{note}.md.tmp` with the complete content (**note: extension is `.md.tmp`, not `.tmp`**)
