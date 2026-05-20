@@ -972,20 +972,24 @@ Execute the following steps:
 
 1. **Load the `deep-research` skill**: invoke `skill("deep-research")`. This skill internally handles web search, Firecrawl, Exa, and report synthesis.
 
-   After loading, **you MUST output exactly one of these status lines** in the dialogue:
+   After loading, **you MUST output exactly one of these status lines**:
 
    ```
    🔬 deep-research skill loaded — executing structured multi-source research...
    ```
    or
    ```
-   ⚠️ deep-research skill not available — skipping Phase 6.
+   ⚠️ deep-research skill not available — falling back to websearch.
+   ```
+   or
+   ```
+   ❌ deep-research skill not available and no websearch tool found — skipping Phase 6.
    ```
 
-2. If loaded, execute the research on:
-   > Deep research on {topic}: mainstream views, controversies, different perspectives, industry consensus and divergence, authoritative sources
-
-   If not, append `[Phase 6] Skipped` to progress file and end the workflow.
+2. Execute based on status:
+   - 🔬 → proceed with deep-research skill
+   - ⚠️ → use available web search tools (Web Search MCP, `webfetch`, etc.) to execute the research manually
+   - ❌ → append `[Phase 6] Skipped` to progress file, end workflow
 
 #### 6.1.3 Research Report Reception
 
