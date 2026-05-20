@@ -420,6 +420,16 @@ Confirm creation? Reply:
 - Write each atomic note's wikilink from the H3 topic folder into the corresponding MOC's `## Related Notes` (or equivalent section)
 - **Do not modify the outline roadmap in this step**: bidirectional links between the outline roadmap's "H3 ↔ MOC" and "MOC ↔ Roadmap" are **unified in Phase 4.3** (or via the `scripts/double-link-builder.py` roadmap-MOC logic), avoiding duplicate insertion with Phase 4
 
+**`## Related Notes` section: shared responsibility**:
+
+| Writer | Content | When |
+|--------|---------|------|
+| Phase 2.2 | `- [[atomic note name]]` (links to atomic notes in same H3 folder) | After file creation, before content fill |
+| Phase 4.3 | `- [[../../Learning Roadmap v1 - {Topic}\|Learning Roadmap]]` (backlink to outline roadmap) | After wikilink building |
+| Phase 4.2b | `- [[other note]] (relationship_type)` (inter-note wikilinks) | During wikilink classification |
+
+Each phase only adds its own links; never removes links from a previous phase. Scan for duplicates before insertion.
+
 **Step 2.3: Validate Structure**
 - Check that folder structure and note counts match the roadmap
 - If discrepancies exist, fix before proceeding to Phase 3
@@ -559,6 +569,7 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
 
 **Quality review is executed by default**, unless the user explicitly requests skipping:
 - Use the `note-reviewer` agent to review all **filled** atomic notes (skip `status: draft` and `.tmp` files)
+- **In incremental mode**: pass `incremental_mode: true` to the reviewer — only review newly filled notes; skip existing `reviewed` notes
 - Check content richness (200+ words, case study, original citation)
 - Check for no significant duplication
 - Check for no obvious errors

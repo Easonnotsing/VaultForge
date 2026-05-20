@@ -110,6 +110,35 @@ Each atomic note must enable a **complete beginner with no prior knowledge** to 
 
 **If content is too simplified (e.g., bullet points only), it must be expanded.**
 
+## Phase 3 Entry Check (Orchestrator)
+
+This agent receives **prepared context**. The main workflow must complete these steps before dispatching:
+
+### Step 3.0: Breakpoint Recovery
+
+1. Scan all atomic note frontmatter `status` fields:
+   - `draft` → unfilled, add to fill queue
+   - `filling` → crashed residue. Two cases:
+     - `.md.tmp` exists → crashed before rename. If .tmp is complete, rename to `.md` and set `filled`; otherwise delete .tmp, keep `.md` as `draft`
+     - No `.md.tmp` → rename succeeded but status update crashed. Content is complete; set `status: filled`
+   - `filled` / `reviewed` → skip
+   - `needs_review` → exceeded max retries, report for manual handling
+2. Clean orphan `.md.tmp` files (no corresponding `.md`, or `.md` status is neither `filling` nor `draft`)
+3. Read `.obsidian-learning-progress.md` for last interruption point
+4. Report to user: completed count, pending count, needs_review count, residue cleaned
+
+### Step 3.0b: Context Pre-Extraction
+
+Run `scripts/context-extractor.py` to generate per-note source excerpts:
+
+```
+python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --output context_packets.json
+```
+
+If `source_range` annotations are missing (legacy roadmap), skip this step and pass the full learning material as fallback. If PyPDF2 is unavailable, script degrades with stderr warning — filler agent degrades to locating content from full material.
+
+The filler agent receives only the **context packets** for its assigned notes.
+
 ## Input
 
 - List of atomic notes to fill (including file paths)

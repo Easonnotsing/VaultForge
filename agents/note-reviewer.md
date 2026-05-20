@@ -49,10 +49,26 @@ Items checked:
 
 Items checked:
 - Is frontmatter correct (title, date, tags, aliases)?
+- Are **vf_ fields present** (`vf`, `vf_version`, `vf_status`, `vf_session`) on every note?
 - Are wikilinks valid (target notes exist)?
 - Is the format consistent and standardized?
 - Do filenames match their content?
 - **Do Core Concepts and Case Study sections use bold-labeled paragraph formatting?** (not continuous walls of text)
+
+### 5. Status Integrity
+
+Items checked:
+- Are there any orphan `.md.tmp` files (no corresponding `.md`, or `.md` status is neither `filling` nor `draft`)?
+- Are all atomic notes in `filled` or `reviewed` status (no residual `draft` or `filling`)?
+- Are `needs_review` notes listed with an acknowledged count?
+
+### 6. Wikilink Integrity
+
+Items checked:
+- Does every MOC's `## Related Notes` contain wikilinks to all atomic notes in that H3 folder?
+- Is each H3 in the outline roadmap linked to its corresponding MOC?
+- Does each MOC have a backlink to the outline roadmap?
+- Are there duplicate wikilink lines in any `## Related Notes` section?
 
 ## Output Format
 
@@ -73,6 +89,14 @@ REVIEW REPORT
 - [Detailed findings]
 
 ## 4. Obsidian Format
+✅ Pass / ⚠️ Warning / ❌ Fail
+- [Detailed findings]
+
+## 5. Status Integrity
+✅ Pass / ⚠️ Warning / ❌ Fail
+- [Detailed findings]
+
+## 6. Wikilink Integrity
 ✅ Pass / ⚠️ Warning / ❌ Fail
 - [Detailed findings]
 

@@ -287,6 +287,41 @@ Auto-extract from the full version, keeping only:
 2. Save outline version to vault
 3. Report save results
 
+### Step 5: Parse Statistics from Saved File
+
+**Auto-executed after saving.** The agent re-reads the saved complete roadmap `.md` file and parses its structure — **not model self-reported numbers**.
+
+1. Use the Read tool to open the saved complete roadmap file
+2. Parse line by line:
+   - Lines starting with `## ` → H2 category count +1
+   - Lines starting with `### ` → H3 topic count +1
+   - Lines starting with `- ` → knowledge point bullet count +1
+3. Report actual file-based statistics:
+   - H2 categories, H3 topics, knowledge points
+   - Estimated atomic notes count (= bullet count), MOC count (= H3 count)
+
+4. Run **proportion check**: for each H2 category, compute `knowledge_points ÷ source_pages`:
+   - \> 1.0 → ⚠️ over-fragmented, suggest merging adjacent knowledge points
+   - 0.1–1.0 → ✅ reasonable
+   - \< 0.1 → ⚠️ sparse content, consider merging or expanding
+
+5. Run **hierarchy check**: each H2 must have ≥ 2 H3 topics:
+   - 0 → ❌ fatal, H2 must have H3 topics
+   - 1 → ❌ redundant hierarchy, suggest a) split b) merge into adjacent H2 c) elevate H3 to H2
+   - ≥ 2 → ✅ reasonable
+
+6. Report findings and ask for confirmation:
+   ```
+   📊 Roadmap statistics (parsed from saved file):
+      H2 categories: 4, H3 topics: 12, Knowledge points: 48
+      Estimated atomic notes: 48, MOCs: 12
+
+   ⚠️ Issues found:
+      - Strategic Management: 1 H3 → redundant hierarchy
+   
+   Reply "continue" or "modify + feedback":
+   ```
+
 ## Constraints
 
 - **Must use content actually present in the learning materials**
