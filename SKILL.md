@@ -970,9 +970,9 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Execute deep research** by calling `skill("deep-research")` with the research topic. This skill internally uses Firecrawl and Exa — do not call websearch, webfetch, or any other search tool directly. The deep-research skill produces a structured multi-source report.
+1. **Execute deep research** using the available MCP search tools directly (not via sub-agent). Use `firecrawl_search` or `web_search_exa` for broad topic searches, and `firecrawl_scrape` or `crawling_exa` to get full page content. Follow the deep-research methodology: multi-source search → synthesize findings → cited report. Do not use websearch or webfetch as substitutes for firecrawl/exa.
 
-2. **If `skill("deep-research")` fails to load or returns an error**, fall back to available web search tools. If no search tools are available, append `[Phase 6] Skipped` and end the workflow.
+2. **If neither firecrawl nor exa tools are available in this session**, fall back to any available web search tools. If no search tools are available at all, append `[Phase 6] Skipped` and end the workflow.
 
 #### 6.1.3 Research Report Reception
 
