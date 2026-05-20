@@ -32,7 +32,7 @@ title: {Knowledge Point Title}
 date: {creation date}
 status: draft|filling|filled|reviewed
 vf: true
-vf_version: v2.2.0
+vf_version: v3.0.0
 vf_status: pristine
 vf_session: initial|incremental-YYYY-MM-DD
 tags:
@@ -217,7 +217,7 @@ title: {Knowledge Point Title in output language}
 date: {creation date}
 status: filling
 vf: true
-vf_version: v2.2.0
+vf_version: v3.0.0
 vf_status: pristine
 vf_session: {value from main workflow}
 tags:
