@@ -970,25 +970,11 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Load deep-research skill first**. Do NOT start by searching for generic "web search" or "webfetch" tools. The `deep-research` skill is a separate capability loaded via the skill mechanism — it is not a standard tool. Check if it can be invoked:
+1. **Load the `deep-research` skill**: invoke `skill("deep-research")`. This skill internally handles web search, Firecrawl, Exa, and report synthesis — do NOT attempt to replace it with standalone websearch or webfetch.
 
-   ```
-   skill("deep-research")
-   ```
-
-   If the skill loads successfully, use it. Do NOT fall back to websearch just because websearch is also available — deep-research produces structured, multi-source, cited reports that generic websearch cannot match.
-
-2. **Only if deep-research fails to load**, check for fallback tools in this order:
-
-   | Priority | Tool | Description |
-   |----------|------|-------------|
-   | 2 | Web Search MCP (e.g., Exa, Brave Search) | Neural or API-based web search with source attribution |
-   | 3 (last) | `webfetch` tool | Fetches content from individual URLs; lower coverage |
-
-2. **Report and execute**:
+2. **Execute or skip**:
    - ✅ `deep-research` skill loaded → prompt `Using deep-research skill...`, proceed to step 3
-   - ⚠️ `deep-research` unavailable, but fallback found → prompt `deep-research not available, using {fallback} instead...`, proceed to step 3
-   - ❌ Nothing available → inform user and skip Phase 6
+   - ❌ Skill not available → inform user "Deep-research skill not available. Skipping Phase 6.", append `[Phase 6] Skipped` to progress file, workflow ends
 3. **Execute search**: use available tools to search for:
    > Deep research on {topic}: mainstream views, controversies, different perspectives, industry consensus and divergence, authoritative sources
 
