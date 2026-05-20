@@ -9,19 +9,19 @@
 
 用法:
   # 完整模式（输出候选对供 LLM 分类）
-  python3 double-link-builder.py <vault_path> <roadmap_name> --output candidates.json
+  python3 double-link-builder.py <folder_path> <roadmap_name> --output candidates.json
 
   # 严格模式（仅确定性规则，不输出候选对）
-  python3 double-link-builder.py <vault_path> <roadmap_name> --mode strict
+  python3 double-link-builder.py <folder_path> <roadmap_name> --mode strict
 
   # 同时产出确定性链接和候选对
-  python3 double-link-builder.py <vault_path> <roadmap_name> --output candidates.json --mode strict
+  python3 double-link-builder.py <folder_path> <roadmap_name> --output candidates.json --mode strict
 
   # 增量模式（新笔记间的链接直接写入；新→旧仅输出建议 JSON）
-  python3 double-link-builder.py <vault_path> <roadmap_name> --mode incremental --new-notes new_notes.json --output-suggestions suggestions.json
+  python3 double-link-builder.py <folder_path> <roadmap_name> --mode incremental --new-notes new_notes.json --output-suggestions suggestions.json
 
-roadmap_name 为 vault 根目录下「学习路线图 - {roadmap_name}.md」中 {roadmap_name} 一段；
-省略时自动在根目录查找唯一的大纲版路线图（排除含「完整版」的）。
+<folder_path>: 学习材料所在文件夹路径（非 Obsidian vault 根目录）。脚本递归扫描此路径下的所有 .md 文件。
+roadmap_name 为此文件夹下「学习路线图 v1 - {roadmap_name}.md」中 {roadmap_name} 一段；
 """
 
 import argparse

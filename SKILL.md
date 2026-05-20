@@ -704,12 +704,12 @@ Final links
 **Step 4.1: Run double-link-builder.py (Stages 1+2)**
 
 ```
-python3 scripts/double-link-builder.py <vault_path> <roadmap_name> --output candidates.json
+python3 scripts/double-link-builder.py <learning_folder_path> <roadmap_name> --output candidates.json
 ```
 
-The script outputs `candidates.json`, with a top-level `pairs` array. Each element contains `note_a`, `note_b`, `title_a`, `title_b`, `scores` (`{structural, tfidf_cosine, keyword_rules}`), `preview_a`, `preview_b`.
+> ⚠️ **Scope**: The `<learning_folder_path>` is the folder selected in Phase 1.1 — the one containing the learning materials and generated atomic notes. **Do not pass the Obsidian vault root.** The script recursively scans from this path, so passing the entire vault will process unrelated notes and produce massively inflated results.
 
-The script also outputs an estimated coverage percentage (based on structural affinity calculations).
+The script outputs `candidates.json`, with a top-level `pairs` array. Each element contains `note_a`, `note_b`, `title_a`, `title_b`, `scores` (`{structural, tfidf_cosine, keyword_rules}`), `preview_a`, `preview_b`.
 
 **Step 4.2: LLM Batch Classification (Stage 3)**
 
