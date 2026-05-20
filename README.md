@@ -94,7 +94,7 @@ Phase 1: Roadmap Generation    → Full reading → structured outline + detaile
 Phase 2: File Structure         → Batch create folders / MOCs / blank atomic notes (add-only in incremental)
 Phase 3: Parallel Content Fill  → Resume check → context pre-extraction → parallel agents → quality review
 Phase 4: Wikilink Building      → Three-stage funnel (structural → TF-IDF → LLM classification; new→old suggestions)
-Phase 5: Final Review           → Integrity check + core question generation + update report (incremental)
+Phase 5: Final Review           → Integrity check + core question generation + update report + **pristine refresh** (incremental)
 Phase 6: Deep Research (opt)    → Web search → controversy analysis notes
 ```
 
@@ -104,6 +104,7 @@ Phase 6: Deep Research (opt)    → Web search → controversy analysis notes
 - **Atomic Write Protection**: `.md.tmp` → verify → rename. Agent crashes never corrupt completed notes.
 - **vf_ Frontmatter Standard**: All notes carry `vf: true`, `vf_version`, `vf_status` (pristine/user_modified/locked), `vf_session` for traceability and incremental detection.
 - **Incremental Update (v2.1)**: Phase 0 auto-detects existing VaultForge notes, classifies new vs processed files, and offers incremental (add-only, never modifies user edits) or fresh generation.
+- **Pristine Note Refresh (v2.2)**: When new source material covers existing topics, auto-detects refresh-eligible notes in the Update Report. User selects which to regenerate — frontmatter preserved, body replaced with expanded content.
 - **Context Pre-extraction**: `context-extractor.py` extracts source paragraphs per `source_range` annotation. Each agent receives only relevant snippets — token usage reduced 5×+.
 - **Auto Retry**: Notes failing quality review enter a repair queue with up to 2 retries.
 - **Wikilink Precision**: Three-stage funnel (structural filtering + TF-IDF semantics + LLM classification), ~60-80% coverage.
@@ -251,7 +252,7 @@ Phase 1: 路线图生成           → 完整阅读 → 结构化大纲 + 详细
 Phase 2: 文件结构创建         → 批量创建文件夹/MOC/空白原子笔记（增量模式仅添加）
 Phase 3: 并行内容填充         → 断点恢复 → 上下文预提取 → 并行 Agent → 质量审核
 Phase 4: 双向链接构建         → 三阶段漏斗（结构→TF-IDF→LLM 分类；新→旧仅建议）
-Phase 5: 终审                 → 完整性检查 + 核心问题 + 更新报告（增量模式）
+Phase 5: 终审                 → 完整性检查 + 核心问题 + 更新报告 + **已有笔记刷新**（增量模式）
 Phase 6: 深度研究（可选）     → 网络搜索 → 争议分析笔记
 ```
 

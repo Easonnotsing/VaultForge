@@ -32,7 +32,7 @@ title: {Knowledge Point Title}
 date: {creation date}
 status: draft|filling|filled|reviewed
 vf: true
-vf_version: v2.1.0
+vf_version: v2.2.0
 vf_status: pristine
 vf_session: initial|incremental-YYYY-MM-DD
 tags:
@@ -50,6 +50,40 @@ aliases:
 If the main workflow passes `vf_session` (e.g., `incremental-2026-05-20`), use that value. If not provided (normal mode), use `initial`.
 
 **Do not add `vf_` fields to notes that already exist and are being refilled in incremental mode** — existing notes keep their original `vf_` values.
+
+## 🔄 Refresh Mode (Phase 5.4b)
+
+When the main workflow passes `refresh_mode: true`, the agent replaces the body of an existing note while preserving its frontmatter.
+
+### Frontmatter Handling
+
+| Field | Action |
+|-------|--------|
+| `title` | Preserve |
+| `vf` | Preserve |
+| `vf_version` | Preserve |
+| `vf_status` | Preserve (`pristine`) |
+| `vf_session` | Update → `refresh-YYYY-MM-DD` |
+| `date` | Update → current date |
+| `source_range` | Update if the new roadmap has a wider range |
+| `tags` | Preserve |
+| `aliases` | Preserve |
+| `status` | Set to `filling` during write, then `filled` after rename |
+
+### Body Replacement
+
+1. Read the existing `.md` file, extract frontmatter YAML between `---` delimiters
+2. Replace the body (everything after the closing `---`) with freshly generated content
+3. Re-generate all sections: Core Concepts, Case Study, Original Text, Reflection Questions — using the **new, expanded source context**
+4. Use atomic write: `.md.tmp` → verify → rename to `.md`
+5. Update `status` to `filled`
+
+### Input (Refresh Mode)
+
+- Single note file path (notes processed one at a time)
+- Context packet with expanded `source_range` (more pages than original)
+- `refresh_mode: true` flag
+- `vf_session: refresh-YYYY-MM-DD` value
 
 ## ⚠️ Core Requirement: Content Must Be Rich, Not an Outline
 
@@ -152,7 +186,7 @@ title: {Knowledge Point Title in output language}
 date: {creation date}
 status: filling
 vf: true
-vf_version: v2.1.0
+vf_version: v2.2.0
 vf_status: pristine
 vf_session: {value from main workflow}
 tags:

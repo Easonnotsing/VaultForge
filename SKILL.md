@@ -512,7 +512,7 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
    ```yaml
    ---
    vf: true
-   vf_version: v2.1.0
+   vf_version: v2.2.0
    vf_status: pristine
    vf_session: initial|incremental-{date}
    status: filling
@@ -832,6 +832,57 @@ Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
 
 **After report generation**: append `[Phase 5] Incremental update report generated` to `.obsidian-learning-progress.md`.
 
+**Step 5.4b: Execute Pristine Note Refresh (incremental mode, user-triggered)**
+
+After the Update Report is presented, the agent **pauses** and hands control to the user:
+
+```
+📋 Notes eligible for refresh:
+
+   1. [ ] digital-maturity-model.md — 8 new source pages available (original: 3, now: 11)
+   2. [ ] five-stage-model.md — 3 new source pages available (original: 5, now: 8)
+
+   Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
+```
+
+**Detection logic**: during Phase 5.4 report compilation, compare each pristine note's topic against the new incremental roadmap. A note is refresh-eligible when:
+- Its topic matches a knowledge point in the new roadmap (same or similar title, or same H3 folder membership)
+- The new roadmap's `source_range` for that topic covers **more pages** than the note's original `source_range`
+- Delta (new_pages − original_pages) is the number shown beside each entry
+
+**User actions**:
+- `skip` → no refresh, proceed to Step 5.5
+- `refresh 1,2` → execute refresh for notes at those positions
+- `refresh all` → execute refresh for all listed notes
+
+**Refresh execution flow**:
+
+1. Re-run `scripts/context-extractor.py` with `--note-filter digital-maturity-model.md,five-stage-model.md` (only extract packets for selected notes, using the new roadmap's `source_range`)
+
+2. For each selected note, invoke `atomic-note-filler` in **refresh mode** — the filler:
+   - Reads the existing `.md` file to preserve frontmatter
+   - **Preserves**: `title`, `vf`, `vf_version`, `vf_status`, `tags`, `aliases`
+   - **Updates**: `date` → current, `vf_session` → `refresh-YYYY-MM-DD`, `source_range` → new value (if changed)
+   - Replaces the **body** (everything after `---` closing frontmatter) with fresh content
+   - Uses atomic write protection (`.md.tmp` → verify → rename)
+
+3. Progress report:
+   ```
+   🔄 Refreshing pristine notes...
+
+   [1/2] ✅ digital-maturity-model.md — refreshed (11 pages)
+   [2/2] ✅ five-stage-model.md — refreshed (8 pages)
+
+   📊 Refresh complete: 2 notes updated
+   ```
+
+4. Append to `.obsidian-learning-progress.md`:
+   ```
+   [Phase 5.4b] Refreshed: digital-maturity-model.md, five-stage-model.md (2 notes, refresh-2026-XX-XX)
+   ```
+
+**After refresh (or skip)** → proceed to Step 5.5 (Phase 6 confirmation).
+
 **Step 5.5: Phase 6 Execution Confirmation**
 
 After Phase 5 completes, **must** ask the user whether to enter Phase 6:
@@ -981,7 +1032,7 @@ Phase 3: Content Generation (parallel, with vf_ frontmatter)
     ↓
 Phase 4: Wikilink Building (new-to-new links; new-to-old suggestions)
     ↓
-Phase 5: Final Review + Core Question + Update Report (if incremental)
+Phase 5: Final Review + Core Question + Update Report + Pristine Refresh (if incremental)
     ↓
 Phase 6: Deep Research & Controversy Analysis
 ```

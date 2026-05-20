@@ -15,6 +15,7 @@
 
 用法:
   python3 context-extractor.py <vault_path> <roadmap_path> --output context_packets.json
+  python3 context-extractor.py <vault_path> <roadmap_path> --output packets.json --note-filter note1.md,note2.md
 
 依赖:
   - PyPDF2（可选，用于 PDF 页码提取；未安装时 PDF 源降级为空文本）
@@ -567,6 +568,10 @@ def main():
         default=1,
         help="页码范围缓冲区（±N 页，默认 1）",
     )
+    parser.add_argument(
+        "--note-filter",
+        help="逗号分隔的笔记文件名列表，仅提取匹配的上下文包（用于增量刷新）",
+    )
     args = parser.parse_args()
 
     vault_path = os.path.abspath(args.vault_path)
@@ -578,6 +583,12 @@ def main():
         print(f"❌ 路线图文件不存在: {roadmap_path}", file=sys.stderr)
         sys.exit(1)
 
+    # 应用 note 过滤
+    note_filter: Optional[Set[str]] = None
+    if args.note_filter:
+        note_filter = set(n.strip() for n in args.note_filter.split(","))
+        print(f"🎯 按笔记过滤: {note_filter}")
+
     print(f"📖 上下文预提取")
     print(f"   Vault: {vault_path}")
     print(f"   路线图: {os.path.basename(roadmap_path)}")
@@ -587,6 +598,13 @@ def main():
     print("🔍 解析路线图 source_range...")
     knowledge_points = parse_roadmap_source_ranges(roadmap_path)
     print(f"   找到 {len(knowledge_points)} 个知识点")
+
+    if note_filter:
+        knowledge_points = [kp for kp in knowledge_points if kp.get("note_file", "") in note_filter]
+        print(f"   过滤后: {len(knowledge_points)} 个知识点")
+        if not knowledge_points:
+            print("   ❌ 过滤后无匹配的知识点")
+            sys.exit(1)
     if not knowledge_points:
         print("   ❌ 路线图中未找到任何 source_range 标注。请检查路线图格式。")
         sys.exit(1)
