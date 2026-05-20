@@ -970,9 +970,9 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Execute deep research** using the available MCP search tools directly (not via sub-agent). Use `firecrawl_search` or `web_search_exa` for broad topic searches, and `firecrawl_scrape` or `crawling_exa` to get full page content. Follow the deep-research methodology: multi-source search → synthesize findings → cited report. Do not use websearch or webfetch as substitutes for firecrawl/exa.
+1. **Execute deep research** using the available MCP search tools directly. Tool names in opencode are prefixed with the server name — use `firecrawl_firecrawl_search` and `firecrawl_firecrawl_scrape` (Firecrawl), or `exa_web_search_exa` (Exa). Follow the deep-research methodology: multi-source search → synthesize findings → cited report. Do not use the built-in `websearch` or `webfetch` tools as substitutes.
 
-2. **If neither firecrawl nor exa tools are available in this session**, fall back to any available web search tools. If no search tools are available at all, append `[Phase 6] Skipped` and end the workflow.
+2. **If neither firecrawl nor exa tools are available**, fall back to any available web search tools. If no search tools are available at all, append `[Phase 6] Skipped` and end the workflow.
 
 #### 6.1.3 Research Report Reception
 
