@@ -86,15 +86,17 @@
   .stats-bar {
     background: var(--bg-dark);
     color: var(--text-dark);
-    text-align: center;
-    padding: 48px 24px;
+    padding: 60px 24px;
     font-size: 17px;
     letter-spacing: -0.01em;
   }
-  .stats-bar span { margin: 0 20px; white-space: nowrap; }
+  .stats-row { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+  .stats-row + .stats-row { margin-top: 20px; }
+  .stats-row span { text-align: center; white-space: nowrap; }
+  @media (max-width: 768px) { .stats-row { gap: 24px; } }
 
   .section {
-    padding: 100px 0;
+    padding: 100px 0 80px;
   }
   .section:nth-child(even) { background: #fff; }
   .section:nth-child(odd) { background: var(--bg); }
@@ -197,7 +199,7 @@
     color: var(--text);
     margin-bottom: 6px;
   }
-  .funnel .arrow { font-size: 20px; color: var(--border); }
+  .funnel .arrow { font-size: 20px; color: var(--accent); font-weight: 500; }
 
   .callout {
     background: var(--card-bg);
@@ -216,7 +218,7 @@
   }
   .evaluation h2 { color: #fff; font-size: 48px; }
   .evaluation .section-label { color: #6ea8f7; }
-  .evaluation table { margin: 40px 0 60px; }
+  .evaluation table { margin: 0 0 60px; }
   .evaluation thead th { color: #86868b; border-bottom-color: #424245; }
   .evaluation tbody td { border-bottom-color: #333; color: #d2d2d7; }
   .evaluation tbody td:first-child { color: #fff; }
@@ -229,13 +231,17 @@
   .evaluation .stars { color: #fff; }
 
   .quote {
-    font-size: 21px;
+    font-size: 19px;
     line-height: 1.5;
+    font-weight: 400;
     color: #a1a1a6;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0 0 48px;
     font-style: italic;
+    letter-spacing: -0.01em;
   }
+  .quote::before { content: '"'; }
+  .quote::after { content: '"'; }
 
   .cta {
     text-align: center;
@@ -253,30 +259,31 @@
     font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
     margin-bottom: 24px;
   }
-  .cta p { color: var(--text-secondary); font-size: 17px; max-width: 600px; margin: 0 auto 32px; }
+  .cta p { color: var(--text-secondary); font-size: 17px; max-width: 640px; margin: 0 auto 32px; }
 
   .footer {
     text-align: center;
-    padding: 32px 24px 60px;
+    padding: 48px 24px 80px;
     background: var(--bg);
   }
-  .footer a {
-    font-size: 15px;
+  .footer-item {
+    display: inline-block;
+    margin: 0 40px;
+    text-align: center;
+  }
+  .footer-item a {
+    font-size: 19px;
     color: var(--accent);
     text-decoration: none;
     font-weight: 500;
-    margin: 0 16px;
   }
-  .footer a:hover { text-decoration: underline; }
-  .footer .copy { font-size: 12px; color: var(--text-secondary); margin-top: 24px; }
-
-  .state-machine {
-    font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
-    font-size: 15px;
-    text-align: center;
-    margin: 24px 0;
-    color: var(--text);
+  .footer-item a:hover { text-decoration: underline; }
+  .footer-item .desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 6px;
   }
+  .footer .copy { font-size: 12px; color: var(--text-secondary); margin-top: 40px; }
 
   @media (max-width: 768px) {
     .hero h1 { font-size: 40px; }
@@ -285,8 +292,6 @@
     .compare { grid-template-columns: 1fr; }
     .section h2, .evaluation h2 { font-size: 36px; }
     .section { padding: 64px 0; }
-    .stats-bar { font-size: 14px; }
-    .stats-bar span { display: block; margin: 8px 0; }
     .cta h2 { font-size: 32px; }
   }
 </style>
@@ -326,12 +331,16 @@
 
 <!-- Stats Bar -->
 <div class="stats-bar">
-  <span>7‑Phase Pipeline</span>
-  <span>58 Automated Tests</span>
-  <span>7 Cross‑File Contracts</span>
-  <span>8 Degradation Paths</span>
-  <span>16/16 Audit Closure</span>
-  <span>19/19 Cross‑File Verification</span>
+  <div class="stats-row">
+    <span>7‑Phase Pipeline</span>
+    <span>58 Automated Tests</span>
+    <span>7 Cross‑File Contracts</span>
+  </div>
+  <div class="stats-row">
+    <span>8 Degradation Paths</span>
+    <span>16/16 Audit Closure</span>
+    <span>19/19 Cross‑File Verification</span>
+  </div>
 </div>
 
 <!-- Section 1 -->
@@ -351,12 +360,6 @@
         <h4>五态状态机 + 原子写入</h4>
         <p>每个笔记携带 status 字段。filling 状态拆分为两种崩溃子场景，分别恢复。.md.tmp → verify → rename 确保文件完整性。</p>
       </div>
-    </div>
-
-    <div class="state-machine">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; needs_review<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↗<br>
-      draft  →  filling  →  filled  →  reviewed
     </div>
 
     <div class="callout">
@@ -466,6 +469,8 @@
     <div class="section-label">Independent Review</div>
     <h2>综合评估</h2>
 
+    <p class="quote">VaultForge v2.3.0 is the most educationally rigorous and architecturally disciplined project in the current Agent Skill ecosystem. It has evolved from a one-shot generation tool into a continuous knowledge management system — with Phase 0 metacognitive awareness, vf_ frontmatter as a persistent state layer, ACL-style three-tier note protection, and engineering quality backed by 58 tests and 16/16 audit closure.</p>
+
     <table>
       <thead><tr><th>Pedagogical Design · 教育理论</th><th>v1.2</th><th>v2.3</th><th>Driver</th></tr></thead>
       <tbody>
@@ -492,8 +497,6 @@
       </tbody>
     </table>
 
-    <p class="quote">"VaultForge v2.3.0 is the most educationally rigorous and architecturally disciplined project in the current Agent Skill ecosystem. It has evolved from a one-shot generation tool into a continuous knowledge management system."</p>
-  </div>
 </section>
 
 <!-- CTA -->
@@ -505,8 +508,14 @@ pip install pypdf</pre>
 </section>
 
 <footer class="footer">
-  <a href="https://github.com/Easonnotsing/VaultForge">GitHub</a>
-  <a href="https://dev.to/easonnotsing/how-i-turned-6-cognitive-science-principles-into-an-ai-agent-that-builds-obsidian-vaults-103e">Dev.to</a>
+  <div class="footer-item">
+    <a href="https://github.com/Easonnotsing/VaultForge">GitHub</a>
+    <div class="desc">Skill 仓库 · 源码与安装</div>
+  </div>
+  <div class="footer-item">
+    <a href="https://dev.to/easonnotsing/how-i-turned-6-cognitive-science-principles-into-an-ai-agent-that-builds-obsidian-vaults-103e">Dev.to</a>
+    <div class="desc">设计思路 · 认知科学原理</div>
+  </div>
   <p class="copy">MIT Licensed</p>
 </footer>
 
