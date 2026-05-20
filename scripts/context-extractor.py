@@ -205,23 +205,36 @@ def parse_roadmap_source_ranges(roadmap_path: str) -> List[KnowledgePoint]:
             )
             continue
 
-        # 兼容模式：source_range 在下一行（不在同一行）
+        # 兼容模式：source_range 在后续行（支持空行间隔，向前搜索最多 3 行）
         kp_bare_match = re.match(r"^\*\*(.+?)\*\*\s*$", line)
-        if kp_bare_match and i + 1 < len(lines):
-            next_line = lines[i + 1].strip()
-            sr_match = re.match(r"^`?source_range:\s*(.+?)`?\s*$", next_line)
-            if sr_match:
-                title = kp_bare_match.group(1).strip()
-                raw_source_range = sr_match.group(1).strip()
-                source_ranges = _parse_multi_source_ranges(raw_source_range)
-                note_file = _infer_note_file_path(title, current_h2, current_h3)
-                knowledge_points.append(
-                    {
-                        "title": title,
-                        "note_file": note_file,
-                        "source_ranges": source_ranges,
-                    }
-                )
+        if kp_bare_match:
+            title = kp_bare_match.group(1).strip()
+            # 向前扫描非空行，查找 source_range（最多 3 行）
+            sr_found = False
+            for j in range(1, min(4, len(lines) - i)):
+                look_line = lines[i + j].strip()
+                if not look_line:
+                    continue
+                sr_match = re.match(r"^`?source_range:\s*(.+?)`?\s*$", look_line)
+                if sr_match:
+                    raw_source_range = sr_match.group(1).strip()
+                    source_ranges = _parse_multi_source_ranges(raw_source_range)
+                    note_file = _infer_note_file_path(title, current_h2, current_h3)
+                    knowledge_points.append(
+                        {
+                            "title": title,
+                            "note_file": note_file,
+                            "source_ranges": source_ranges,
+                        }
+                    )
+                    sr_found = True
+                    i = i + j  # skip ahead
+                    break
+                elif not look_line.startswith("source_range:") and look_line != "-":
+                    # 这不是 source_range 行，停止搜索
+                    break
+            if sr_found:
+                continue
 
     return knowledge_points
 
@@ -598,6 +611,18 @@ def main():
     print("🔍 解析路线图 source_range...")
     knowledge_points = parse_roadmap_source_ranges(roadmap_path)
     print(f"   找到 {len(knowledge_points)} 个知识点")
+    if not knowledge_points:
+        # 诊断：显示路线图中找到的粗体标题（如果有的话）
+        print("   ── 诊断信息 ──")
+        with open(roadmap_path, "r", encoding="utf-8") as f:
+            bold_items = re.findall(r"^\*\*(.+?)\*\*", f.read(), re.MULTILINE)
+        if bold_items:
+            print(f"   找到 {len(bold_items)} 个粗体标题，但均无有效 source_range。")
+            print(f"   前 5 个标题: {bold_items[:5]}")
+            print(f"   请确认 source_range 格式：`source_range: 文件名.pdf:页码-页码`")
+        else:
+            print(f"   未找到任何粗体标题。路线图格式可能不兼容。")
+        print(f"   ── 诊断结束 ──")
 
     if note_filter:
         knowledge_points = [kp for kp in knowledge_points if kp.get("note_file", "") in note_filter]
@@ -605,6 +630,7 @@ def main():
         if not knowledge_points:
             print("   ❌ 过滤后无匹配的知识点")
             sys.exit(1)
+
     if not knowledge_points:
         print("   ❌ 路线图中未找到任何 source_range 标注。请检查路线图格式。")
         sys.exit(1)
