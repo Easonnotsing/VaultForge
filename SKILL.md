@@ -970,11 +970,9 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **FORBIDDEN: do NOT use the `WebSearch` or `webfetch` tools for Phase 6 research.**
+1. **Execute deep research** using Firecrawl and Exa MCP tools. Use the full tool suite as appropriate — `firecrawl_search` to discover sources, `firecrawl_scrape` for full content, `firecrawl_agent` for autonomous multi-step research, `firecrawl_map` to explore sites, `exa_search` for academic or neural searches. Follow deep-research methodology: multi-source → synthesize → cited report.
 
-2. Use `firecrawl_search` + `firecrawl_scrape` for multi-source deep research. For autonomous multi-step research, use `firecrawl_agent`. For academic/paper searches, use `exa_search`. Follow deep-research methodology: multi-source → synthesize → cited report.
-
-3. If firecrawl or exa tools are unavailable, fall back to any available web search tools. If no search tools at all, skip Phase 6.
+2. If Firecrawl or Exa tools are unavailable, fall back to any available web search. If nothing available, skip Phase 6.
 
 #### 6.1.3 Research Report Reception
 
