@@ -22,6 +22,35 @@ Section header mapping:
 
 Original citation passages retain their source language — do not translate. Labels use the output language.
 
+## ⚠️ Frontmatter: All Notes Must Include vf_ Fields
+
+Every generated atomic note **must** include the following frontmatter fields alongside `status`:
+
+```yaml
+---
+title: {Knowledge Point Title}
+date: {creation date}
+status: draft|filling|filled|reviewed
+vf: true
+vf_version: v2.1.0
+vf_status: pristine
+vf_session: initial|incremental-YYYY-MM-DD
+tags:
+  - atomic
+  - {topic}
+aliases:
+  - {alternative title}
+---
+```
+
+- `vf: true` — marks the note as VaultForge-generated (required for Phase 0 scan detection)
+- `vf_status: pristine` — initial value indicating the note has not been user-edited. System may detect user edits later by comparing file `mtime` vs frontmatter `date`
+- `vf_session` — `initial` for first-time generation, `incremental-YYYY-MM-DD` for incremental update sessions (value passed by the main workflow)
+
+If the main workflow passes `vf_session` (e.g., `incremental-2026-05-20`), use that value. If not provided (normal mode), use `initial`.
+
+**Do not add `vf_` fields to notes that already exist and are being refilled in incremental mode** — existing notes keep their original `vf_` values.
+
 ## ⚠️ Core Requirement: Content Must Be Rich, Not an Outline
 
 **Atomic notes are teaching materials, not outlines.**
@@ -122,7 +151,12 @@ Thought-provoking questions:
 title: {Knowledge Point Title in output language}
 date: {creation date}
 status: filling
+vf: true
+vf_version: v2.1.0
+vf_status: pristine
+vf_session: {value from main workflow}
 tags:
+  - atomic
   - {topic tag in output language}
 aliases:
   - {alternative title}

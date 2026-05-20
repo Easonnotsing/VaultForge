@@ -9,6 +9,12 @@ Creates folder structure and blank atomic notes based on the roadmap outline.
 
 **Batch operation mode**: Create all files and folders first, then confirm everything at once.
 
+**Incremental mode (add-only)**: When the main workflow passes `incremental_mode: true`, this agent operates in **add-only** mode:
+- Never rename, move, or delete any existing folders or files
+- Create only folders/files that do not already exist
+- Existing MOCs are not modified (new MOCs created only for new H3 topics)
+- Uses `mkdir -p` (no-op on existing directories) and skips note creation if the target `.md` already exists
+
 ## ⚠️ Language Requirement
 
 **Must conduct all user dialogue and confirmation prompts in the output language (English or 中文) specified by the main workflow.** Folder names and file names should match the outline roadmap titles (already in the output language).

@@ -133,6 +133,59 @@ All user confirmation points follow a uniform pattern:
 
 ## Complete Workflow
 
+### Phase 0: Vault Scan and Mode Selection
+
+**Executed before Phase 1.** Scans the selected folder to detect whether an existing VaultForge knowledge base is present. Determines fresh generation vs incremental update.
+
+**Step 0.1: Scan for Existing VaultForge Notes**
+- Scan the selected folder and subfolders for `.md` files with `vf: true` in frontmatter
+- Load `.obsidian-learning-progress.md` if it exists (contains `vf_processed_files` list)
+- Count notes by `vf_status`:
+
+```
+Phase 0 scan result:
+  Existing VaultForge notes: 48
+    pristine (auto-updatable): 32
+    user_modified (read-only): 14
+    locked (untouched): 2
+```
+
+**Step 0.2: Detect New Materials**
+- List all files in the selected folder
+- Compare against `vf_processed_files` from `.obsidian-learning-progress.md` (by filename + hash if available)
+- Classify each file:
+
+| Tag | Condition |
+|-----|-----------|
+| `NEW` | Not in `vf_processed_files` |
+| `DONE` | In `vf_processed_files` |
+| `[Source]` | Extension `.pdf` |
+| `[Other format Source]` | Extension `.md` / `.txt` not in `vf_processed_files` |
+| `[Processed Source]` | In `vf_processed_files` |
+
+**Step 0.3: Mode Selection**
+
+If both existing notes and new materials are detected, present mode selection:
+
+```
+📋 VaultForge knowledge base detected: Digital Transformation
+
+   New materials found: 2 files
+   Existing notes: 48 (32 pristine / 14 user_modified / 2 locked)
+
+   1. Incremental update — add new notes, extend existing framework, never modify user edits (recommended)
+   2. Full regenerate — rebuild from scratch (existing notes preserved but superseded)
+   3. Skip — do nothing
+
+   Reply with number:
+```
+
+- **Incremental update** → set `incremental_mode = true` for all subsequent Phases
+- **Full regenerate** → proceed with existing Phase 1-6 as-is (user keeps old notes but new pipeline runs fresh)
+- **Skip** → end workflow
+
+If no existing notes are found, proceed directly to Phase 1 (normal mode).
+
 ### Phase 1: Learning Roadmap Generation
 
 **Step 1.1: Detect Vault and Select Folder**
@@ -141,25 +194,25 @@ All user confirmation points follow a uniform pattern:
 - Proceed after user confirmation
 
 **Step 1.2: Auto-Detect File List**
-- Auto-detect all learning files (PDF, Markdown, TXT, etc.) in the selected folder
-- Display file list with: filename, size, page count (PDF) / word count (document)
-- Allow the user to multi-select files to process
-- Format example:
-  ```
-  📁 Selected folder: Digital Transformation/
 
-  Detected learning files:
+In **normal mode**: identical to existing behavior — list all files, user selects.
 
-  1. [ ] 📄 Digital Transformation Guide.pdf     - 329 pages - 12.5 MB
-  2. [✓] 📄 Customer Strategy Core.pdf           - 156 pages - 5.2 MB
-  3. [ ] 📄 Tech Architecture Overview.md         - 3,200 words
-  4. [ ] 📄 Platform Model Research.pdf           - 89 pages - 3.8 MB
+In **incremental mode**: use the file classification from Phase 0.2. NEW files default to selected; DONE files default to unselected.
 
-  Selected: 1 file
+```
+📁 Selected folder: Digital Transformation/
+
+  File list (incremental mode — new files pre-selected):
+
+  NEW     1. [✓] 📄 Platform Model Research.pdf         - 89 pages       [Source]
+  NEW     2. [ ] 📝 Industry Analysis Report.md         - 4,200 words    [Other format Source]
+  DONE    3. [ ] 📄 Digital Transformation Guide.pdf    - 329 pages      [Processed Source]
+  DONE    4. [ ] 📝 Customer Strategy Core.pdf          - 156 pages      [Processed Source]
+
+  Selected: 1 file (new material)
 
   Confirm to start reading (reply "continue"), or enter numbers to adjust selection (e.g., "1,3"):
-  ```
-- Proceed to Step 1.3 after user confirmation
+```
 
 **Step 1.3: Complete Reading of Learning Materials**
 - Prefer **single-pass full reads** of each file
@@ -277,6 +330,12 @@ Would you like to modify the roadmap?
 > Reason for switching statistics source from "model self-report" to "file parse": to avoid counting inaccuracies caused by medium-scale models (e.g., Minimax-M2.7) estimating their own generation.
 
 ### Phase 2: File Structure Creation
+
+**In incremental mode**, Phase 2 operates in **add-only** mode:
+- Never rename, move, or delete existing folders/files
+- Create only what is new in the incremental roadmap
+- MOCs for new H3 topics are created as new files; existing MOCs are not modified
+- Existing folders are left untouched even if the new roadmap suggests restructuring
 
 **Step 2.1: Batch Create Folders and Files**
 
@@ -447,12 +506,25 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
 
 **Environment and degradation**: If the current client **does not support** true multi-agent parallelism (no `Task` / sub-agent orchestration), fall back to **sequential execution**: still group in batches of ≤5 atomic notes, invoke `atomic-note-filler` or equivalent flow group by group until all are complete; progress report format remains unchanged.
 
-**Atomic write specification**:
+**Atomic write specification (vf_ frontmatter)**:
 1. The filling agent first creates `{note}.md.tmp` with the complete content (**note: extension is `.md.tmp`, not `.tmp`**)
-2. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
-3. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
-4. Update frontmatter `status` to `filled`
-5. **Immediately** append to `.obsidian-learning-progress.md`: `[Phase 3] {note}.md → filled`
+2. All generated notes **must** include these frontmatter fields:
+   ```yaml
+   ---
+   vf: true
+   vf_version: v2.1.0
+   vf_status: pristine
+   vf_session: initial|incremental-{date}
+   status: filling
+   ---
+   ```
+   - `vf: true` — marks the note as VaultForge-generated
+   - `vf_status: pristine` — initial value; system may detect user edits later by comparing `mtime` vs `date`
+   - `vf_session` — `initial` for first generation, `incremental-YYYY-MM-DD` for incremental sessions
+3. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
+4. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
+5. Update frontmatter `status` to `filled`
+6. **Immediately** append to `.obsidian-learning-progress.md`: `[Phase 3] {note}.md → filled`
 
 ```
 [agent-1] 📝 Filling: NoteA, NoteB, NoteC
@@ -528,7 +600,16 @@ Total: 12 atomic notes
 Duration: X minutes
 ```
 
+**In incremental mode**, also update `vf_processed_files` in `.obsidian-learning-progress.md` to include the newly processed source files from this session, recording filename and hash for future incremental scans.
+
 ### Phase 4: Wikilink Building
+
+**In incremental mode**, Phase 4 establishes links with two tiers:
+- **New ↔ New**: all three funnel stages execute normally, links written directly
+- **New ↔ Old**: only **suggestions** are generated; no existing notes are modified
+- **Old ↔ New**: never modify existing notes
+
+The agent runs the three-stage funnel on all note pairs (new + old) but writes links only for new-to-new pairs. New-to-old suggestions are collected into a JSON file for the Phase 5 Update Report.
 
 #### Phase 4 Execution Strategy (Three-Stage Funnel — Main Agent & Script Collaboration)
 
@@ -684,7 +765,74 @@ If any check item is not passed, fix it before reporting the final results.
 
 **After completion**: append `[Phase 5] Final review complete` to `.obsidian-learning-progress.md`.
 
-**Step 5.4: Phase 6 Execution Confirmation**
+**Step 5.4: Generate Incremental Update Report (incremental mode only)**
+
+If `incremental_mode = true`, generate a `VaultForge Update Report - {date}.md` in the learning materials folder.
+
+The agent compiles the report by aggregating:
+- Phase 2: list of newly created folders, MOCs, and atomic notes
+- Phase 3: count of filled notes (pristine vs user_modified vs locked)
+- Phase 4: new-to-new link count + new-to-old suggestions
+- Phase 5: any pristine notes eligible for content refresh (when new source pages cover existing notes)
+
+**Report template**:
+```markdown
+---
+title: VaultForge Update Report - {date}
+date: YYYY-MM-DD
+tags:
+  - vaultforge-report
+  - {topic}
+---
+
+# VaultForge Update Report - {date}
+
+## New Files Created
+
+**New H2 categories** (new folders):
+- 03. New Category/...
+
+**New notes in existing folders**:
+- 01. Digital Transformation/Customer Domain/Customer Journey Map.md
+- 01. Digital Transformation/Customer Domain/Omnichannel Strategy.md
+
+## Wikilinks Established
+
+| Scope | Count |
+|-------|-------|
+| New ↔ New | 28 |
+| New → Existing (suggested) | 4 |
+
+**Suggested new-to-existing links** (review and add manually if desired):
+- [[Customer Journey Map]] → [[digitization-and-transformation]] (derivation)
+- [[Omnichannel Strategy]] → [[digital-maturity-model]] (application)
+
+## Notes Eligible for Refresh (pristine)
+
+These notes have new source content available and can be auto-refreshed:
+
+- [ ] digital-maturity-model.md — 8 new source pages available
+- [ ] five-stage-model.md — 3 new source pages available
+
+Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
+
+## Protected Notes (not modified)
+
+| Status | Count |
+|--------|-------|
+| User-modified (preserved as-is) | 14 |
+| Locked (untouched) | 2 |
+
+## Update Session
+
+- Previous roadmap: Learning Roadmap - {Topic}.md
+- New roadmap: Learning Roadmap v2 - {Topic}.md
+- `vf_session` on new notes: incremental-{date}
+```
+
+**After report generation**: append `[Phase 5] Incremental update report generated` to `.obsidian-learning-progress.md`.
+
+**Step 5.5: Phase 6 Execution Confirmation**
 
 After Phase 5 completes, **must** ask the user whether to enter Phase 6:
 
@@ -823,15 +971,17 @@ skill directory/
 ## Flow Overview
 
 ```
-Phase 1: Roadmap Generation
+Phase 0: Vault Scan & Mode Selection (auto-detect incremental vs fresh)
     ↓
-Phase 2: File Structure Creation
+Phase 1: Roadmap Generation (or incremental roadmap)
     ↓
-Phase 3: Content Generation (Parallel)
+Phase 2: File Structure Creation (add-only in incremental mode)
     ↓
-Phase 4: Wikilink Building
+Phase 3: Content Generation (parallel, with vf_ frontmatter)
     ↓
-Phase 5: Final Review + Core Question Generation
+Phase 4: Wikilink Building (new-to-new links; new-to-old suggestions)
+    ↓
+Phase 5: Final Review + Core Question + Update Report (if incremental)
     ↓
 Phase 6: Deep Research & Controversy Analysis
 ```
@@ -840,7 +990,7 @@ Phase 6: Deep Research & Controversy Analysis
 
 - **Claude Code / Codex**: Typical trigger via slash command (e.g., `/VaultForge`, subject to local command configuration); sub-agents and "skill calling skill" depend on whether the current harness supports them.
 - **Cursor**: Usually auto-matched by **Agent Skills** based on description, or the user explicitly requests execution per this SKILL in conversation; if multi-agent orchestration is unavailable, Phase 3 degrades to **sequential grouping** as described above.
-- **`scripts/double-link-builder.py` (v2)**: Executes stages 1+2 of the three-stage funnel (structural affinity filtering + TF-IDF + keyword heuristics). `--mode full` (default) outputs `candidates.json` for the main agent's LLM to do stage 3 classification; `--mode strict` (degraded) directly writes deterministic links. The script is conservative by design — relationships not covered by keywords are left unlinked, to be completed by LLM stage 3 or by the user in Obsidian.
+- **`scripts/double-link-builder.py` (v2)**: Executes stages 1+2 of the three-stage funnel (structural affinity filtering + TF-IDF + keyword heuristics). `--mode full` (default) outputs `candidates.json` for the main agent's LLM to do stage 3 classification; `--mode strict` (degraded) directly writes deterministic links; `--mode incremental` writes links only between new notes and outputs new→old suggestions (requires `--new-notes` and `--output-suggestions`). The script is conservative by design — relationships not covered by keywords are left unlinked, to be completed by LLM stage 3 or by the user in Obsidian.
 - **LLM Stage 3 Dependency**: Phase 4.2b's LLM batch classification requires the main agent to have LLM calling capability. If unsupported (e.g., purely local environment), use the `--mode strict` degraded path.
 
 ## Output Quality Standards

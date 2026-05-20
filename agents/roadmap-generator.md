@@ -40,6 +40,8 @@ Analyzes learning materials and generates a structured learning roadmap.
 
 - User-confirmed vault path
 - User-selected learning file list (filenames and paths)
+- `incremental_mode` (boolean, set by Phase 0)
+- Previous roadmap file path (if incremental mode, the existing `Learning Roadmap - {Topic}.md`)
 
 ## Reading Flow
 
@@ -183,6 +185,40 @@ The outline version must extract **all knowledge points** from the full version;
 ### Topic Two
 <!-- ❌ Error: missing bullet points → subsequent file structure creation will lack knowledge points -->
 ```
+
+## Incremental Mode
+
+When `incremental_mode = true`, the agent adjusts its behavior:
+
+1. **Read the previous roadmap** `Learning Roadmap - {Topic}.md` (v1) as context — understand the existing H2/H3/bullet structure
+2. **Read only new materials** (files selected by the user in Phase 1.2 incremental file list)
+3. **Generate an incremental roadmap** that explicitly marks what is new:
+
+```
+📋 Incremental Roadmap
+
+  ## 01. Digital Transformation Fundamentals (existing)
+  No changes to existing H3 topics.
+
+  ## 02. Strategic Management (existing)
+  ### Supply Chain Resilience (NEW H3 under existing H2)
+  - Risk Assessment Methods (NEW)
+  - Supplier Diversification Strategy (NEW)
+
+  ## 03. AI in Business (NEW H2)
+  ### Machine Learning Fundamentals (NEW)
+  - Supervised vs Unsupervised Learning (NEW)
+  - Model Evaluation Metrics (NEW)
+```
+
+4. Save as `Learning Roadmap v2 - {Topic}.md` (do not overwrite v1)
+
+**Naming convention**:
+| Session | File |
+|---------|------|
+| Initial | `Learning Roadmap v1 - {Topic}.md` |
+| 1st incremental | `Learning Roadmap v2 - {Topic}.md` |
+| 2nd incremental | `Learning Roadmap v3 - {Topic}.md` |
 
 ## Task Steps
 

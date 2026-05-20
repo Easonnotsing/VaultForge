@@ -17,6 +17,9 @@
   # 同时产出确定性链接和候选对
   python3 double-link-builder.py <vault_path> <roadmap_name> --output candidates.json --mode strict
 
+  # 增量模式（新笔记间的链接直接写入；新→旧仅输出建议 JSON）
+  python3 double-link-builder.py <vault_path> <roadmap_name> --mode incremental --new-notes new_notes.json --output-suggestions suggestions.json
+
 roadmap_name 为 vault 根目录下「学习路线图 - {roadmap_name}.md」中 {roadmap_name} 一段；
 省略时自动在根目录查找唯一的大纲版路线图（排除含「完整版」的）。
 """
@@ -493,9 +496,17 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["full", "strict"],
+        choices=["full", "strict", "incremental"],
         default="full",
-        help="full=输出候选对+确定性链接; strict=仅确定性链接，不输出候选对",
+        help="full=输出候选对+确定性链接; strict=仅确定性链接; incremental=新笔记间写入链接+新→旧输出建议",
+    )
+    parser.add_argument(
+        "--new-notes",
+        help="增量模式下新笔记路径的 JSON 文件（含相对路径列表）",
+    )
+    parser.add_argument(
+        "--output-suggestions",
+        help="增量模式下新→旧建议链接的 JSON 输出路径",
     )
     parser.add_argument(
         "--tfidf-threshold",
@@ -594,11 +605,46 @@ def main():
         if len(candidates) > 200:
             print(f"   ⚠️ 候选对较多 ({len(candidates)})，建议调高 --tfidf-threshold 减少 LLM 调用")
 
-    # ─── 确定性链接写入（strict 模式始终写入，full 模式下候选对留给 LLM 判决） ───
+    # ─── 增量模式：新笔记间写入链接，新→旧仅输出建议 ───
+    incremental_new: Set[str] = set()
+    if args.mode == "incremental":
+        if not args.new_notes:
+            print("错误: 增量模式需要 --new-notes 参数")
+            sys.exit(1)
+        with open(args.new_notes, "r", encoding="utf-8") as f:
+            incremental_new = set(json.load(f))
+        print(f"\n📦 增量模式: {len(incremental_new)} 个新笔记")
+
+    # ─── 确定性链接写入 ───
     if args.mode == "strict":
         print("\n✏️ 写入确定性链接（strict 模式）...")
         updated = add_links_to_notes(vault_path, note_links)
         print(f"   更新了 {updated} 个笔记")
+
+    elif args.mode == "incremental":
+        print("\n✏️ 增量模式: 新笔记间写入链接...")
+        new_links: Dict[str, List[str]] = {}
+        old_to_new_suggestions: List[Dict] = []
+        # 分离新→新和新→旧
+        for note_path, targets in note_links.items():
+            note_in_new = note_path in incremental_new
+            new_targets = [t for t in targets if t in incremental_new]
+            old_targets = [t for t in targets if t not in incremental_new]
+            if note_in_new and new_targets:
+                new_links[note_path] = new_targets
+            if note_in_new and old_targets:
+                for t in old_targets:
+                    old_to_new_suggestions.append({
+                        "from": note_path,
+                        "to": t,
+                    })
+        updated = add_links_to_notes(vault_path, new_links)
+        print(f"   新笔记间写入: {sum(len(v) for v in new_links.values())} 个链接（{updated} 个笔记）")
+        print(f"   新→旧建议: {len(old_to_new_suggestions)} 个（未写入，等待用户确认）")
+        if args.output_suggestions:
+            with open(args.output_suggestions, "w", encoding="utf-8") as f:
+                json.dump(old_to_new_suggestions, f, ensure_ascii=False, indent=2)
+            print(f"   建议已写入 {args.output_suggestions}")
 
     # ─── 路线图 ↔ MOC 双向链接（与模式无关，始终执行） ───
     print("\n📋 建立路线图与 MOC 双向链接...")

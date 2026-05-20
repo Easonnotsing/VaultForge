@@ -25,13 +25,13 @@ class SkillFileIntegrityTest(unittest.TestCase):
     def test_phase_numbering_continuous(self):
         phases = re.findall(r"### Phase (\d+):", self.skill_md)
         nums = [int(p) for p in phases]
-        expected = list(range(1, max(nums) + 1)) if nums else []
+        expected = list(range(0, max(nums) + 1)) if nums else []
         self.assertEqual(
             nums, expected, f"Phase numbering not continuous: {nums}"
         )
 
     def test_interaction_convention_present(self):
-        self.assertIn("## 交互约定", self.skill_md)
+        self.assertIn("## Interaction Conventions", self.skill_md)
 
     def test_no_duplicate_sections(self):
         lines = self.skill_md.split("\n")

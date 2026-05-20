@@ -17,6 +17,7 @@ Reviews atomic notes for quality and consistency.
 - Learning roadmap outline file
 - Learning material content
 - List of all **filled** atomic notes (excluding `status: draft`, `.tmp` files, and `status: needs_review` notes)
+- `incremental_mode` (boolean, optional — if true, only review newly filled notes, skip existing reviewed notes)
 
 ## Review Dimensions
 
