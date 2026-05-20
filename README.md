@@ -154,7 +154,38 @@ Every note uses **bold-labeled sections** for readability:
 | **AI Agent Client** | Claude Code / Codex / Cursor or any client supporting Skill loading |
 | **Python 3** | Required by `context-extractor.py`, `double-link-builder.py` |
 | **pypdf** (recommended) | PDF page extraction: `pip install pypdf` (or `PyPDF2`) |
-| **deep-research skill** (optional) | Phase 6 deep research. Requires the `deep-research` skill installed, and at least one MCP backend: **Firecrawl MCP** or **Exa MCP**. Without these, the skill loads but cannot execute — VaultForge falls back to websearch, or skips Phase 6 if no search tools are available. |
+
+### Phase 6 Deep Research (optional)
+
+Phase 6 produces controversy analysis by searching the web for mainstream views, disputes, and different perspectives. It uses the **deep-research** skill with Firecrawl and Exa MCP servers as backends. At least one backend required.
+
+**Step 1 — Get API keys** (both have free tiers):
+
+- [Firecrawl](https://firecrawl.dev) — Register → API Key (format: `fc-...`)
+- [Exa](https://exa.ai) — Register → API Key
+
+**Step 2 — Configure opencode** (`~/.config/opencode/opencode.json`):
+
+```json
+{
+  "mcp": {
+    "firecrawl": {
+      "type": "local",
+      "command": ["npx", "-y", "firecrawl-mcp"],
+      "environment": { "FIRECRAWL_API_KEY": "fc-..." }
+    },
+    "exa": {
+      "type": "local",
+      "command": ["npx", "-y", "exa-mcp"],
+      "environment": { "EXA_API_KEY": "..." }
+    }
+  }
+}
+```
+
+**Step 3 — Start a new session.** MCP tools are only injected on session creation. Resume/reconnect won't pick them up — you must start a fresh conversation.
+
+Without MCP backends, VaultForge falls back to built-in web search, or skips Phase 6 if no search tools are available.
 
 ---
 
