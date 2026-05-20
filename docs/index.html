@@ -93,6 +93,7 @@
   .stats-row { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
   .stats-row + .stats-row { margin-top: 20px; }
   .stats-row span { text-align: center; white-space: nowrap; }
+  @media (max-width: 768px) { .stats-row { gap: 24px; } }
 
   .section {
     padding: 100px 0 80px;
@@ -285,6 +286,48 @@
   }
   .footer .copy { font-size: 12px; color: var(--text-secondary); margin-top: 40px; }
 
+  @media (max-width: 768px) {
+    .hero { padding: 80px 20px 60px; }
+    .hero h1 { font-size: 36px; }
+    .hero .tagline { font-size: 19px; }
+
+    .intro { padding: 48px 0; }
+    .intro p { font-size: 17px; }
+
+    .pillars { grid-template-columns: 1fr; padding: 0 20px 60px; }
+    .pillar-card { padding: 28px 24px; }
+
+    .stats-bar { padding: 40px 20px; font-size: 15px; }
+    .stats-row { gap: 18px; }
+
+    .section { padding: 64px 0 48px; }
+    .section h2, .evaluation h2 { font-size: 32px; }
+
+    .compare { grid-template-columns: 1fr; gap: 20px; }
+    .compare-box { padding: 28px 24px; }
+
+    table { font-size: 14px; }
+    thead th { font-size: 11px; padding-right: 8px; }
+    tbody td { padding: 10px 8px 10px 0; font-size: 14px; }
+    .evaluation tbody td:nth-child(2),
+    .evaluation tbody td:nth-child(3) { font-size: 14px; }
+
+    .funnel { gap: 8px; margin: 24px 0; }
+    .funnel .stage { padding: 16px 20px; }
+
+    .evaluation { padding: 64px 0; }
+
+    .quote { font-size: 17px; margin-bottom: 32px; }
+
+    .cta { padding: 64px 20px; }
+    .cta h2 { font-size: 28px; }
+    .cta pre { font-size: 13px; padding: 16px 20px; }
+    .cta p { font-size: 15px; }
+
+    .footer { padding: 32px 20px 60px; }
+    .footer-item { margin: 0 20px 16px; }
+    .footer-item a { font-size: 17px; }
+  }
 </style>
 </head>
 <body>
