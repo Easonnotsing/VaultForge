@@ -970,16 +970,24 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Load the `deep-research` skill**: invoke `skill("deep-research")`. This skill internally handles web search, Firecrawl, Exa, and report synthesis.
+1. **Load and verify the `deep-research` skill** in two steps:
 
-   After loading, **you MUST output exactly one of these status lines**:
+   a) Invoke `skill("deep-research")`.
+
+   b) **Do NOT stop at loading.** Verify the skill can actually execute by checking if at least one of its required backends is running:
+      - `firecrawl_search` tool is available, or
+      - `web_search_exa` tool is available
+
+      If the skill loaded but neither backend is running (no `firecrawl_search` or `web_search_exa` in the tool list), the skill **counts as unavailable** — proceed to ⚠️ fallback.
+
+   After verification, **you MUST output exactly one of these status lines**:
 
    ```
-   🔬 deep-research skill loaded and operational — executing...
+   🔬 deep-research operational (skill loaded + firecrawl/exa backend detected) — executing...
    ```
    or
    ```
-   ⚠️ deep-research skill not available — falling back to websearch.
+   ⚠️ deep-research unavailable (skill not loaded, or loaded but no firecrawl/exa backend running) — falling back to websearch.
    ```
    or
    ```
@@ -987,8 +995,8 @@ Execute the following steps:
    ```
 
 2. Execute based on status:
-   - 🔬 → proceed with deep-research skill
-   - ⚠️ → use available web search tools to research manually
+   - 🔬 → proceed with deep-research skill (it has working firecrawl/exa backends)
+   - ⚠️ → skill can't execute; use available web search tools (Web Search MCP, `webfetch`) to research manually
    - ❌ → append `[Phase 6] Skipped` to progress file, end workflow
 
 #### 6.1.3 Research Report Reception
