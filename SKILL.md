@@ -156,15 +156,27 @@ Phase 0 scan result:
 **Step 0.2: Detect New Materials**
 - List all files in the selected folder
 - Compare against `vf_processed_files` from `.obsidian-learning-progress.md` (by filename + hash if available)
-- Classify each file:
+- Classify each file using a two-layer label: **Status** (processing state) + **Format** (file type):
 
-| Tag | Condition |
-|-----|-----------|
-| `NEW` | Not in `vf_processed_files` |
-| `DONE` | In `vf_processed_files` |
-| `[Source]` | Extension `.pdf` |
-| `[Other format Source]` | Extension `.md` / `.txt` not in `vf_processed_files` |
-| `[Processed Source]` | In `vf_processed_files` |
+**Status labels** (mutually exclusive):
+
+| Label | Condition | Meaning |
+|-------|-----------|---------|
+| `NEW` | Not in `vf_processed_files` | Unprocessed; will be read in this session |
+| `DONE` | In `vf_processed_files` | Already processed in a previous session |
+
+**Format labels** (applied alongside status):
+
+| Label | Condition |
+|-------|-----------|
+| `📄 [PDF]` | Extension `.pdf` |
+| `📝 [Markdown]` | Extension `.md` |
+| `📋 [Text]` | Extension `.txt` |
+| `❓ [Unknown]` | Any other extension |
+
+**Combined display format**: `NEW   📄 [PDF]`, `DONE  📄 [PDF]`
+
+In the user-facing file list, format labels are shown inline; the Phase 0.3 mode selection and Phase 1.2 file selection use only the status label (NEW/DONE) for logic.
 
 **Step 0.3: Mode Selection**
 
@@ -189,6 +201,19 @@ If both existing notes and new materials are detected, present mode selection:
 
 If no existing notes are found, proceed directly to Phase 1 (normal mode).
 
+**Step 0.4: Degradation and Error Handling**
+
+| Failure Scenario | Handling |
+|------------------|----------|
+| `.obsidian-learning-progress.md` missing | Treat all files as NEW (fresh generation). No error — this is the initial-run case. |
+| `.obsidian-learning-progress.md` corrupt / unparseable | Warn the user: "Progress file unreadable — treating all files as NEW." Proceed to mode selection as if it didn't exist. |
+| `vf_processed_files` missing or empty in progress file | Treat all files as NEW (same as missing progress file). |
+| Permission error / inaccessible file during scan | Skip the file, continue scanning. Report skipped count at end of scan: "⚠️ 3 files skipped (inaccessible)." |
+| Zero scan-able files in folder | "📁 Selected folder contains no readable files. Please choose a folder with PDF or Markdown files." → return to Step 1.1. |
+| Hash mismatch in `vf_processed_files` | File name matches but content hash differs → treat as NEW (user may have updated the source). Log a note: "h: hash mismatch for {filename} — treated as NEW." |
+| Existing notes detected but no roadmap file found | Warn: "Found {N} VaultForge notes but no roadmap file. Suggesting fresh generation." → offer only options 2 (Full regenerate) and 3 (Skip). |
+| `vf: true` false positives | Phase 0.1 scan checks frontmatter for `vf: true`. If non-VaultForge notes happen to also have this field, they will be miscounted. Mitigation: document that `vf: true` is reserved for VaultForge use. |
+
 ### Phase 1: Learning Roadmap Generation
 
 **Step 1.1: Detect Vault and Select Folder**
@@ -207,10 +232,10 @@ In **incremental mode**: use the file classification from Phase 0.2. NEW files d
 
   File list (incremental mode — new files pre-selected):
 
-  NEW     1. [✓] 📄 Platform Model Research.pdf         - 89 pages       [Source]
-  NEW     2. [ ] 📝 Industry Analysis Report.md         - 4,200 words    [Other format Source]
-  DONE    3. [ ] 📄 Digital Transformation Guide.pdf    - 329 pages      [Processed Source]
-  DONE    4. [ ] 📝 Customer Strategy Core.pdf          - 156 pages      [Processed Source]
+  NEW     1. [✓] 📄 [PDF] Platform Model Research.pdf         - 89 pages
+  NEW     2. [ ] 📝 [Markdown] Industry Analysis Report.md     - 4,200 words
+  DONE    3. [ ] 📄 [PDF] Digital Transformation Guide.pdf    - 329 pages
+  DONE    4. [ ] 📄 [PDF] Customer Strategy Core.pdf          - 156 pages
 
   Selected: 1 file (new material)
 
