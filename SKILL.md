@@ -685,8 +685,8 @@ Final links
 **Detailed flow**:
 
 1. **Default path (recommended)**
-   - **Step 4.2a**: Run `scripts/double-link-builder.py`, executing stage 1+2 (structural filtering + TF-IDF + keyword heuristics), producing a **candidate pair list** (`candidates.json`).
-   - **Step 4.2b**: The main agent reads the candidate pair list and uses LLM to classify each candidate pair into the 5 relationship types (can batch process, 5-10 pairs per batch). Only writes to `## Related Notes` when a relationship type is positively identified.
+   - **Step 4.1**: Run `scripts/double-link-builder.py`, executing stage 1+2 (structural filtering + TF-IDF + keyword heuristics), producing a **candidate pair list** (`candidates.json`).
+   - **Step 4.2**: The main agent reads the candidate pair list and uses LLM to classify each candidate pair into the 5 relationship types (can batch process, 5-10 pairs per batch). Only writes to `## Related Notes` when a relationship type is positively identified.
    - **Step 4.3**: The main agent completes bidirectional links between the outline roadmap ↔ each MOC (coexisting with the atomic note list already written in Phase 2.2), **scanning before insertion** for existing equivalent `[[...]]` links; **duplicate lines forbidden**.
 
 2. **Script-only path (non-LLM degradation)**
@@ -697,7 +697,7 @@ Final links
    - When note count ≤ 20: the script can be skipped; the main agent directly reads all notes + roadmap and completes relationship classification in one pass. Token-wise this remains manageable (~400 pairs, batch processing ~40 calls).
 
 4. **Forbidden**
-   - Double-linking from "main agent already wrote 4.2 + uncleaned script run" within the same Phase;
+    - Double-linking from "main agent already wrote Step 4.2 + uncleaned script run" within the same Phase;
    - Duplicate lines of `- [[same target]]` in `## Related Notes` (merge into one line).
    - Building links when stage 3 LLM outputs "none" (unrelated).
 
