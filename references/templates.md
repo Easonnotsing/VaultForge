@@ -330,8 +330,8 @@ Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
 
 ## Update Session
 
-- Previous roadmap: Learning Roadmap{v1} - {Topic}.md
-- New roadmap: Learning Roadmap {v2} - {Topic}.md
+- Previous roadmap: Learning Roadmap v1 - {Topic}.md
+- New roadmap: Learning Roadmap v2 - {Topic}.md
 - `vf_session` on new notes: incremental-{date}
 ```
 

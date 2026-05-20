@@ -135,11 +135,14 @@ All user confirmation points follow a uniform pattern:
 
 ### Phase 0: Vault Scan and Mode Selection
 
+> **Execution note**: Phase 0 is executed directly by the main agent from these SKILL.md instructions. It does not have a separate sub-agent file — unlike Phases 1-3 which delegate to `roadmap-generator`, `file-structure-creator`, and `atomic-note-filler`. The scan logic (file detection, vf status counting, mode selection) requires direct filesystem access and cross-phase orchestration decisions that are best handled by the main agent's tool set.
+
 **Executed before Phase 1.** Scans the selected folder to detect whether an existing VaultForge knowledge base is present. Determines fresh generation vs incremental update.
 
 **Step 0.1: Scan for Existing VaultForge Notes**
 - Scan the selected folder and subfolders for `.md` files with `vf: true` in frontmatter
 - Load `.obsidian-learning-progress.md` if it exists (contains `vf_processed_files` list)
+- **Detect existing roadmap**: look for `Learning Roadmap v* - {Topic}.md` files (v1, v2, ...) AND legacy files named `Learning Roadmap - {Topic}.md` (no version suffix, pre-v2.2.0). If both exist, prefer the highest v-number.
 - Count notes by `vf_status`:
 
 ```
@@ -250,12 +253,12 @@ Would you like to modify? Reply:
 **⚠️ The outline version MUST contain knowledge points (bullet points). Only keeping H2/H3 is forbidden.**
 
 Save two files:
-- `Learning Roadmap (Full) - {Topic}.md` — detailed version (with full descriptions, cases, original citations)
-- `Learning Roadmap - {Topic}.md` — outline version (**must contain H2/H3/bullet three-level structure**)
+- `Learning Roadmap (Full) v1 - {Topic}.md` — detailed version (with full descriptions, cases, original citations)
+- `Learning Roadmap v1 - {Topic}.md` — outline version (**must contain H2/H3/bullet three-level structure**)
 
 **Correct outline format example**:
 ```markdown
-# Learning Roadmap - Digital Transformation
+# Learning Roadmap v1 - Digital Transformation
 
 ## 01. Digital Transformation Fundamentals
 
@@ -375,7 +378,7 @@ vault/
 0. **Pre-creation validation**: first read the outline roadmap, parse the H2/H3/bullet hierarchy, and cross-validate with the planned folder structure
 1. Create folder structure following H2/H3 hierarchy
 2. Create MOC notes (blank template) **inside each H3 topic folder**
-3. Create **blank atomic note files** for each bullet knowledge point (frontmatter and title only, **no body content**)
+3. Create **blank atomic note files** for each bullet knowledge point (frontmatter with `vf: true` and `status: draft`, title only, **no body content**)
 4. **Present all created files at once** after creation
 
 **⚠️ Important: Step 2 only creates empty files, does not fill content**
@@ -521,6 +524,17 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
    - `vf: true` — marks the note as VaultForge-generated
    - `vf_status: pristine` — initial value; system may detect user edits later by comparing `mtime` vs `date`
    - `vf_session` — `initial` for first generation, `incremental-YYYY-MM-DD` for incremental sessions
+
+**`vf_status` values**:
+
+| Value | Set By | Meaning | Refresh Behavior |
+|-------|--------|---------|------------------|
+| `pristine` | System (auto-generated) | Note never edited by user; auto-updatable | Eligible for Phase 5.4b refresh |
+| `user_modified` | System (detected) | User edited the note (mtime > date + delta); read-only | Excluded from auto-refresh |
+| `locked` | User (manually edits frontmatter) | User explicitly froze this note; no auto-touch | Excluded from auto-refresh |
+
+- **`locked`**: A user who wants to protect a specific pristine note from auto-refresh sets `vf_status: locked` in the frontmatter. The system never changes this value. It differs from `user_modified` in that the note body is unchanged — the user is simply choosing to keep it frozen.
+- **`user_modified`**: Detected automatically when a note's file modification time diverges from its frontmatter `date` by more than 5 minutes, or when the content hash changes. The system sets this during Phase 0 scanning.
 3. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
 4. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
 5. Update frontmatter `status` to `filled`
@@ -825,7 +839,7 @@ Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
 
 ## Update Session
 
-- Previous roadmap: Learning Roadmap - {Topic}.md
+- Previous roadmap: Learning Roadmap v1 - {Topic}.md
 - New roadmap: Learning Roadmap v2 - {Topic}.md
 - `vf_session` on new notes: incremental-{date}
 ```
@@ -845,7 +859,7 @@ After the Update Report is presented, the agent **pauses** and hands control to 
    Reply "refresh 1,2" to regenerate selected notes, or "skip" to ignore.
 ```
 
-**Detection logic**: during Phase 5.4 report compilation, compare each pristine note's topic against the new incremental roadmap. A note is refresh-eligible when:
+**Detection logic**: during Phase 5.4 report compilation, scan all notes with `vf_status: pristine` (exclude `locked` and `user_modified`). A note is refresh-eligible when:
 - Its topic matches a knowledge point in the new roadmap (same or similar title, or same H3 folder membership)
 - The new roadmap's `source_range` for that topic covers **more pages** than the note's original `source_range`
 - Delta (new_pages − original_pages) is the number shown beside each entry

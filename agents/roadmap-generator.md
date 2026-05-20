@@ -9,7 +9,7 @@ Analyzes learning materials and generates a structured learning roadmap.
 
 ## ⚠️ Language Requirement
 
-**Must generate all H2/H3 titles and knowledge point names in the output language (English or 中文) specified by the main workflow**, as well as all dialogue with the user. Roadmap filename examples: `Learning Roadmap - {Topic}.md` (English) / `学习路线图 - {主题}.md` (中文).
+**Must generate all H2/H3 titles and knowledge point names in the output language (English or 中文) specified by the main workflow**, as well as all dialogue with the user. Roadmap filename examples: `Learning Roadmap v1 - {Topic}.md` (English) / `学习路线图 v1 - {主题}.md` (中文).
 
 ## ⚠️ Core Requirement: Must Read All Learning Materials Completely
 
@@ -41,7 +41,7 @@ Analyzes learning materials and generates a structured learning roadmap.
 - User-confirmed vault path
 - User-selected learning file list (filenames and paths)
 - `incremental_mode` (boolean, set by Phase 0)
-- Previous roadmap file path (if incremental mode, the existing `Learning Roadmap - {Topic}.md`)
+- Previous roadmap file path (if incremental mode, the existing `Learning Roadmap v1 - {Topic}.md`)
 
 ## Reading Flow
 
@@ -84,7 +84,7 @@ After Phase 1 completes, **two** learning roadmap files must be saved:
 
 ### 1. Full Version (Must Save)
 
-File: `Learning Roadmap (Full) - {Topic}.md` (English) / `学习路线图（完整版） - {主题}.md` (中文)
+File: `Learning Roadmap (Full) v1 - {Topic}.md` (English) / `学习路线图（完整版） v1 - {主题}.md` (中文)
 
 Contains:
 - **Detailed description** of all knowledge points (200+ words)
@@ -120,7 +120,7 @@ source_range: Digital Transformation.pdf:12-15, Strategy.md
 
 Format:
 ```markdown
-# Learning Roadmap (Full): {Topic Name}
+# Learning Roadmap (Full) v1: {Topic Name}
 
 This is a learning roadmap on {Topic Name}, compiled from {N} learning resources.
 
@@ -147,14 +147,14 @@ This is a learning roadmap on {Topic Name}, compiled from {N} learning resources
 
 ### 2. Outline Version
 
-File: `Learning Roadmap - {Topic}.md` (English) / `学习路线图 - {主题}.md` (中文)
+File: `Learning Roadmap v1 - {Topic}.md` (English) / `学习路线图 v1 - {主题}.md` (中文)
 
 **⚠️ Must preserve the complete three-level structure: H2 → H3 → bullet points**
 
 The outline version must extract **all knowledge points** from the full version; no bullet can be lost:
 
 ```markdown
-# Learning Roadmap - {Topic Name}
+# Learning Roadmap v1 - {Topic Name}
 
 ## 01. First Category
 
@@ -190,7 +190,7 @@ The outline version must extract **all knowledge points** from the full version;
 
 When `incremental_mode = true`, the agent adjusts its behavior:
 
-1. **Read the previous roadmap** `Learning Roadmap - {Topic}.md` (v1) as context — understand the existing H2/H3/bullet structure
+1. **Read the previous roadmap** `Learning Roadmap v1 - {Topic}.md` as context — understand the existing H2/H3/bullet structure
 2. **Read only new materials** (files selected by the user in Phase 1.2 incremental file list)
 3. **Generate an incremental roadmap** that explicitly marks what is new:
 

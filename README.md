@@ -64,8 +64,8 @@ After processing, your vault will contain:
 ```
 vault/
 ├── .obsidian-learning-progress.md             # Progress tracking & vf_processed_files
-├── Learning Roadmap - {Topic}.md              # Outline version (H2/H3/bullets)
-├── Learning Roadmap (Full) - {Topic}.md       # Detailed version (cases, citations, source_range)
+├── Learning Roadmap v1 - {Topic}.md              # Outline version (H2/H3/bullets)
+├── Learning Roadmap (Full) v1 - {Topic}.md       # Detailed version (cases, citations, source_range)
 ├── Core Questions.md                          # ≤5 guiding questions
 ├── {Topic} - Controversy Analysis.md          # Consensus vs disputes vs context-dependent
 ├── VaultForge Update Report - {date}.md       # (incremental) new files, links, refresh suggestions
@@ -86,7 +86,7 @@ vault/
 
 ## Core Capabilities
 
-### 7-Phase Pipeline (v2.1)
+### 7-Phase Pipeline
 
 ```
 Phase 0: Vault Scan             → Auto-detect existing vf notes → incremental vs fresh vs skip
@@ -103,8 +103,8 @@ Phase 6: Deep Research (opt)    → Web search → controversy analysis notes
 - **Interruption Recovery**: Each atomic note has a `status` field (draft → filling → filled → reviewed). Phase 3 auto-scans and prompts "resume from breakpoint".
 - **Atomic Write Protection**: `.md.tmp` → verify → rename. Agent crashes never corrupt completed notes.
 - **vf_ Frontmatter Standard**: All notes carry `vf: true`, `vf_version`, `vf_status` (pristine/user_modified/locked), `vf_session` for traceability and incremental detection.
-- **Incremental Update (v2.1)**: Phase 0 auto-detects existing VaultForge notes, classifies new vs processed files, and offers incremental (add-only, never modifies user edits) or fresh generation.
-- **Pristine Note Refresh (v2.2)**: When new source material covers existing topics, auto-detects refresh-eligible notes in the Update Report. User selects which to regenerate — frontmatter preserved, body replaced with expanded content.
+- **Incremental Update**: Phase 0 auto-detects existing VaultForge notes, classifies new vs processed files, and offers incremental (add-only, never modifies user edits) or fresh generation.
+- **Pristine Note Refresh**: When new source material covers existing topics, auto-detects refresh-eligible notes in the Update Report. User selects which to regenerate — frontmatter preserved, body replaced with expanded content.
 - **Context Pre-extraction**: `context-extractor.py` extracts source paragraphs per `source_range` annotation. Each agent receives only relevant snippets — token usage reduced 5×+.
 - **Auto Retry**: Notes failing quality review enter a repair queue with up to 2 retries.
 - **Wikilink Precision**: Three-stage funnel (structural filtering + TF-IDF semantics + LLM classification), ~60-80% coverage.
@@ -174,7 +174,7 @@ Default uses the three-stage funnel: keyword heuristics + TF-IDF semantics + LLM
 
 The skill requires 200+ word core explanations, 150+ word case analysis, and 50-150 word original citations. Quality review auto-detects substandard notes and triggers rewrites.
 
-### Q: Can I incrementally add new materials? (v2.1+)
+### Q: Can I incrementally add new materials?
 
 Yes. Place new PDF/MD files in the same vault folder and re-trigger the skill. Phase 0 auto-detects existing VaultForge notes, marks new files pre-selected, and runs in **add-only incremental mode** — new notes are created, existing notes are never modified, and new-to-old wikilinks are suggested (not auto-written). See `VaultForge Update Report - {date}.md` for a summary.
 
@@ -242,7 +242,7 @@ MIT
 | **双链** | 基于逻辑关系（推导/类比/矛盾/应用/背景）而非术语相似建立 |
 | **核心问题** | ≤5 个引导性问题，驱动主动探索式学习 |
 | **争议分析** | 深度研究呈现共识、争议、未知与探索方向 |
-| **增量更新** (v2.1) | 自动检测已有笔记，仅添加新笔记，不修改用户编辑，生成更新报告 |
+| **增量更新** | 自动检测已有笔记，仅添加新笔记，不修改用户编辑，生成更新报告 |
 
 ### 7 阶段流水线 (v2.1)
 

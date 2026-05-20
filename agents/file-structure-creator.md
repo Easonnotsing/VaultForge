@@ -87,6 +87,10 @@ This Map of Content collects atomic notes related to {Topic Name}.
 title: {Knowledge Point Name}
 date: {creation date}
 status: draft
+vf: true
+vf_version: v2.2.0
+vf_status: pristine
+vf_session: {initial or incremental-YYYY-MM-DD}
 tags:
   - atomic
 aliases:
@@ -104,7 +108,7 @@ aliases:
 ## Reflection Questions
 ```
 
-**Note**: All section bodies are empty. `status: draft` marks the note as pending fill. Content filling is done in Phase 3.
+**Note**: All section bodies are empty. `status: draft` marks the note as pending fill. `vf: true` is set at creation time so Phase 0 re-scans can identify the note as VaultForge-owned even if the workflow is interrupted before Phase 3. Content filling is done in Phase 3.
 
 ### Step 5: Roadmap ↔ MOC Bidirectional Links (Not written by this Agent)
 
