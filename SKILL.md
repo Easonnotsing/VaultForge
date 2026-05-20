@@ -549,7 +549,7 @@ Required agents = ceil(pending note count / 10)
 
 Launch the specified number of agents **in parallel** to execute the fill task. Each agent must follow the **atomic write specification**:
 
-**Environment and degradation**: If the current client does not support sub-agent orchestration, or if parallel dispatch does not begin producing results within a generous window (several minutes for complex tasks), fall back to sequential execution. In sequential mode, group notes in batches of ≤10 and fill batch by batch. Do not wait for user intervention — proceed directly once it is clear parallel dispatch has stalled. Progress report format remains unchanged.
+**Environment and degradation**: If the current client does not support sub-agent orchestration, or if no sub-agent produces output within 5 minutes of parallel dispatch, fall back to sequential execution. In sequential mode, group notes in batches of ≤10 and fill batch by batch. Progress report format remains unchanged.
 
 **Atomic write specification (vf_ frontmatter)**:
 1. The filling agent first creates `{note}.md.tmp` with the complete content (**note: extension is `.md.tmp`, not `.tmp`**)
