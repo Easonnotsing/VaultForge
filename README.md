@@ -154,7 +154,7 @@ Every note uses **bold-labeled sections** for readability:
 | **AI Agent Client** | Claude Code / Codex / Cursor or any client supporting Skill loading |
 | **Python 3** | Required by `context-extractor.py`, `double-link-builder.py` |
 | **pypdf** (recommended) | PDF page extraction: `pip install pypdf` (or `PyPDF2`) |
-| **deep-research skill** (optional) | Phase 6 deep research; auto-skipped with notice if unavailable |
+| **deep-research skill** (optional) | Phase 6 deep research. Requires the `deep-research` skill installed, and at least one MCP backend: **Firecrawl MCP** or **Exa MCP**. Without these, the skill loads but cannot execute — VaultForge falls back to websearch, or skips Phase 6 if no search tools are available. |
 
 ---
 
@@ -182,7 +182,7 @@ Yes. Place new PDF/MD files in the same vault folder and re-trigger the skill. P
 
 ### Q: How to trigger Phase 6 deep research?
 
-Phase 5 completion prompts a confirmation. Choose "continue" and the agent auto-detects available search tools (`deep-research` skill, Web Search MCP, etc.), executes if available or notifies if unavailable.
+Phase 5 completion prompts a confirmation. Choose "continue" and the agent loads the `deep-research` skill. It requires Firecrawl MCP or Exa MCP as backends to function. If the skill is unavailable (not installed or no MCP backends configured), VaultForge falls back to websearch, or skips Phase 6 if no search tools are available.
 
 ### Q: What file formats are supported?
 
