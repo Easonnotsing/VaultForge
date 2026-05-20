@@ -972,11 +972,9 @@ Execute the following steps:
 
 1. **FORBIDDEN: do NOT use the `WebSearch` or `webfetch` tools for Phase 6 research.**
 
-2. Before searching, **list your available tools and find the firecrawl or exa MCP tools**. They will be named with a `firecrawl_` or `exa_` prefix (e.g., `firecrawl_search`, `firecrawl_scrape`, `exa_web_search_exa`). Use the exact names you find.
+2. Use `firecrawl_search` + `firecrawl_scrape` for multi-source deep research. For autonomous multi-step research, use `firecrawl_agent`. For academic/paper searches, use `exa_search`. Follow deep-research methodology: multi-source → synthesize → cited report.
 
-3. If firecrawl or exa tools ARE in your tool list: use them to execute deep research (multi-source → synthesize → cited report).
-
-4. If NO firecrawl or exa tools are in your list: output `⚠️ Firecrawl/Exa MCP tools not in tool list — falling back to websearch` and use any available web search tools. If no search tools at all, skip Phase 6.
+3. If firecrawl or exa tools are unavailable, fall back to any available web search tools. If no search tools at all, skip Phase 6.
 
 #### 6.1.3 Research Report Reception
 
