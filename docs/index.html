@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultForge v2.3.0</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f5f5f7;
+    --bg-dark: #1d1d1f;
+    --text: #1d1d1f;
+    --text-secondary: #86868b;
+    --text-dark: #f5f5f7;
+    --accent: #0071e3;
+    --border: #d2d2d7;
+    --card-bg: #ffffff;
+    --card-bg-dark: #2d2d2f;
+    --radius: 18px;
+    --radius-sm: 12px;
+    --max-width: 980px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 120px 24px 80px;
+    background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%);
+  }
+  .hero h1 {
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--text);
+  }
+  .hero .tagline {
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+  .intro { text-align: center; padding: 80px 0; }
+  .intro p { font-size: 19px; color: var(--text-secondary); max-width: 720px; margin: 0 auto 24px; }
+  .intro p strong { color: var(--text); }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .pillar-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .pillar-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+  .pillar-card .label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .pillar-card h3 { font-size: 21px; font-weight: 600; margin-bottom: 12px; }
+  .pillar-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.55; }
+
+  .stats-bar {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+    text-align: center;
+    padding: 48px 24px;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .stats-bar span { margin: 0 20px; white-space: nowrap; }
+
+  .section {
+    padding: 100px 0;
+  }
+  .section:nth-child(even) { background: #fff; }
+  .section:nth-child(odd) { background: var(--bg); }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .section h2 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 48px;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .compare-box {
+    border-radius: var(--radius);
+    padding: 40px;
+  }
+  .compare-box.old {
+    background: #f5f5f7;
+    border: 1px solid var(--border);
+  }
+  .compare-box.new {
+    background: linear-gradient(135deg, #0071e3 0%, #0066cc 100%);
+    color: #fff;
+  }
+  .compare-box .ver {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+    margin-bottom: 16px;
+  }
+  .compare-box h4 { font-size: 19px; font-weight: 600; margin-bottom: 12px; }
+  .compare-box p { font-size: 15px; line-height: 1.55; opacity: 0.85; }
+  .compare-box.new p { color: rgba(255,255,255,0.85); }
+
+  .detail { margin: 32px 0; }
+  .detail h4 { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0 40px;
+    font-size: 15px;
+  }
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    padding: 0 12px 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  thead th:first-child { padding-left: 0; }
+  tbody td {
+    padding: 14px 12px 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+  }
+  tbody td:first-child { padding-left: 0; font-weight: 500; }
+  tbody td:last-child { color: var(--text-secondary); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .funnel .stage {
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 20px 28px;
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .funnel .stage strong {
+    display: block;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .funnel .arrow { font-size: 20px; color: var(--border); }
+
+  .callout {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 24px 28px;
+    margin: 32px 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .evaluation {
+    padding: 100px 0;
+    background: var(--bg-dark);
+    color: var(--text-dark);
+  }
+  .evaluation h2 { color: #fff; font-size: 48px; }
+  .evaluation .section-label { color: #6ea8f7; }
+  .evaluation table { margin: 40px 0 60px; }
+  .evaluation thead th { color: #86868b; border-bottom-color: #424245; }
+  .evaluation tbody td { border-bottom-color: #333; color: #d2d2d7; }
+  .evaluation tbody td:first-child { color: #fff; }
+  .evaluation tbody td:nth-child(2),
+  .evaluation tbody td:nth-child(3) {
+    text-align: center;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+  .evaluation .stars { color: #fff; }
+
+  .quote {
+    font-size: 21px;
+    line-height: 1.5;
+    color: #a1a1a6;
+    max-width: 800px;
+    margin: 0 auto;
+    font-style: italic;
+  }
+
+  .cta {
+    text-align: center;
+    padding: 100px 24px;
+    background: #fff;
+  }
+  .cta h2 { font-size: 40px; font-weight: 700; margin-bottom: 24px; }
+  .cta pre {
+    background: #f5f5f7;
+    border-radius: var(--radius-sm);
+    padding: 24px 32px;
+    display: inline-block;
+    text-align: left;
+    font-size: 15px;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+    margin-bottom: 24px;
+  }
+  .cta p { color: var(--text-secondary); font-size: 17px; max-width: 600px; margin: 0 auto 32px; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px 60px;
+    background: var(--bg);
+  }
+  .footer a {
+    font-size: 15px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 16px;
+  }
+  .footer a:hover { text-decoration: underline; }
+  .footer .copy { font-size: 12px; color: var(--text-secondary); margin-top: 24px; }
+
+  .state-machine {
+    font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+    font-size: 15px;
+    text-align: center;
+    margin: 24px 0;
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 40px; }
+    .hero .tagline { font-size: 21px; }
+    .pillars { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    .section h2, .evaluation h2 { font-size: 36px; }
+    .section { padding: 64px 0; }
+    .stats-bar { font-size: 14px; }
+    .stats-bar span { display: block; margin: 8px 0; }
+    .cta h2 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <h1>VaultForge v2.3.0</h1>
+  <p class="tagline">从生成工具到知识系统</p>
+</header>
+
+<!-- Intro -->
+<section class="container intro">
+  <p>v1.2.0 是一个生成工具——输入 PDF，输出笔记。它的核心假设是"一次性加工"：一次运行处理一批材料，产出即终态。工具本身不记忆任何状态，不区分生成内容与用户编辑，不做生成后的独立质量校验。</p>
+  <p>v2.3.0 是<strong>系统级的重新设计</strong>。它在三个维度上同时改变了工具的行为方式——不是增量迭代，而是将学习工具从"文本生成器"重新定义为<strong>认知过程的工程支撑系统</strong>。</p>
+</section>
+
+<!-- Three Pillars -->
+<div class="pillars">
+  <div class="pillar-card">
+    <div class="label">Pillar 1</div>
+    <h3>运行时可靠性</h3>
+    <p>中断恢复和写入保护使处理流程不再脆弱。状态机 + 原子写确保任何时刻系统状态可恢复。</p>
+  </div>
+  <div class="pillar-card">
+    <div class="label">Pillar 2</div>
+    <h3>知识积累模型</h3>
+    <p>从一次性加工变为可检测、可增量、可保护的持续建构。Phase 0 感知已有知识，三态 ACL 保护用户编辑。</p>
+  </div>
+  <div class="pillar-card">
+    <div class="label">Pillar 3</div>
+    <h3>输出精度控制</h3>
+    <p>从关键词匹配升级为五类逻辑关系分类和独立质量审查回路。三阶段漏斗在精度和成本间取得平衡。</p>
+  </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <span>7‑Phase Pipeline</span>
+  <span>58 Automated Tests</span>
+  <span>7 Cross‑File Contracts</span>
+  <span>8 Degradation Paths</span>
+  <span>16/16 Audit Closure</span>
+  <span>19/19 Cross‑File Verification</span>
+</div>
+
+<!-- Section 1 -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Pillar 1</div>
+    <h2>运行时可靠性</h2>
+
+    <div class="compare">
+      <div class="compare-box old">
+        <div class="ver">v1.2.0</div>
+        <h4>无状态运行时</h4>
+        <p>Agent 崩溃或网络中断 → 所有进度丢失。已写入文件可能不完整。重新触发后从第一页重读。</p>
+      </div>
+      <div class="compare-box new">
+        <div class="ver">v2.3.0</div>
+        <h4>五态状态机 + 原子写入</h4>
+        <p>每个笔记携带 status 字段。filling 状态拆分为两种崩溃子场景，分别恢复。.md.tmp → verify → rename 确保文件完整性。</p>
+      </div>
+    </div>
+
+    <div class="state-machine">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; needs_review<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↗<br>
+      draft  →  filling  →  filled  →  reviewed
+    </div>
+
+    <div class="callout">
+      <strong>与学习理论的关系</strong><br>
+      分布式学习（Spaced Learning）的记忆保持率显著高于集中学习，但前提是中断后能无缝恢复。不支持断点恢复的工具实际上在惩罚有效的学习策略。状态机将学习过程从连续作业解耦为可中断的会话——这是将间隔效应转化为工程约束。
+    </div>
+  </div>
+</section>
+
+<!-- Section 2 -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Pillar 2</div>
+    <h2>知识积累模型</h2>
+
+    <div class="compare">
+      <div class="compare-box old">
+        <div class="ver">v1.2.0</div>
+        <h4>线性处理</h4>
+        <p>读取所有文件 → 生成路线图 → 创建所有笔记 → 建立所有链接。新文件加入时，整流程重跑，已有笔记被覆盖或丢弃。</p>
+      </div>
+      <div class="compare-box new">
+        <div class="ver">v2.3.0</div>
+        <h4>Phase 0 · 三态保护</h4>
+        <p>Phase 0 在内容生成前扫描已有笔记状态。Pristine 可刷新 · User-modified 受保护 · Locked 完全冻结。增量模式下仅处理新文件，已有文件原样保留。</p>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>状态</th><th>判定方式</th><th>系统行为</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pristine</strong></td><td>生成后未被修改</td><td>可自动刷新内容</td></tr>
+        <tr><td><strong>User-modified</strong></td><td>检测到 mtime 与 date 差异</td><td>受保护，自动操作不覆盖</td></tr>
+        <tr><td><strong>Locked</strong></td><td>用户手动标记</td><td>系统完全忽略</td></tr>
+      </tbody>
+    </table>
+
+    <div class="detail">
+      <h4>增量模式下的链接策略</h4>
+      <p>新笔记 ↔ 新笔记：链接直接写入。新笔记 → 已有笔记：仅输出建议 JSON，不修改已有文件。已有笔记的链接网络是使用者已建立的心理模型——新增链接应作为可选数据源，而非自动变更。</p>
+    </div>
+
+    <div class="callout">
+      <strong>与学习理论的关系</strong><br>
+      Bruner 的螺旋课程模型证明，最有效的知识建构是在不同时间以更高复杂度重新审视同一主题——但前提是每次返回时已有结构不被重建。Phase 0 + 增量处理 + 三态保护，使 VaultForge 从一次性工具变为螺旋式学习系统。
+    </div>
+  </div>
+</section>
+
+<!-- Section 3 -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Pillar 3</div>
+    <h2>输出精度控制</h2>
+
+    <div class="compare">
+      <div class="compare-box old">
+        <div class="ver">v1.2.0</div>
+        <h4>关键词匹配</h4>
+        <p>两个笔记提到相同词汇即建立关联。停留在识别记忆层——"我见过这个词"，而非"这些概念如何关联"。</p>
+      </div>
+      <div class="compare-box new">
+        <div class="ver">v2.3.0</div>
+        <h4>五类逻辑关系 + 六维审查</h4>
+        <p>推导 · 类比 · 矛盾 · 应用 · 背景 —— 五类关系覆盖 Bloom 分类学从理解到评价的全部认知层次。note‑reviewer 在六个维度上独立审查每篇笔记。</p>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>关系</th><th>含义</th><th>Bloom 层次</th></tr></thead>
+      <tbody>
+        <tr><td><strong>推导</strong></td><td>A 是 B 的逻辑前提</td><td>理解 → 应用</td></tr>
+        <tr><td><strong>类比</strong></td><td>A 和 B 共享底层结构但表面不同</td><td>分析</td></tr>
+        <tr><td><strong>矛盾</strong></td><td>A 和 B 得出冲突的结论</td><td>评价</td></tr>
+        <tr><td><strong>应用</strong></td><td>A 的框架在 B 的场景中使用</td><td>应用</td></tr>
+        <tr><td><strong>背景</strong></td><td>A 和 B 属于同一领域的不同发展阶段</td><td>综合</td></tr>
+      </tbody>
+    </table>
+
+    <div class="funnel">
+      <div class="stage">
+        <strong>Stage 1 · 结构亲和过滤</strong>
+        零成本。仅同 H2 类别下的笔记对进入下一阶段。过滤 ~80%
+      </div>
+      <div class="arrow">↓</div>
+      <div class="stage">
+        <strong>Stage 2 · TF‑IDF 语义评分</strong>
+        纯 Python，零外部依赖。计算余弦相似度，输出高置信候选
+      </div>
+      <div class="arrow">↓</div>
+      <div class="stage">
+        <strong>Stage 3 · LLM 分类</strong>
+        可控 token 成本。仅对约 20% 的候选对执行五类关系判断
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>与学习理论的关系</strong><br>
+      Kluger &amp; DeNisi (1996) 的元分析确认，有效反馈需三个条件：针对任务而非自我评价、提供具体修正方向、给予修正机会。六维审查 + 自动重写回路构成工程闭环——反馈精确到文件路径和行号，方向按 HIGH / MEDIUM 分级，修正在同一 session 内完成。
+    </div>
+  </div>
+</section>
+
+<!-- Evaluation -->
+<section class="evaluation">
+  <div class="container">
+    <div class="section-label">Independent Review</div>
+    <h2>综合评估</h2>
+
+    <table>
+      <thead><tr><th>Pedagogical Design · 教育理论</th><th>v1.2</th><th>v2.3</th><th>Driver</th></tr></thead>
+      <tbody>
+        <tr><td>Cognitive Load Management · 认知负荷管理</td><td class="stars">⭐⭐⭐½</td><td class="stars">⭐⭐⭐⭐⭐</td><td>原子笔记比例检查 + Context Pre‑extraction</td></tr>
+        <tr><td>Advance Organizers · 先行组织者</td><td class="stars">⭐⭐⭐⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>MOC 双链完整性自动校验</td></tr>
+        <tr><td>Semantic Network · 语义网络建构</td><td class="stars">⭐⭐⭐</td><td class="stars">⭐⭐⭐⭐½</td><td>五类关系替代关键词匹配</td></tr>
+        <tr><td>Retrieval Guidance · 提取引导</td><td class="stars">⭐⭐⭐</td><td class="stars">⭐⭐⭐⭐</td><td>结构化引导替代简单列表</td></tr>
+        <tr><td>Critical Thinking · 批判性思维</td><td class="stars">⭐⭐⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>三层 Controversy Analysis 框架</td></tr>
+        <tr><td>Spiral Curriculum · 螺旋课程</td><td class="stars">—</td><td class="stars">⭐⭐⭐⭐⭐</td><td>Phase 0 + Incremental + 三态保护</td></tr>
+        <tr><td>Learner Autonomy · 学习者自主性</td><td class="stars">—</td><td class="stars">⭐⭐⭐⭐½</td><td>vf_status 三态 ACL 模型</td></tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead><tr><th>Engineering & Agent Design · 工程与 Agent 设计</th><th>v1.2</th><th>v2.3</th><th>Driver</th></tr></thead>
+      <tbody>
+        <tr><td>Fault Tolerance · 容错性</td><td class="stars">⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>状态机 + Atomic Write + 8 降级路径</td></tr>
+        <tr><td>Output Accuracy · 输出精度</td><td class="stars">⭐⭐½</td><td class="stars">⭐⭐⭐⭐½</td><td>6‑D Review + 漏斗双链 + 文件统计</td></tr>
+        <tr><td>Token Efficiency · Token 效率</td><td class="stars">⭐⭐</td><td class="stars">⭐⭐⭐⭐½</td><td>Context Pre‑extraction + --note‑filter</td></tr>
+        <tr><td>Cross‑Platform · 跨平台</td><td class="stars">⭐⭐</td><td class="stars">⭐⭐⭐⭐½</td><td>三模式 CLI + Phase 0 无 sub‑agent 依赖</td></tr>
+        <tr><td>Maintainability · 可维护性</td><td class="stars">⭐⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>58 tests + 7 跨文件契约 + 16/16 审计</td></tr>
+        <tr><td>Internal Consistency · 内部一致性</td><td class="stars">⭐⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>19 项交叉验证 + 自动化保护</td></tr>
+        <tr><td>Incremental Architecture · 增量架构</td><td class="stars">—</td><td class="stars">⭐⭐⭐⭐⭐</td><td>三态 ACL + add‑only + 建议分离 + 刷新闭环</td></tr>
+      </tbody>
+    </table>
+
+    <p class="quote">"VaultForge v2.3.0 is the most educationally rigorous and architecturally disciplined project in the current Agent Skill ecosystem. It has evolved from a one-shot generation tool into a continuous knowledge management system."</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>开始使用</h2>
+  <pre>git clone https://github.com/Easonnotsing/VaultForge.git ~/.agents/skills/VaultForge
+pip install pypdf</pre>
+  <p>在 Claude Code、Codex 或 Cursor 中触发后，首先选择输出语言（English / 中文）。系统自动运行 Phase 0 扫描，如已有知识库，将询问增量更新还是全新生成。</p>
+</section>
+
+<footer class="footer">
+  <a href="https://github.com/Easonnotsing/VaultForge">GitHub</a>
+  <a href="https://dev.to/easonnotsing/how-i-turned-6-cognitive-science-principles-into-an-ai-agent-that-builds-obsidian-vaults-103e">Dev.to</a>
+  <p class="copy">MIT Licensed</p>
+</footer>
+
+</body>
+</html>
