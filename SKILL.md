@@ -519,24 +519,26 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 
 **Step 3.0c: Detect Parallel Dispatch Capability**
 
-Before computing agent distribution, determine whether the current environment supports true multi-agent parallel dispatch. Do NOT attempt parallel dispatch speculatively — detect first.
+Before computing agent distribution, determine the environment's practical parallel limit. Do NOT dispatch speculatively — measure first.
 
-1. Check if the environment provides a `Task` tool or equivalent sub-agent orchestration primitive
-2. If the tool exists, attempt a **single** lightweight probe: dispatch one sub-agent that immediately returns "ok". If the probe succeeds within 10 seconds, parallel dispatch is available
-3. Present the result to the user:
+1. Check if the environment provides a `Task` tool or equivalent sub-agent orchestration primitive. If not, skip to sequential fill immediately
+2. If the tool exists, run a **concurrency probe**: dispatch 2 lightweight sub-agents simultaneously, each returning "ok". If both complete within 15 seconds, the environment can handle at least 2-way parallelism
+3. If both complete, optionally probe with 3 agents to find the safe upper bound
+4. Present the result:
 
 ```
-🔧 Environment check:
-
-   Parallel sub-agent dispatch: ✅ supported (or ❌ not supported)
+🔧 Environment check: parallel sub-agent dispatch — ✅ up to 2 (or 3) concurrent agents
    Estimated agents needed: ceil({pending}/10) = {N}
+   Will dispatch in groups of {detected_limit}
 ```
 
-If parallel is **not supported**, skip Step 3.1 entirely and proceed directly to sequential fill (Step 3.2, sequential path). The user does not need to intervene — this is a silent fallback.
+**If parallel is not supported or the probe fails**: skip Step 3.1 and proceed directly to sequential fill. No timeout, no user intervention needed.
 
 **Step 3.1: Compute Parallel Task Distribution** (only if parallel supported)
 
-Calculate required agent count based on **pending** atomic note count (i.e., status=draft count):
+The actual number of agents dispatched simultaneously is capped by the detected limit. If more agents are needed, dispatch in successive batches.
+
+Calculate required agent count:
 
 ```
 Required agents = ceil(pending note count / 10)
@@ -550,6 +552,7 @@ Required agents = ceil(pending note count / 10)
 
 **Distribution principles**:
 - Each agent handles **no more than 10** atomic notes
+- **Concurrency cap**: do not dispatch more agents simultaneously than the limit detected in Step 3.0c. If more agents are needed than the cap, dispatch in successive groups, waiting for each group to complete before starting the next
 - Distribute as evenly as possible for balanced workload per agent
 - Each agent receives only the **context packets** for its assigned notes (not the full learning material)
 - Record each agent's assigned note list
