@@ -980,13 +980,16 @@ Execute the following steps:
 
 #### 6.1.3 Research Report Reception
 
-Extract from the deep research (or equivalent research output):
+The output of `skill("deep-research")` is a complete structured report. **Save the full output verbatim** (do not summarize, do not extract partial content) to:
+
+`{learning materials folder}/{Topic} - Deep Research.md`
+
+The user can open this file to verify the research was conducted properly — check for multiple sources, citations, and topic-level findings.
+
+Then, from this saved report, extract:
 - **Executive Summary**: used for the summary section of the controversy analysis note
 - **Sources**: used for the reference source list
 - **Findings by topic**: used to identify consensus and controversies
-
-Save the complete research report to:
-`{vault}/{learning materials folder}/{Topic} - Deep Research.md`
 
 **Step 6.2: Parse Research Results**
 
