@@ -522,14 +522,14 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 Calculate required agent count based on **pending** atomic note count (i.e., status=draft count):
 
 ```
-Required agents = ceil(pending note count / 5)
+Required agents = min( ceil(pending note count / 5), 4 )
 ```
 
 **Examples**:
-- 8 notes → ceil(8/5) = 2 agents
-- 15 notes → ceil(15/5) = 3 agents
-- 35 notes → ceil(35/5) = 7 agents
-- 60 notes → ceil(60/5) = 12 agents
+- 8 notes → min(ceil(8/5), 4) = min(2, 4) = 2 agents
+- 15 notes → min(ceil(15/5), 4) = min(3, 4) = 3 agents
+- 35 notes → min(ceil(35/5), 4) = min(7, 4) = **4 agents** (capped)
+- 60 notes → min(ceil(60/5), 4) = min(12, 4) = **4 agents** (capped)
 
 **Distribution principles**:
 - Each agent handles **no more than 5** atomic notes
@@ -537,7 +537,17 @@ Required agents = ceil(pending note count / 5)
 - Each agent receives only the **context packets** for its assigned notes (not the full learning material)
 - Record each agent's assigned note list
 
-**⚠️ When atomic notes exceed 50**:
+**Parallel cap and batching**: The maximum number of concurrently dispatched sub-agents is **4**. When the required count exceeds 4, batch the agents:
+
+```
+Batch 1: agents 1-4 (up to 20 notes) → wait for all to complete
+Batch 2: agents 5-8 (next group) → wait
+...
+```
+
+**Proactive degradation**: If the environment does not support parallel sub-agent dispatch, or if a parallel dispatch attempt stalls for more than **30 seconds**, fall back to **sequential execution** without waiting for user confirmation. Group notes in batches of ≤5 and fill batch by batch. Do not wait for a timeout error — monitor and degrade preemptively.
+
+**When atomic notes exceed 50**:
 - System prompt: `📢 Detected {N} atomic notes — a large count`
 - Suggest the user consider:
   1. Should the learning roadmap be streamlined to reduce knowledge points?
@@ -549,7 +559,7 @@ Required agents = ceil(pending note count / 5)
 
 Launch the specified number of agents **in parallel** to execute the fill task. Each agent must follow the **atomic write specification**:
 
-**Environment and degradation**: If the current client **does not support** true multi-agent parallelism (no `Task` / sub-agent orchestration), fall back to **sequential execution**: still group in batches of ≤5 atomic notes, invoke `atomic-note-filler` or equivalent flow group by group until all are complete; progress report format remains unchanged.
+**Environment and degradation**: If the current client does not support multi-agent parallelism, or parallel dispatch stalls for more than 30 seconds, **immediately and without user confirmation** fall back to sequential execution. Group notes in batches of ≤5, invoke `atomic-note-filler` batch by batch until all are complete. Do not wait for a timeout error or user interruption — degrade preemptively. Progress report format remains unchanged regardless of execution mode.
 
 **Atomic write specification (vf_ frontmatter)**:
 1. The filling agent first creates `{note}.md.tmp` with the complete content (**note: extension is `.md.tmp`, not `.tmp`**)
