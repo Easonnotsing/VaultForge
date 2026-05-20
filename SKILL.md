@@ -970,26 +970,32 @@ Extract from the learning roadmap:
 
 Execute the following steps:
 
-1. **Load the `deep-research` skill**: invoke `skill("deep-research")`. This skill internally handles web search, Firecrawl, Exa, and report synthesis — do NOT attempt to replace it with standalone websearch or webfetch.
+1. **Load the `deep-research` skill**: invoke `skill("deep-research")`. This skill internally handles web search, Firecrawl, Exa, and report synthesis.
 
-2. **Execute or skip**:
-   - ✅ `deep-research` skill loaded → prompt `Using deep-research skill...`, proceed to step 3
-   - ❌ Skill not available → inform user "Deep-research skill not available. Skipping Phase 6.", append `[Phase 6] Skipped` to progress file, workflow ends
-3. **Execute search**: use available tools to search for:
+   After loading, **you MUST output exactly one of these status lines** in the dialogue:
+
+   ```
+   🔬 deep-research skill loaded — executing structured multi-source research...
+   ```
+   or
+   ```
+   ⚠️ deep-research skill not available — skipping Phase 6.
+   ```
+
+2. If loaded, execute the research on:
    > Deep research on {topic}: mainstream views, controversies, different perspectives, industry consensus and divergence, authoritative sources
+
+   If not, append `[Phase 6] Skipped` to progress file and end the workflow.
 
 #### 6.1.3 Research Report Reception
 
-The output of `skill("deep-research")` is a complete structured report. **Save the full output verbatim** (do not summarize, do not extract partial content) to:
-
-`{learning materials folder}/{Topic} - Deep Research.md`
-
-The user can open this file to verify the research was conducted properly — check for multiple sources, citations, and topic-level findings.
-
-Then, from this saved report, extract:
+Extract from the deep research output:
 - **Executive Summary**: used for the summary section of the controversy analysis note
 - **Sources**: used for the reference source list
 - **Findings by topic**: used to identify consensus and controversies
+
+Save the complete research report to:
+`{learning materials folder}/{Topic} - Deep Research.md`
 
 **Step 6.2: Parse Research Results**
 
