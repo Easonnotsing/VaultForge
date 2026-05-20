@@ -287,11 +287,12 @@
   .footer .copy { font-size: 12px; color: var(--text-secondary); margin-top: 40px; }
 
   @media (max-width: 768px) {
+    .container { padding: 0 20px; }
     .hero { padding: 80px 20px 60px; }
     .hero h1 { font-size: 36px; }
     .hero .tagline { font-size: 19px; }
 
-    .intro { padding: 48px 0; }
+    .intro { padding: 48px 20px; }
     .intro p { font-size: 17px; }
 
     .pillars { grid-template-columns: 1fr; padding: 0 20px 60px; }
@@ -300,7 +301,7 @@
     .stats-bar { padding: 40px 20px; font-size: 15px; }
     .stats-row { gap: 18px; }
 
-    .section { padding: 64px 0 48px; }
+    .section { padding: 64px 20px 48px; }
     .section h2, .evaluation h2 { font-size: 32px; }
 
     .compare { grid-template-columns: 1fr; gap: 20px; }
@@ -315,13 +316,13 @@
     .funnel { gap: 8px; margin: 24px 0; }
     .funnel .stage { padding: 16px 20px; }
 
-    .evaluation { padding: 64px 0; }
+    .evaluation { padding: 64px 20px; }
 
     .quote { font-size: 17px; margin-bottom: 32px; }
 
     .cta { padding: 64px 20px; }
     .cta h2 { font-size: 28px; }
-    .cta pre { font-size: 13px; padding: 16px 20px; }
+    .cta pre { font-size: 13px; padding: 16px 20px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
     .cta p { font-size: 15px; }
 
     .footer { padding: 32px 20px 60px; }
@@ -341,7 +342,7 @@
 <!-- Intro -->
 <section class="container intro">
   <p>v1.2.0 是一个生成工具——输入 PDF，输出笔记。它的核心假设是"一次性加工"：一次运行处理一批材料，产出即终态。工具本身不记忆任何状态，不区分生成内容与用户编辑，不做生成后的独立质量校验。</p>
-  <p>v2.3.0 是<strong>系统级的重新设计</strong>。它在三个维度上同时改变了工具的行为方式——不是增量迭代，而是将学习工具从"文本生成器"重新定义为<strong>认知过程的工程支撑系统</strong>。</p>
+  <p>v3.0.0 是<strong>系统级的重新设计</strong>。它在三个维度上同时改变了工具的行为方式——不是增量迭代，而是将学习工具从"文本生成器"重新定义为<strong>认知过程的工程支撑系统</strong>。</p>
 </section>
 
 <!-- Three Pillars -->
@@ -390,7 +391,7 @@
         <p>Agent 崩溃或网络中断 → 所有进度丢失。已写入文件可能不完整。重新触发后从第一页重读。</p>
       </div>
       <div class="compare-box new">
-        <div class="ver">v2.3.0</div>
+        <div class="ver">v3.0.0</div>
         <h4>五态状态机 + 原子写入</h4>
         <p>每个笔记携带 status 字段。filling 状态拆分为两种崩溃子场景，分别恢复。.md.tmp → verify → rename 确保文件完整性。</p>
       </div>
@@ -416,7 +417,7 @@
         <p>读取所有文件 → 生成路线图 → 创建所有笔记 → 建立所有链接。新文件加入时，整流程重跑，已有笔记被覆盖或丢弃。</p>
       </div>
       <div class="compare-box new">
-        <div class="ver">v2.3.0</div>
+        <div class="ver">v3.0.0</div>
         <h4>Phase 0 · 三态保护</h4>
         <p>Phase 0 在内容生成前扫描已有笔记状态。Pristine 可刷新 · User-modified 受保护 · Locked 完全冻结。增量模式下仅处理新文件，已有文件原样保留。</p>
       </div>
@@ -456,7 +457,7 @@
         <p>两个笔记提到相同词汇即建立关联。停留在识别记忆层——"我见过这个词"，而非"这些概念如何关联"。</p>
       </div>
       <div class="compare-box new">
-        <div class="ver">v2.3.0</div>
+        <div class="ver">v3.0.0</div>
         <h4>五类逻辑关系 + 六维审查</h4>
         <p>推导 · 类比 · 矛盾 · 应用 · 背景 —— 五类关系覆盖 Bloom 分类学从理解到评价的全部认知层次。note‑reviewer 在六个维度上独立审查每篇笔记。</p>
       </div>
@@ -507,7 +508,7 @@
 
     <div class="table-wrap">
     <table>
-      <thead><tr><th>Pedagogical Design · 教育理论</th><th>v1.2</th><th>v2.3</th><th>Driver</th></tr></thead>
+      <thead><tr><th>Pedagogical Design · 教育理论</th><th>v1.2</th><th>v3.0</th><th>Driver</th></tr></thead>
       <tbody>
         <tr><td>Cognitive Load Management · 认知负荷管理</td><td class="stars">⭐⭐⭐½</td><td class="stars">⭐⭐⭐⭐⭐</td><td>原子笔记比例检查 + Context Pre‑extraction</td></tr>
         <tr><td>Advance Organizers · 先行组织者</td><td class="stars">⭐⭐⭐⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>MOC 双链完整性自动校验</td></tr>
@@ -522,7 +523,7 @@
 
     <div class="table-wrap">
     <table>
-      <thead><tr><th>Engineering & Agent Design · 工程与 Agent 设计</th><th>v1.2</th><th>v2.3</th><th>Driver</th></tr></thead>
+      <thead><tr><th>Engineering & Agent Design · 工程与 Agent 设计</th><th>v1.2</th><th>v3.0</th><th>Driver</th></tr></thead>
       <tbody>
         <tr><td>Fault Tolerance · 容错性</td><td class="stars">⭐</td><td class="stars">⭐⭐⭐⭐⭐</td><td>状态机 + Atomic Write + 8 降级路径</td></tr>
         <tr><td>Output Accuracy · 输出精度</td><td class="stars">⭐⭐½</td><td class="stars">⭐⭐⭐⭐½</td><td>6‑D Review + 漏斗双链 + 文件统计</td></tr>
