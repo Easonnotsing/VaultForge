@@ -8,6 +8,8 @@ AI agent skill for Obsidian — transforms PDFs and Markdown files into structur
 
 📖 [中文说明](#chinese)
 
+> 🆕 **See what's new in v3.0.0** — [Release Page](https://easonnotsing.github.io/VaultForge/) · [Dev.to](https://dev.to/easonnotsing/how-i-turned-6-cognitive-science-principles-into-an-ai-agent-that-builds-obsidian-vaults-103e)
+
 ---
 
 ## Why VaultForge
@@ -257,6 +259,8 @@ Phase 6: 深度研究（可选）     → 网络搜索 → 争议分析笔记
 ```
 
 ### 快速开始
+
+> 🆕 **查看 v3.0.0 更新** — [发布页](https://easonnotsing.github.io/VaultForge/) · [Dev.to](https://dev.to/easonnotsing/how-i-turned-6-cognitive-science-principles-into-an-ai-agent-that-builds-obsidian-vaults-103e)
 
 ```bash
 git clone https://github.com/Easonnotsing/VaultForge.git ~/.agents/skills/VaultForge
