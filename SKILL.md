@@ -1053,14 +1053,14 @@ Present once:
 
 After all phases complete, generate a shareable achievement image summarizing the learning results.
 
-**Data collection** (aggregate from all phases):
+**Data collection** (aggregate from all phases with strict counting rules):
 
-| Stat | Source | Example | Position |
-|------|--------|---------|----------|
-| Source words | Phase 1.3 reading stats, rounded to k | 12.4k | Top-left |
-| Atomic notes count | Phase 3.5 report | 48 | Top-right |
-| Core questions count | Phase 5.2 (always ≤5) | 5 | Bottom-left |
-| Wikilinks count | Phase 4.4 report | 156 | Bottom-right |
+| Stat | Source | Counting Rule | Example |
+|------|--------|---------------|---------|
+| Source words | Phase 1.2 selected source files | Count words in all selected PDF/Markdown source files, rounded to k | 51.5k |
+| Atomic notes count | Phase 3.5 report | Count `.md` files in H3 folders, **exclude** MOC files (name contains "MOC") and roadmap files | 45 |
+| Core questions count | Phase 5.2 | Always ≤5 | 5 |
+| Wikilinks count | Phase 4.4 report | Count inter-note wikilinks only. **Exclude** any link targeting MOC notes or roadmap files | 69 |
 
 **Graph View background**:
 
