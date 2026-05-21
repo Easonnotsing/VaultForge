@@ -7,7 +7,6 @@
 body{width:540px;height:900px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;display:flex;align-items:center;justify-content:center;position:relative}
 .card{width:480px;text-align:center}
 .hero-img{width:100%;border-radius:16px;margin-bottom:32px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.hero-placeholder{font-size:48px;font-weight:200;color:#d2d2d7;letter-spacing:-0.02em;margin-bottom:32px;line-height:1.2;padding:60px 0;border:1px solid #e5e5ea;border-radius:16px}
 .topic{font-size:30px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:28px}
 .stats-row{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:28px}
 .stat-item{text-align:center;padding:0 20px}
@@ -24,7 +23,7 @@ body{width:540px;height:900px;background:#fff;color:#1d1d1f;font-family:-apple-s
 <body>
 <div class="card">
   <div class="topic">{{TOPIC}}</div>
-  <div class="hero-placeholder">{{TOPIC}}</div>
+  <img class="hero-img" src="../scripts/hero-bg.png" alt="">
   <div class="stats-row">
     <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
     <div class="divider"></div>

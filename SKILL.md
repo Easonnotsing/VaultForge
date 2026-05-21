@@ -1100,8 +1100,8 @@ Randomly pick one, then follow the path for that style:
 
 **Style B path:**
 1. Read `scripts/share-card-b.html`
-2. Render with `--window-size=540,900`
-3. No image needed — Style B uses pure CSS typography
+2. The hero image is already embedded in the template — no conversion needed
+3. Render with `--window-size=540,900`
 
 **Both paths — fill these shared placeholders:**
    - `{{TOPIC}}` — learning topic name
