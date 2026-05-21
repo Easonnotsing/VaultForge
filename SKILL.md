@@ -1089,7 +1089,8 @@ Convert the static `scripts/graph-bg.svg` to PNG:
   "file:///{skill dir}/scripts/graph-bg.svg"
 ```
 
-Encode and inject.
+Encode the PNG as base64. Replace `{{GRAPH_BG}}` in the template with:
+`<img class="bg-layer" src="data:image/png;base64,...">`
 
 **Render the card** (randomly pick style A or B):
 
