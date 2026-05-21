@@ -1084,23 +1084,6 @@ vf_core_questions={value}    ← Phase 5.2 (always ≤5)
 vf_wikilinks={value}         ← Phase 4.4
 ```
 
-**Graph View background**:
-
-**Graph View background** (for style A):
-
-Convert the static `scripts/graph-bg.svg` to PNG:
-
-```
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-  --headless --disable-gpu --no-sandbox \
-  --window-size=900,900 \
-  --screenshot={temp}/graph-bg.png \
-  "file:///{skill dir}/scripts/graph-bg.svg"
-```
-
-Encode the PNG as base64. Replace `{{GRAPH_BG}}` in the template with:
-`<img class="bg-layer" src="data:image/png;base64,...">`
-
 **Render the card** (randomly pick style A or B):
 
 | Style | Template | Ratio | Look |
@@ -1111,8 +1094,8 @@ Encode the PNG as base64. Replace `{{GRAPH_BG}}` in the template with:
 Randomly pick one, then follow the path for that style:
 
 **Style A path:**
-1. Read `scripts/share-card.html`
-2. Replace `{{GRAPH_BG}}` with the graph-bg PNG base64 as `<img class="bg-layer" src="data:image/png;base64,...">`
+1. Convert `scripts/graph-bg.svg` to PNG (`--window-size=900,900`, `--screenshot={temp}/graph-bg.png`)
+2. Encode as base64, inject into `scripts/share-card.html`: replace `{{GRAPH_BG}}` with `<img class="bg-layer" src="data:image/png;base64,...">`
 3. Render with `--window-size=900,900`
 
 **Style B path:**
