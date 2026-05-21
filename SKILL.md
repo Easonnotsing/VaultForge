@@ -1055,13 +1055,12 @@ After all phases complete, generate a shareable achievement image summarizing th
 
 **Data collection** (aggregate from all phases):
 
-| Stat | Source | Example |
-|------|--------|---------|
-| Topic | Phase 1 roadmap title | Digital Transformation |
-| Atomic notes count | Phase 3.5 report | 48 |
-| Wikilinks count | Phase 4.4 report | 156 |
-| Source words | Phase 1.3 reading stats, rounded | 12.4k or 12,400 字 |
-| Core questions count | Phase 5.2 (always ≤5) | 5 |
+| Stat | Source | Example | Position |
+|------|--------|---------|----------|
+| Source words | Phase 1.3 reading stats, rounded to k | 12.4k | Top-left |
+| Atomic notes count | Phase 3.5 report | 48 | Top-right |
+| Core questions count | Phase 5.2 (always ≤5) | 5 | Bottom-left |
+| Wikilinks count | Phase 4.4 report | 156 | Bottom-right |
 
 **Graph View background (optional)**:
 
@@ -1082,8 +1081,9 @@ If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — 
    - `{{TOPIC}}` — learning topic name
    - `{{NOTES}}` / `{{LINKS}}` / `{{WORDS}}` / `{{QUESTIONS}}` — numeric stats
    - `{{LABEL_NOTES}}` etc. — labels in the user's selected language:
-     - English: Atomic Notes / Logical Links / Source Words / Core Questions
-     - 中文: 原子笔记 / 逻辑链接 / 深度阅读 / 核心问题
+     - English: Source Words / Atomic Notes / Core Questions / Logical Links
+     - 中文: 深度阅读 / 原子笔记 / 核心问题 / 逻辑链接
+   - `{{WORDS}}` — use k-unit format for both languages (e.g., 12.4k)
    - `{{SLOGAN}}` — language-aware:
      - English: "Every read builds something that lasts."
      - 中文: "每一次阅读，都不止于阅读。"
