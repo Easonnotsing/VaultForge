@@ -390,24 +390,24 @@
 <section class="section">
   <div class="container">
     <div class="section-label">Pillar 1</div>
-    <h2>运行时可靠性</h2>
+    <h2>Runtime Reliability · 运行时可靠性</h2>
 
     <div class="compare">
       <div class="compare-box old">
         <div class="ver">v1.2.0</div>
-        <h4>无状态运行时</h4>
-        <p>Agent 崩溃或网络中断 → 所有进度丢失。已写入文件可能不完整。重新触发后从第一页重读。</p>
+        <h4>Stateless Runtime</h4>
+        <p>Agent crash or network interruption → all progress lost. Files may be corrupted. Restart from page one.</p>
       </div>
       <div class="compare-box new">
         <div class="ver">v3.0.0</div>
-        <h4>五态状态机 + 原子写入</h4>
-        <p>每个笔记携带 status 字段。filling 状态拆分为两种崩溃子场景，分别恢复。.md.tmp → verify → rename 确保文件完整性。</p>
+        <h4>Five-State State Machine + Atomic Write</h4>
+        <p>Every note carries a status field. The filling state splits into two crash sub-scenarios, recovered separately. .md.tmp → verify → rename guarantees file integrity.</p>
       </div>
     </div>
 
     <div class="callout">
-      <strong>与学习理论的关系</strong><br>
-      分布式学习（Spaced Learning）的记忆保持率显著高于集中学习，但前提是中断后能无缝恢复。不支持断点恢复的工具实际上在惩罚有效的学习策略。状态机将学习过程从连续作业解耦为可中断的会话——这是将间隔效应转化为工程约束。
+      <strong>Learning Theory Connection</strong><br>
+      Spaced Learning produces significantly better retention than massed learning — but requires seamless recovery from interruption. A tool without checkpoint recovery penalizes the most effective study strategy. The state machine decouples learning from continuous sessions into interruptible ones — the spacing effect translated into an engineering constraint.
     </div>
   </div>
 </section>
@@ -416,18 +416,18 @@
 <section class="section">
   <div class="container">
     <div class="section-label">Pillar 2</div>
-    <h2>知识积累模型</h2>
+    <h2>Knowledge Accumulation · 知识积累模型</h2>
 
     <div class="compare">
       <div class="compare-box old">
         <div class="ver">v1.2.0</div>
-        <h4>线性处理</h4>
-        <p>读取所有文件 → 生成路线图 → 创建所有笔记 → 建立所有链接。新文件加入时，整流程重跑，已有笔记被覆盖或丢弃。</p>
+        <h4>Linear Processing</h4>
+        <p>Read all files → generate roadmap → create all notes → build all links. New files trigger full re-run. Existing notes overwritten or orphaned.</p>
       </div>
       <div class="compare-box new">
         <div class="ver">v3.0.0</div>
-        <h4>Phase 0 · 三态保护</h4>
-        <p>Phase 0 在内容生成前扫描已有笔记状态。Pristine 可刷新 · User-modified 受保护 · Locked 完全冻结。增量模式下仅处理新文件，已有文件原样保留。</p>
+        <h4>Phase 0 · Three-Tier Protection</h4>
+        <p>Phase 0 scans existing notes before any content generation. Pristine = refreshable. User-modified = protected. Locked = frozen. Incremental mode processes only new files; existing notes untouched.</p>
       </div>
     </div>
 
@@ -441,12 +441,12 @@
     </table>
 
     <div class="detail">
-      <h4>增量模式下的链接策略</h4>
-      <p>新笔记 ↔ 新笔记：链接直接写入。新笔记 → 已有笔记：仅输出建议 JSON，不修改已有文件。已有笔记的链接网络是使用者已建立的心理模型——新增链接应作为可选数据源，而非自动变更。</p>
+      <h4>Link Strategy in Incremental Mode</h4>
+      <p>New ↔ New: links written directly. New → Existing: suggestions JSON only, existing files untouched. The link network in existing notes is the user's mental model — new links should be an optional data source, not an automatic change.</p>
     </div>
 
     <div class="callout">
-      <strong>与学习理论的关系</strong><br>
+      <strong>Learning Theory Connection</strong><br>
       Bruner 的螺旋课程模型证明，最有效的知识建构是在不同时间以更高复杂度重新审视同一主题——但前提是每次返回时已有结构不被重建。Phase 0 + 增量处理 + 三态保护，使 VaultForge 从一次性工具变为螺旋式学习系统。
     </div>
   </div>
@@ -456,18 +456,18 @@
 <section class="section">
   <div class="container">
     <div class="section-label">Pillar 3</div>
-    <h2>输出精度控制</h2>
+    <h2>Output Precision · 输出精度控制</h2>
 
     <div class="compare">
       <div class="compare-box old">
         <div class="ver">v1.2.0</div>
-        <h4>关键词匹配</h4>
-        <p>两个笔记提到相同词汇即建立关联。停留在识别记忆层——"我见过这个词"，而非"这些概念如何关联"。</p>
+        <h4>Keyword Matching</h4>
+        <p>Two notes sharing a keyword get linked. Stops at recognition memory — "I've seen this word" rather than "how do these concepts relate."</p>
       </div>
       <div class="compare-box new">
         <div class="ver">v3.0.0</div>
-        <h4>五类逻辑关系 + 六维审查</h4>
-        <p>推导 · 类比 · 矛盾 · 应用 · 背景 —— 五类关系覆盖 Bloom 分类学从理解到评价的全部认知层次。note‑reviewer 在六个维度上独立审查每篇笔记。</p>
+        <h4>Five-Type Logical Links + Six-Dimension Review</h4>
+        <p>Derivation · Analogy · Contradiction · Application · Context — five types covering Bloom's taxonomy from comprehension to evaluation. note‑reviewer independently audits every note across six dimensions.</p>
       </div>
     </div>
 
@@ -500,7 +500,7 @@
     </div>
 
     <div class="callout">
-      <strong>与学习理论的关系</strong><br>
+      <strong>Learning Theory Connection</strong><br>
       Kluger &amp; DeNisi (1996) 的元分析确认，有效反馈需三个条件：针对任务而非自我评价、提供具体修正方向、给予修正机会。六维审查 + 自动重写回路构成工程闭环——反馈精确到文件路径和行号，方向按 HIGH / MEDIUM 分级，修正在同一 session 内完成。
     </div>
   </div>
@@ -510,7 +510,7 @@
 <section class="evaluation">
   <div class="container">
     <div class="section-label">Independent Review</div>
-    <h2>综合评估</h2>
+    <h2>Evaluation · 综合评估</h2>
 
     <p class="quote">VaultForge v3.0.0 is the most educationally rigorous and architecturally disciplined project in the current Agent Skill ecosystem. It has evolved from a one-shot generation tool into a continuous knowledge management system — with Phase 0 metacognitive awareness, vf_ frontmatter as a persistent state layer, ACL-style three-tier note protection, and engineering quality backed by 58 tests and 16/16 audit closure.</p>
 
@@ -548,10 +548,10 @@
 
 <!-- CTA -->
 <section class="cta">
-  <h2>开始使用</h2>
+  <h2>Get Started · 开始使用</h2>
   <pre>git clone https://github.com/Easonnotsing/VaultForge.git ~/.agents/skills/VaultForge
 pip install pypdf</pre>
-  <p>在 Claude Code、Codex 或 Cursor 中触发后，首先选择输出语言（English / 中文）。系统自动运行 Phase 0 扫描，如已有知识库，将询问增量更新还是全新生成。</p>
+  <p>Trigger in Claude Code, Codex, or Cursor. Select output language first (English / 中文). Phase 0 scans automatically — if a knowledge base exists, you'll be asked: incremental update or fresh generation.</p>
 </section>
 
 <footer class="footer">
