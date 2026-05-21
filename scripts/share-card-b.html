@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:900px;height:1200px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;display:flex;align-items:center;justify-content:center;position:relative}
+.card{width:720px;text-align:center}
+.hero-img{width:100%;border-radius:20px;margin-bottom:48px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.topic{font-size:40px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:44px}
+.stats-row{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:52px}
+.stat-item{text-align:center;padding:0 36px}
+.stat-item .num{font-size:32px;font-weight:600;letter-spacing:-0.03em;color:#1d1d1f;line-height:1}
+.stat-item .label{font-size:14px;font-weight:500;color:#86868b;margin-top:6px;letter-spacing:-0.01em}
+.divider{width:1px;height:28px;background:#e5e5ea}
+.sep{width:60px;height:3px;background:#F08800;border-radius:2px;margin:0 auto 44px}
+.slogan{font-size:24px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:44px}
+.qr-section{text-align:center;margin-bottom:24px}
+.qr-section img{width:70px;height:70px;border-radius:8px}
+.footer{font-size:12px;font-weight:500;color:#c7c7cc;letter-spacing:-0.01em;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="hero-img" src="{{HERO_IMG}}" alt="">
+  <div class="topic">{{TOPIC}}</div>
+  <div class="stats-row">
+    <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
+    <div class="divider"></div>
+    <div class="stat-item"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
+    <div class="divider"></div>
+    <div class="stat-item"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
+    <div class="divider"></div>
+    <div class="stat-item"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
+  </div>
+  <div class="sep"></div>
+  <div class="slogan">{{SLOGAN}}</div>
+  <div class="footer">VaultForge v3.0.0</div>
+  <div class="qr-section">
+    <img src="{{QR_URL}}" alt="QR">
+  </div>
+</div>
+</body>
+</html>
