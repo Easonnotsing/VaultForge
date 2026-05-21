@@ -1,18 +1,19 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{width:1200px;height:630px;background:linear-gradient(135deg,#1d1d1f 20%,#2d2d2f 100%);color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.bg-layer{position:absolute;top:0;left:0;width:1200px;height:630px;opacity:0.10;object-fit:cover;z-index:0}
-.card{position:relative;z-index:1;text-align:center;padding:0 80px}
-.logo{width:56px;height:56px;background:linear-gradient(135deg,#0071e3,#1d1d1f);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 6px 20px rgba(0,113,227,0.25)}
-.logo span{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.03em}
-.topic{font-size:40px;font-weight:700;letter-spacing:-0.015em;margin-bottom:24px;line-height:1.2}
-.stats{display:flex;justify-content:center;gap:64px;margin-bottom:28px}
-.stat-item{text-align:center}
-.num{font-size:52px;font-weight:700;letter-spacing:-0.03em;line-height:1}
-.label{font-size:15px;color:#a1a1a6;margin-top:6px;letter-spacing:-0.01em}
-.sep{width:200px;height:1px;background:rgba(255,255,255,0.15);margin:0 auto 28px}
-.slogan{font-size:22px;color:#a1a1a6;letter-spacing:-0.01em;margin-bottom:16px}
-.footer{font-size:13px;color:#86868b}
+body{width:1200px;height:630px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;-webkit-font-smoothing:antialiased}
+.bg-layer{position:absolute;top:0;left:0;width:1200px;height:630px;opacity:0.05;object-fit:cover;z-index:0;filter:grayscale(100%)}
+.card{position:relative;z-index:1;width:960px;text-align:center}
+.logo{width:56px;height:56px;background:#0071e3;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:36px}
+.logo span{font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.topic{font-size:44px;font-weight:600;letter-spacing:-0.02em;margin-bottom:48px;color:#1d1d1f}
+.stats{display:flex;justify-content:center;gap:80px;margin-bottom:52px}
+.stat-item{text-align:center;min-width:100px}
+.stat-item .num{font-size:56px;font-weight:600;letter-spacing:-0.04em;color:#1d1d1f;line-height:1}
+.stat-item .label{font-size:15px;font-weight:500;color:#86868b;margin-top:10px;letter-spacing:-0.01em}
+.sep{width:120px;height:1px;background:#e5e5ea;margin:0 auto 40px}
+.slogan{font-size:21px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:32px}
+.footer{font-size:13px;font-weight:500;color:#aeaeb2;letter-spacing:-0.01em}
+.divider{width:1px;height:40px;background:#e5e5ea;align-self:center}
 </style></head><body>
 {{GRAPH_BG}}
 <div class="card">
@@ -20,8 +21,11 @@ body{width:1200px;height:630px;background:linear-gradient(135deg,#1d1d1f 20%,#2d
   <div class="topic">{{TOPIC}}</div>
   <div class="stats">
     <div class="stat-item"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
+    <div class="divider"></div>
     <div class="stat-item"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
+    <div class="divider"></div>
     <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
+    <div class="divider"></div>
     <div class="stat-item"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
   </div>
   <div class="sep"></div>
