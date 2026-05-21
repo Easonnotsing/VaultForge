@@ -1091,7 +1091,7 @@ Encode and inject.
 | Style | Template | Ratio | Look |
 |-------|----------|-------|------|
 | A | `scripts/share-card.html` | 1:1 (900×900) | Graph view background, 2×2 frosted stat panels |
-| B | `scripts/share-card-b.html` | 3:1.8 (900×540) | Image left, stats + slogan right |
+| B | `scripts/share-card-b.html` | 3:1.8 (540×900) | Portrait, topic → hero image → inline stats → slogan |
 
 Randomly pick one. For style A, inject `{{GRAPH_BG}}` with the graph PNG base64. For style B, inject `{{HERO_IMG}}` with the generated achievement card PNG as base64.
 
@@ -1111,7 +1111,7 @@ Then fill all `{{PLACEHOLDER}}` variables:
 3. Write the filled template to a temp `.html` file
 4. Render with Chrome headless using the chosen style's window size:
    - Style A: `--window-size=900,900`
-   - Style B: `--window-size=900,540`
+   - Style B: `--window-size=540,900`
    ```
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --headless --disable-gpu --no-sandbox \
