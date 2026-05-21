@@ -247,6 +247,7 @@ In **incremental mode**: use the file classification from Phase 0.2. NEW files d
 - If a file is too large (e.g., PDF), auto-batch (50 pages/batch), **no user confirmation needed**
 - Real-time progress: `📖 Reading: filename.pdf - [150/329 pages] (46%)`
 - Completion report: `✅ Reading complete! X/Y pages (100%)`
+- **Record stat**: append `vf_source_words={total word count}` to `.obsidian-learning-progress.md`. The agent counts words across all selected source files and records the total.
 
 **Step 1.4: Generate and Confirm Roadmap**
 - Generate the learning roadmap based on the complete reading
@@ -657,6 +658,8 @@ Total: 12 atomic notes
 Duration: X minutes
 ```
 
+Also append `vf_atomic_notes={count}` to `.obsidian-learning-progress.md` (count of non-MOC, non-roadmap notes).
+
 **In incremental mode**, also update `vf_processed_files` in `.obsidian-learning-progress.md` to include the newly processed source files from this session, recording filename and hash for future incremental scans.
 
 ### Phase 4: Wikilink Building
@@ -751,6 +754,7 @@ The main agent reads `candidates.json`, batches candidate pairs (5-10 pairs per 
 
 **Step 4.4: Batch Report Results**
 - Present a summary of all added wikilinks. **Must include an exact count** of inter-note wikilinks written (excluding MOC and roadmap links) — this count is used in Step 6.5 for the achievement card.
+- **Record stat**: append `vf_wikilinks={count}` to `.obsidian-learning-progress.md`
 - Confirm completion
 
 ### Phase 5: Final Review and Core Question Generation
@@ -809,6 +813,8 @@ See [references/templates.md](./references/templates.md) for the complete `Core 
 - No more than 5 core questions, each with question title + background + optional 2-3 sub-questions
 - End with a `## Study Tips` section to guide active learning
 - Storage location: `{learning materials folder}/Core Questions.md`
+
+**Record stat**: append `vf_core_questions={count}` (the number of questions generated, always ≤5) to `.obsidian-learning-progress.md`.
 
 **Step 5.3: Batch Report Final Results**
 
@@ -1067,12 +1073,15 @@ After all phases complete, generate a shareable achievement image summarizing th
 | Core questions | Phase 5.2: count generated questions (always ≤5). | 5 |
 | Wikilinks | Phase 4.4: count actual `[[wikilink]]` entries in `## Related Notes` sections of atomic notes. **Exclude** any link targeting a MOC file or roadmap file. Do NOT count structural candidates or estimate from folder hierarchy — scan the written files. | 18 |
 
-⚠️ **Verification before rendering**: After collecting all stats, run a quick verification scan:
+**Data collection** (read from `.obsidian-learning-progress.md` — do NOT re-count):
+
+Previous phases have already recorded these values. Read them directly:
 
 ```
-1. Atomic notes: confirm count matches the number of non-MOC .md files in H3 folders
-2. Wikilinks: count all [[...]] in Related Notes sections, filter out MOC/roadmap targets
-3. If any number looks inconsistent with the above verification, pause and report the discrepancy to the user
+vf_source_words={value}      ← Phase 1.3
+vf_atomic_notes={value}      ← Phase 3.5
+vf_core_questions={value}    ← Phase 5.2 (always ≤5)
+vf_wikilinks={value}         ← Phase 4.4
 ```
 
 **Graph View background**:
