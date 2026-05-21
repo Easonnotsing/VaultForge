@@ -1049,7 +1049,12 @@ Present once:
 - Controversy Analysis note generated
 - Reference source list
 
-**Step 6.5: Generate Achievement Share Card**
+Ask the user: "📸 Generate an achievement share card? This takes about 1-2 minutes. Reply 'yes' or 'no'."
+
+- If **no** → append `[Phase 6] Complete — Achievement card skipped by user` to progress file, workflow ends
+- If **yes** → proceed to Step 6.5
+
+**Step 6.5: Generate Achievement Share Card** (optional, user-confirmed)
 
 After all phases complete, generate a shareable achievement image summarizing the learning results.
 
