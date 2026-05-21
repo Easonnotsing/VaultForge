@@ -1082,7 +1082,7 @@ If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — 
    - `{{NOTES}}` / `{{LINKS}}` / `{{WORDS}}` / `{{QUESTIONS}}` — numeric stats
    - `{{LABEL_NOTES}}` etc. — labels in the user's selected language:
      - English: Source Words / Atomic Notes / Core Questions / Logical Links
-     - 中文: XXXX字源文件阅读 / XXX篇笔记生成 / XXX个核心问题思考 / XXX个思维链接建立
+     - 中文: XXXX字源文件阅读 / XXX篇笔记生成 / XXX核心问题思考 / XXX思维链接建立
    - `{{WORDS}}` — use k-unit format for both languages (e.g., 12.4k)
    - `{{SLOGAN}}` — language-aware:
      - English: "Every read builds something that lasts."
