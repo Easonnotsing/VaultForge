@@ -1099,10 +1099,19 @@ Encode the PNG as base64. Replace `{{GRAPH_BG}}` in the template with:
 | A | `scripts/share-card.html` | 1:1 (900×900) | Graph view background, 2×2 frosted stat panels |
 | B | `scripts/share-card-b.html` | 3:1.8 (540×900) | Portrait, topic → hero image → inline stats → slogan |
 
-Randomly pick one. For style A, inject `{{GRAPH_BG}}` with the graph PNG base64. For style B, inject `{{HERO_IMG}}` with the generated achievement card PNG as base64.
+Randomly pick one, then follow the path for that style:
 
-Then fill all `{{PLACEHOLDER}}` variables:
-   - `{{GRAPH_BG}}` — if graph-view.png exists: `<img class="bg-layer" src="{relative path}">`; otherwise empty string
+**Style A path:**
+1. Read `scripts/share-card.html`
+2. Replace `{{GRAPH_BG}}` with the graph-bg PNG base64 as `<img class="bg-layer" src="data:image/png;base64,...">`
+3. Render with `--window-size=900,900`
+
+**Style B path:**
+1. Read `scripts/share-card-b.html`
+2. Replace `{{HERO_IMG}}` with the achievement card PNG base64 as `data:image/png;base64,...`
+3. Render with `--window-size=540,900`
+
+**Both paths — fill these shared placeholders:**
    - `{{TOPIC}}` — learning topic name
    - `{{NOTES}}` / `{{LINKS}}` / `{{WORDS}}` / `{{QUESTIONS}}` — numeric stats
    - `{{LABEL_NOTES}}` etc. — labels in the user's selected language:
@@ -1113,20 +1122,9 @@ Then fill all `{{PLACEHOLDER}}` variables:
      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/Easonnotsing/VaultForge`
    - `{{SLOGAN}}` — language-aware:
      - English: "Every read builds something that lasts."
-     - 中文: "每一次阅读，都不止于阅读。"
-3. Write the filled template to a temp `.html` file
-4. Render with Chrome headless using the chosen style's window size:
-   - Style A: `--window-size=900,900`
-   - Style B: `--window-size=540,900`
-   ```
-   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-     --headless --disable-gpu --no-sandbox \
-     --window-size=900,{height} \
-     --force-device-scale-factor=2 \
-     --screenshot="{learning folder}/VaultForge Achievement - {Topic}.png" \
-     "file:///{temp html path}"
-   ```
-5. Generate a **share page** to make sharing easy. Fill `scripts/share-page.html` with:
+           - 中文: "每一次阅读，都不止于阅读。"
+4. Write the filled template to a temp `.html` file and render with Chrome headless using the style's window size
+5. Generate the **share page** to make sharing easy. Fill `scripts/share-page.html` with:
    - `{{TOPIC}}` — topic name
    - `{{CARD_PATH}}` — absolute path to the generated PNG
    - `{{SHARE_TEXT}}` — URL-encoded share text: "I built a knowledge base on {topic} with VaultForge — {notes} atomic notes, {links} logical links. https://github.com/Easonnotsing/VaultForge"
