@@ -1049,6 +1049,55 @@ Present once:
 - Controversy Analysis note generated
 - Reference source list
 
+**Step 6.5: Generate Achievement Share Card**
+
+After all phases complete, generate a shareable achievement image summarizing the learning results.
+
+**Data collection** (aggregate from all phases):
+
+| Stat | Source | Example |
+|------|--------|---------|
+| Topic | Phase 1 roadmap title | Digital Transformation |
+| Atomic notes count | Phase 3.5 report | 48 |
+| Wikilinks count | Phase 4.4 report | 156 |
+| Source words | Phase 1.3 reading stats, rounded | 12.4k or 12,400 字 |
+| Core questions count | Phase 5.2 (always ≤5) | 5 |
+
+**Graph View background (optional)**:
+
+If Obsidian is running and the `obsidian-cli` skill is available, attempt to capture the local graph view of the learning folder:
+
+```
+obsidian vault="VaultName" eval code="app.workspace.ensureSideLeaf('graph', 'local'); app.workspace.activeLeaf.openLocalGraph();"
+obsidian dev:screenshot path="{learning folder}/graph-view.png"
+```
+
+If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — the card renders with a solid gradient background.
+
+**Render the card**:
+
+1. Read `scripts/share-card.html` template
+2. Replace all `{{PLACEHOLDER}}` variables with real data:
+   - `{{GRAPH_BG}}` — if graph-view.png exists: `<img class="bg-layer" src="{relative path}">`; otherwise empty string
+   - `{{TOPIC}}` — learning topic name
+   - `{{NOTES}}` / `{{LINKS}}` / `{{WORDS}}` / `{{QUESTIONS}}` — numeric stats
+   - `{{LABEL_NOTES}}` etc. — labels in the user's selected language:
+     - English: Atomic Notes / Logical Links / Source Words / Core Questions
+     - 中文: 原子笔记 / 逻辑链接 / 深度阅读 / 核心问题
+   - `{{SLOGAN}}` — language-aware:
+     - English: "Every read builds something that lasts."
+     - 中文: "每一次阅读，都不止于阅读。"
+3. Write the filled template to a temp `.html` file
+4. Render with Chrome headless:
+   ```
+   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+     --headless --disable-gpu --no-sandbox \
+     --window-size=1200,630 \
+     --screenshot="{learning folder}/VaultForge Achievement - {Topic}.png" \
+     "file:///{temp html path}"
+   ```
+5. Report to the user: `📸 Achievement card generated: VaultForge Achievement - {Topic}.png`
+
 > Historical failure cases and improvement records: see [HISTORY.md](./HISTORY.md)
 
 ## File Structure
