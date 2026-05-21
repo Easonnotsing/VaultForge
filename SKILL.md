@@ -750,7 +750,7 @@ The main agent reads `candidates.json`, batches candidate pairs (5-10 pairs per 
   ```
 
 **Step 4.4: Batch Report Results**
-- Present a summary of all added wikilinks
+- Present a summary of all added wikilinks. **Must include an exact count** of inter-note wikilinks written (excluding MOC and roadmap links) — this count is used in Step 6.5 for the achievement card.
 - Confirm completion
 
 ### Phase 5: Final Review and Core Question Generation
@@ -1053,14 +1053,22 @@ Present once:
 
 After all phases complete, generate a shareable achievement image summarizing the learning results.
 
-**Data collection** (aggregate from all phases with strict counting rules):
+**Data collection** (aggregate from actual output files — never estimate from structural data):
 
-| Stat | Source | Counting Rule | Example |
-|------|--------|---------------|---------|
-| Source words | Phase 1.2 selected source files | Count words in all selected PDF/Markdown source files, rounded to k | 51.5k |
-| Atomic notes count | Phase 3.5 report | Count `.md` files in H3 folders, **exclude** MOC files (name contains "MOC") and roadmap files | 45 |
-| Core questions count | Phase 5.2 | Always ≤5 | 5 |
-| Wikilinks count | Phase 4.4 batch report | Count from the **actual written wikilinks** in the report, not from structural candidates. Exclude any link targeting MOC files or roadmap files | 28 |
+| Stat | How to Count | Example |
+|------|-------------|---------|
+| Source words | Phase 1.2: count total words across all selected source files (PDF/MD). Round to nearest 0.1k. Do NOT count from generated notes — they are condensed output. | 51.5k |
+| Atomic notes | Phase 3: count `.md` files in H3 subfolders. **Exclude** files with "MOC" in name. **Exclude** roadmap files. **Exclude** `Core Questions.md` and `*Deep Research.md` and `*Controversy Analysis.md`. | 45 |
+| Core questions | Phase 5.2: count generated questions (always ≤5). | 5 |
+| Wikilinks | Phase 4.4: count actual `[[wikilink]]` entries in `## Related Notes` sections of atomic notes. **Exclude** any link targeting a MOC file or roadmap file. Do NOT count structural candidates or estimate from folder hierarchy — scan the written files. | 18 |
+
+⚠️ **Verification before rendering**: After collecting all stats, run a quick verification scan:
+
+```
+1. Atomic notes: confirm count matches the number of non-MOC .md files in H3 folders
+2. Wikilinks: count all [[...]] in Related Notes sections, filter out MOC/roadmap targets
+3. If any number looks inconsistent with the above verification, pause and report the discrepancy to the user
+```
 
 **Graph View background**:
 
