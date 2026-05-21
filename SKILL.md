@@ -1064,21 +1064,17 @@ After all phases complete, generate a shareable achievement image summarizing th
 
 **Graph View background**:
 
-Generate a real knowledge graph background from the vault structure:
-
-```
-python3 scripts/graph-bg-builder.py "{learning folder path}" 900 1200
-```
-
-This reads the actual VaultForge-generated notes and folders, extracts connections from folder hierarchy and keyword similarity, and renders an SVG graph in Obsidian Graph View style. No Obsidian CLI or user interaction needed. Render the output SVG to PNG:
+Convert the static `scripts/graph-bg.svg` to PNG and use as the card background:
 
 ```
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --headless --disable-gpu --no-sandbox \
   --window-size=900,1200 \
   --screenshot={temp}/graph-bg.png \
-  "file:///{output svg path}"
+  "file:///{skill dir}/scripts/graph-bg.svg"
 ```
+
+Encode the PNG as base64 and inject into the template: `<img class="bg-layer" src="data:image/png;base64,...">`
 
 **Render the card**:
 
