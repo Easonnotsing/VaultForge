@@ -1084,6 +1084,8 @@ If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — 
      - English: Source Words / Atomic Notes / Core Questions / Logical Links
      - 中文: XXXX字源文件阅读 / XXX篇笔记生成 / XXX核心问题思考 / XXX思维链接建立
    - `{{WORDS}}` — use k-unit format for both languages (e.g., 12.4k)
+   - `{{QR_URL}}` — QR code image URL linking to the GitHub repo:
+     `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/Easonnotsing/VaultForge`
    - `{{SLOGAN}}` — language-aware:
      - English: "Every read builds something that lasts."
      - 中文: "每一次阅读，都不止于阅读。"
@@ -1092,7 +1094,7 @@ If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — 
    ```
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --headless --disable-gpu --no-sandbox \
-     --window-size=1200,900 \
+     --window-size=900,1200 \
      --force-device-scale-factor=2 \
      --screenshot="{learning folder}/VaultForge Achievement - {Topic}.png" \
      "file:///{temp html path}"
