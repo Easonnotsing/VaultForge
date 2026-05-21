@@ -3,36 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VaultForge — Achievement Card</title>
+<title>VaultForge — Share Achievement</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 20px;min-height:100vh}
-  h2{font-size:24px;font-weight:600;color:#1d1d1f;margin-bottom:24px}
-  .card-img{max-width:450px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:32px}
-  .share-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-  .btn{padding:12px 24px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;color:#fff;transition:opacity 0.2s;border:none;cursor:pointer}
-  .btn:hover{opacity:0.85}
-  .tw{background:#1DA1F2} .li{background:#0A66C2} .wx{background:#07C160}
-  .cp{background:#0071e3} .dl{background:#86868b}
-  .path{font-size:13px;color:#aeaeb2;margin-top:20px;text-align:center}
+  body{background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 20px 60px;min-height:100vh}
+  h2{font-size:24px;font-weight:600;color:#1d1d1f;margin-bottom:8px;text-align:center}
+  .sub{font-size:14px;color:#86868b;margin-bottom:24px}
+  .card-img{max-width:420px;width:100%;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-bottom:36px}
+  .grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:20px 32px;max-width:600px;width:100%}
+  .item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
+  .circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;transition:transform 0.15s,opacity 0.15s;border:none;cursor:pointer}
+  .circle:hover{transform:scale(1.08);opacity:0.9}
+  .label{font-size:12px;font-weight:500;color:#86868b;text-align:center;white-space:nowrap}
+  .tw{background:#000} .li{background:#0A66C2} .fb{background:#1877F2} .wx{background:#07C160}
+  .wb{background:#E6162D} .tt{background:#000} .xhs{background:#FF2442} .re{background:#FF4500}
+  .cp{background:#0071e3} .dl{background:#8e8e93}
+  .toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:10}
+  .toast.show{opacity:1}
+  @media(max-width:480px){.grid{grid-template-columns:repeat(3,1fr);gap:16px 20px}}
 </style>
 </head>
 <body>
 <h2>{{TOPIC}}</h2>
-<img class="card-img" src="{{CARD_PATH}}" alt="Achievement Card">
-<div class="share-btns">
-  <a class="btn tw" href="https://twitter.com/intent/tweet?text={{SHARE_TEXT}}" target="_blank">Share on X</a>
-  <a class="btn li" href="https://www.linkedin.com/sharing/share-offsite/?url={{PAGE_URL}}" target="_blank">Share on LinkedIn</a>
-  <button class="btn cp" onclick="navigator.clipboard.write('{{CARD_PATH}}')">Copy Image Path</button>
-  <button class="btn dl" onclick="download()">Download</button>
+<p class="sub">Share your achievement</p>
+<img class="card-img" src="{{CARD_PATH}}" alt="Achievement Card" id="card">
+
+<div class="grid">
+  <div class="item" onclick="share('x')">
+    <div class="circle tw">𝕏</div><div class="label">X</div>
+  </div>
+  <div class="item" onclick="share('linkedin')">
+    <div class="circle li">in</div><div class="label">LinkedIn</div>
+  </div>
+  <div class="item" onclick="share('facebook')">
+    <div class="circle fb">f</div><div class="label">Facebook</div>
+  </div>
+  <div class="item" onclick="share('wechat')">
+    <div class="circle wx">微</div><div class="label">微信</div>
+  </div>
+  <div class="item" onclick="share('weibo')">
+    <div class="circle wb">微</div><div class="label">微博</div>
+  </div>
+  <div class="item" onclick="share('reddit')">
+    <div class="circle re">r</div><div class="label">Reddit</div>
+  </div>
+  <div class="item" onclick="share('tiktok')">
+    <div class="circle tt">♪</div><div class="label">TikTok</div>
+  </div>
+  <div class="item" onclick="share('xhs')">
+    <div class="circle xhs">红</div><div class="label">小红书</div>
+  </div>
+  <div class="item" onclick="share('copy-image')">
+    <div class="circle cp">📋</div><div class="label">Copy Image</div>
+  </div>
+  <div class="item" onclick="share('download')">
+    <div class="circle dl">↓</div><div class="label">Download</div>
+  </div>
 </div>
-<p class="path">File: {{CARD_PATH}}</p>
+
+<div id="toast" class="toast"></div>
+
 <script>
-function download() {
-  const a = document.createElement('a');
-  a.href = '{{CARD_PATH}}';
-  a.download = 'VaultForge Achievement.png';
-  a.click();
+const CARD_PATH = '{{CARD_PATH}}';
+const SHARE_TEXT = encodeURIComponent('{{SHARE_RAW}}');
+const SHARE_URL = '{{PAGE_URL}}';
+
+function share(platform) {
+  const text = decodeURIComponent(SHARE_TEXT);
+  const url = SHARE_URL;
+  let w;
+
+  switch(platform) {
+    case 'x':
+      w = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+      window.open(w, '_blank');
+      break;
+    case 'linkedin':
+      w = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+      window.open(w, '_blank', 'width=600,height=500');
+      break;
+    case 'facebook':
+      w = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+      window.open(w, '_blank', 'width=600,height=500');
+      break;
+    case 'wechat':
+      showToast('💬 Save the image and share to WeChat Moments or group chats');
+      break;
+    case 'weibo':
+      w = `https://service.weibo.com/share/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}&pic=${encodeURIComponent(CARD_PATH)}`;
+      window.open(w, '_blank', 'width=600,height=500');
+      break;
+    case 'reddit':
+      w = `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`;
+      window.open(w, '_blank');
+      break;
+    case 'tiktok':
+    case 'xhs':
+      showToast('📱 Save the image and share in-app');
+      break;
+    case 'copy-image':
+      const img = document.getElementById('card');
+      fetch(img.src).then(r => r.blob()).then(b => {
+        navigator.clipboard.write([new ClipboardItem({'image/png': b})]);
+        showToast('✅ Image copied to clipboard');
+      }).catch(() => showToast('📋 Copy failed. Right-click the image → Copy.'));
+      break;
+    case 'download':
+      const a = document.createElement('a');
+      a.href = CARD_PATH;
+      a.download = 'VaultForge Achievement.png';
+      a.click();
+      break;
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
 </body>

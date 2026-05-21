@@ -557,7 +557,7 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
    ```yaml
    ---
    vf: true
-   vf_version: v3.0.0
+   vf_version: v3.1.0
    vf_status: pristine
    vf_session: initial|incremental-{date}
    status: filling
