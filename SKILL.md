@@ -1072,22 +1072,30 @@ After all phases complete, generate a shareable achievement image summarizing th
 
 **Graph View background**:
 
-Convert the static `scripts/graph-bg.svg` to PNG and use as the card background:
+**Graph View background** (for style A):
+
+Convert the static `scripts/graph-bg.svg` to PNG:
 
 ```
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --headless --disable-gpu --no-sandbox \
-  --window-size=900,1200 \
+  --window-size=900,1125 \
   --screenshot={temp}/graph-bg.png \
   "file:///{skill dir}/scripts/graph-bg.svg"
 ```
 
-Encode the PNG as base64 and inject into the template: `<img class="bg-layer" src="data:image/png;base64,...">`
+Encode and inject.
 
-**Render the card**:
+**Render the card** (randomly pick style A or B):
 
-1. Read `scripts/share-card.html` template
-2. Replace all `{{PLACEHOLDER}}` variables with real data:
+| Style | Template | Ratio | Look |
+|-------|----------|-------|------|
+| A | `scripts/share-card.html` | 5:4 (900×1125) | Graph view background, 2×2 frosted stat panels |
+| B | `scripts/share-card-b.html` | 2:1 (900×1800) | Image at top, inline stats row with dividers |
+
+Randomly pick one. For style A, inject `{{GRAPH_BG}}` with the graph PNG base64. For style B, inject `{{HERO_IMG}}` with the generated achievement card PNG as base64.
+
+Then fill all `{{PLACEHOLDER}}` variables:
    - `{{GRAPH_BG}}` — if graph-view.png exists: `<img class="bg-layer" src="{relative path}">`; otherwise empty string
    - `{{TOPIC}}` — learning topic name
    - `{{NOTES}}` / `{{LINKS}}` / `{{WORDS}}` / `{{QUESTIONS}}` — numeric stats
@@ -1101,11 +1109,13 @@ Encode the PNG as base64 and inject into the template: `<img class="bg-layer" sr
      - English: "Every read builds something that lasts."
      - 中文: "每一次阅读，都不止于阅读。"
 3. Write the filled template to a temp `.html` file
-4. Render with Chrome headless:
+4. Render with Chrome headless using the chosen style's window size:
+   - Style A: `--window-size=900,1125`
+   - Style B: `--window-size=900,1800`
    ```
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --headless --disable-gpu --no-sandbox \
-     --window-size=900,1200 \
+     --window-size=900,{height} \
      --force-device-scale-factor=2 \
      --screenshot="{learning folder}/VaultForge Achievement - {Topic}.png" \
      "file:///{temp html path}"
