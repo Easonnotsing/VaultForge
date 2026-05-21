@@ -368,7 +368,7 @@
   <div class="pillar-card">
     <div class="label">Pillar 3</div>
     <h3>Output Precision</h3>
-    <p>5-type logical wikilinks (derivation/analogy/contradiction/application/context). 6-dimension quality review. Three-stage funnel for link accuracy.</p>
+    <p>5-type logical wikilinks + 6-dimension quality review. Three-stage funnel balances precision and cost.</p>
   </div>
 </div>
 
@@ -432,11 +432,11 @@
     </div>
 
     <table>
-      <thead><tr><th>状态</th><th>判定方式</th><th>系统行为</th></tr></thead>
+      <thead><tr><th>Status</th><th>Detection</th><th>Behavior</th></tr></thead>
       <tbody>
-        <tr><td><strong>Pristine</strong></td><td>生成后未被修改</td><td>可自动刷新内容</td></tr>
-        <tr><td><strong>User-modified</strong></td><td>检测到 mtime 与 date 差异</td><td>受保护，自动操作不覆盖</td></tr>
-        <tr><td><strong>Locked</strong></td><td>用户手动标记</td><td>系统完全忽略</td></tr>
+        <tr><td><strong>Pristine</strong></td><td>Unmodified since generation</td><td>Auto-refreshable</td></tr>
+        <tr><td><strong>User-modified</strong></td><td>mtime differs from date</td><td>Protected from auto-writes</td></tr>
+        <tr><td><strong>Locked</strong></td><td>Manually set by user</td><td>Completely ignored</td></tr>
       </tbody>
     </table>
 
@@ -447,7 +447,7 @@
 
     <div class="callout">
       <strong>Learning Theory Connection</strong><br>
-      Bruner 的螺旋课程模型证明，最有效的知识建构是在不同时间以更高复杂度重新审视同一主题——但前提是每次返回时已有结构不被重建。Phase 0 + 增量处理 + 三态保护，使 VaultForge 从一次性工具变为螺旋式学习系统。
+      Bruner's Spiral Curriculum demonstrates that the most effective knowledge construction revisits topics at increasing complexity over time — provided existing structures remain intact on each return. Phase 0 + incremental processing + three-tier protection transforms VaultForge from a one-shot tool into a spiral learning system.
     </div>
   </div>
 </section>
@@ -472,36 +472,36 @@
     </div>
 
     <table>
-      <thead><tr><th>关系</th><th>含义</th><th>Bloom 层次</th></tr></thead>
+      <thead><tr><th>Relation</th><th>Meaning</th><th>Bloom's Level</th></tr></thead>
       <tbody>
-        <tr><td><strong>推导</strong></td><td>A 是 B 的逻辑前提</td><td>理解 → 应用</td></tr>
-        <tr><td><strong>类比</strong></td><td>A 和 B 共享底层结构但表面不同</td><td>分析</td></tr>
-        <tr><td><strong>矛盾</strong></td><td>A 和 B 得出冲突的结论</td><td>评价</td></tr>
-        <tr><td><strong>应用</strong></td><td>A 的框架在 B 的场景中使用</td><td>应用</td></tr>
-        <tr><td><strong>背景</strong></td><td>A 和 B 属于同一领域的不同发展阶段</td><td>综合</td></tr>
+        <tr><td><strong>Derivation</strong></td><td>A is the logical prerequisite of B</td><td>Understand → Apply</td></tr>
+        <tr><td><strong>Analogy</strong></td><td>A and B share deep structure but surface differently</td><td>Analyze</td></tr>
+        <tr><td><strong>Contradiction</strong></td><td>A and B reach conflicting conclusions</td><td>Evaluate</td></tr>
+        <tr><td><strong>Application</strong></td><td>A's framework is used in B's context</td><td>Apply</td></tr>
+        <tr><td><strong>Context</strong></td><td>A and B are phases in the same domain's evolution</td><td>Synthesize</td></tr>
       </tbody>
     </table>
 
     <div class="funnel">
       <div class="stage">
-        <strong>Stage 1 · 结构亲和过滤</strong>
-        零成本。仅同 H2 类别下的笔记对进入下一阶段。过滤 ~80%
+        <strong>Stage 1 · Structural Affinity</strong>
+        Zero cost. Only note pairs within the same H2 proceed. Filters ~80%
       </div>
       <div class="arrow">↓</div>
       <div class="stage">
-        <strong>Stage 2 · TF‑IDF 语义评分</strong>
-        纯 Python，零外部依赖。计算余弦相似度，输出高置信候选
+        <strong>Stage 2 · TF‑IDF Semantic Scoring</strong>
+        Pure Python, zero dependencies. Computes cosine similarity for high-confidence candidates
       </div>
       <div class="arrow">↓</div>
       <div class="stage">
-        <strong>Stage 3 · LLM 分类</strong>
-        可控 token 成本。仅对约 20% 的候选对执行五类关系判断
+        <strong>Stage 3 · LLM Classification</strong>
+        Controlled token cost. Only ~20% of candidates undergo five-type classification
       </div>
     </div>
 
     <div class="callout">
       <strong>Learning Theory Connection</strong><br>
-      Kluger &amp; DeNisi (1996) 的元分析确认，有效反馈需三个条件：针对任务而非自我评价、提供具体修正方向、给予修正机会。六维审查 + 自动重写回路构成工程闭环——反馈精确到文件路径和行号，方向按 HIGH / MEDIUM 分级，修正在同一 session 内完成。
+      Kluger &amp; DeNisi (1996) meta-analysis: effective feedback requires three conditions — task-focused, specific direction, and opportunity to correct. Six-dimension review + auto-rewrite loop forms the engineering closure: precise to file path and line number, graded HIGH / MEDIUM, corrected within the same session.
     </div>
   </div>
 </section>
@@ -518,13 +518,13 @@
     <table>
       <thead><tr><th>Pedagogical Design · 教育理论</th><th>v1.2.0</th><th>v3.0.0</th><th>Driver</th></tr></thead>
       <tbody>
-        <tr><td>Cognitive Load Management · 认知负荷管理</td><td class="stars">3.5</td><td class="stars">5.0</td><td>原子笔记比例检查 + Context Pre‑extraction</td></tr>
-        <tr><td>Advance Organizers · 先行组织者</td><td class="stars">4.0</td><td class="stars">5.0</td><td>MOC 双链完整性自动校验</td></tr>
-        <tr><td>Semantic Network · 语义网络建构</td><td class="stars">3.0</td><td class="stars">4.5</td><td>五类关系替代关键词匹配</td></tr>
-        <tr><td>Retrieval Guidance · 提取引导</td><td class="stars">3.0</td><td class="stars">4.0</td><td>结构化引导替代简单列表</td></tr>
-        <tr><td>Critical Thinking · 批判性思维</td><td class="stars">3.0</td><td class="stars">5.0</td><td>三层 Controversy Analysis 框架</td></tr>
-        <tr><td>Spiral Curriculum · 螺旋课程</td><td class="stars">—</td><td class="stars">5.0</td><td>Phase 0 + Incremental + 三态保护</td></tr>
-        <tr><td>Learner Autonomy · 学习者自主性</td><td class="stars">—</td><td class="stars">4.5</td><td>vf_status 三态 ACL 模型</td></tr>
+        <tr><td>Cognitive Load Management · 认知负荷管理</td><td class="stars">3.5</td><td class="stars">5.0</td><td>Atomic note proportion check + Context Pre-extraction</td></tr>
+        <tr><td>Advance Organizers · 先行组织者</td><td class="stars">4.0</td><td class="stars">5.0</td><td>MOC wikilink completeness auto-audit</td></tr>
+        <tr><td>Semantic Network · 语义网络建构</td><td class="stars">3.0</td><td class="stars">4.5</td><td>Five-type classification replaces keyword matching</td></tr>
+        <tr><td>Retrieval Guidance · 提取引导</td><td class="stars">3.0</td><td class="stars">4.0</td><td>Structured guidance replaces simple lists</td></tr>
+        <tr><td>Critical Thinking · 批判性思维</td><td class="stars">3.0</td><td class="stars">5.0</td><td>Three-layer Controversy Analysis framework</td></tr>
+        <tr><td>Spiral Curriculum · 螺旋课程</td><td class="stars">—</td><td class="stars">5.0</td><td>Phase 0 + Incremental + three-tier ACL</td></tr>
+        <tr><td>Learner Autonomy · 学习者自主性</td><td class="stars">—</td><td class="stars">4.5</td><td>vf_status three-tier ACL model</td></tr>
       </tbody>
     </table>
     </div>
@@ -533,13 +533,13 @@
     <table>
       <thead><tr><th>Engineering & Agent Design · 工程与 Agent 设计</th><th>v1.2.0</th><th>v3.0.0</th><th>Driver</th></tr></thead>
       <tbody>
-        <tr><td>Fault Tolerance · 容错性</td><td class="stars">1.0</td><td class="stars">5.0</td><td>状态机 + Atomic Write + 8 降级路径</td></tr>
-        <tr><td>Output Accuracy · 输出精度</td><td class="stars">2.5</td><td class="stars">4.5</td><td>6‑D Review + 漏斗双链 + 文件统计</td></tr>
-        <tr><td>Token Efficiency · Token 效率</td><td class="stars">2.0</td><td class="stars">4.5</td><td>Context Pre‑extraction + --note‑filter</td></tr>
-        <tr><td>Cross‑Platform · 跨平台</td><td class="stars">2.0</td><td class="stars">4.5</td><td>三模式 CLI + Phase 0 无 sub‑agent 依赖</td></tr>
-        <tr><td>Maintainability · 可维护性</td><td class="stars">2.0</td><td class="stars">5.0</td><td>58 tests + 7 跨文件契约 + 16/16 审计</td></tr>
-        <tr><td>Internal Consistency · 内部一致性</td><td class="stars">2.0</td><td class="stars">5.0</td><td>19 项交叉验证 + 自动化保护</td></tr>
-        <tr><td>Incremental Architecture · 增量架构</td><td class="stars">—</td><td class="stars">5.0</td><td>三态 ACL + add‑only + 建议分离 + 刷新闭环</td></tr>
+        <tr><td>Fault Tolerance · 容错性</td><td class="stars">1.0</td><td class="stars">5.0</td><td>State machine + Atomic Write + 8 degradation paths</td></tr>
+        <tr><td>Output Accuracy · 输出精度</td><td class="stars">2.5</td><td class="stars">4.5</td><td>6-D Review + funnel wikilinks + file-based stats</td></tr>
+        <tr><td>Token Efficiency · Token 效率</td><td class="stars">2.0</td><td class="stars">4.5</td><td>Context Pre-extraction + --note-filter</td></tr>
+        <tr><td>Cross‑Platform · 跨平台</td><td class="stars">2.0</td><td class="stars">4.5</td><td>Tri-mode CLI + Phase 0 no sub-agent dependency</td></tr>
+        <tr><td>Maintainability · 可维护性</td><td class="stars">2.0</td><td class="stars">5.0</td><td>58 tests + 7 cross-file contracts + 16/16 audit</td></tr>
+        <tr><td>Internal Consistency · 内部一致性</td><td class="stars">2.0</td><td class="stars">5.0</td><td>19 cross-checks + automated guardrails</td></tr>
+        <tr><td>Incremental Architecture · 增量架构</td><td class="stars">—</td><td class="stars">5.0</td><td>Three-tier ACL + add-only + suggestion isolation + refresh loop</td></tr>
       </tbody>
     </table>
     </div>
