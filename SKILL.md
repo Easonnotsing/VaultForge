@@ -1093,6 +1093,7 @@ If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — 
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --headless --disable-gpu --no-sandbox \
      --window-size=1200,900 \
+     --force-device-scale-factor=2 \
      --screenshot="{learning folder}/VaultForge Achievement - {Topic}.png" \
      "file:///{temp html path}"
    ```

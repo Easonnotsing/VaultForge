@@ -1,28 +1,35 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{width:1200px;height:900px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;-webkit-font-smoothing:antialiased}
+body{width:1200px;height:900px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;-webkit-font-smoothing:antialiased}
 .bg-layer{position:absolute;top:0;left:0;width:1200px;height:900px;opacity:0.04;object-fit:cover;z-index:0;filter:grayscale(100%)}
-.card{position:relative;z-index:1;width:880px;text-align:center}
-.topic{font-size:46px;font-weight:600;letter-spacing:-0.02em;margin-bottom:64px;color:#1d1d1f}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:60px 120px;margin-bottom:64px}
-.stat-item{text-align:center}
-.stat-item .num{font-size:80px;font-weight:700;letter-spacing:-0.04em;color:#1d1d1f;line-height:1;font-feature-settings:"tnum"}
-.stat-item .label{font-size:16px;font-weight:500;color:#86868b;margin-top:12px;letter-spacing:-0.01em}
-.sep{width:100px;height:1px;background:#e5e5ea;margin:0 auto 48px}
-.slogan{font-size:22px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:36px}
-.footer{font-size:14px;font-weight:500;color:#aeaeb2;letter-spacing:-0.01em}
-</style></head><body>
+.card{position:relative;z-index:1;width:880px}
+.topic{text-align:center;font-size:44px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:56px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:56px}
+.panel{background:#f5f5f7;border-radius:18px;padding:36px 0;text-align:center}
+.panel .num{font-size:56px;font-weight:600;letter-spacing:-0.03em;color:#1d1d1f;line-height:1}
+.panel .label{font-size:15px;font-weight:500;color:#86868b;margin-top:10px;letter-spacing:-0.01em}
+.sep{width:80px;height:1px;background:#d2d2d7;margin:0 auto 44px}
+.slogan{text-align:center;font-size:21px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:32px}
+.footer{text-align:center;font-size:13px;font-weight:500;color:#aeaeb2;letter-spacing:-0.01em}
+</style>
+</head>
+<body>
 {{GRAPH_BG}}
 <div class="card">
   <div class="topic">{{TOPIC}}</div>
   <div class="grid">
-    <div class="stat-item"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
-    <div class="stat-item"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
-    <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
-    <div class="stat-item"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
+    <div class="panel"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
+    <div class="panel"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
+    <div class="panel"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
+    <div class="panel"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
   </div>
   <div class="sep"></div>
   <div class="slogan">{{SLOGAN}}</div>
   <div class="footer">VaultForge v3.0.0</div>
 </div>
-</body></html>
+</body>
+</html>
