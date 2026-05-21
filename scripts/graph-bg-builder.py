@@ -79,6 +79,20 @@ def build_graph(notes: List[Dict]) -> Tuple[List[Tuple[str, str, str]], List[Dic
                 if key not in seen:
                     seen.add(key)
                     edges.append((a["title"], b["title"], "analogy"))
+    # 补充 context 边：同 H2 下随机连接以增加密度
+    h2_groups = defaultdict(list)
+    for n in notes:
+        parts = Path(n["path"]).parts
+        if len(parts) >= 1:
+            h2_groups[parts[0]].append(n["title"])
+    for h2, names in h2_groups.items():
+        for i, a in enumerate(names):
+            for b in names[i + 1 : i + 4]:
+                if b:
+                    key = tuple(sorted([a, b]))
+                    if key not in seen:
+                        seen.add(key)
+                        edges.append((a, b, "context"))
     return edges, notes
 
 
@@ -95,19 +109,12 @@ def layout_graph(
         for n in names
     }
 
-    # 按深度分组,做出层级感
-    depth_groups = defaultdict(list)
-    for n in notes:
-        depth_groups[n["depth"]].append(n["title"])
-    max_depth = max(depth_groups.keys())
-    for depth, group in depth_groups.items():
-        y = int(80 + (height - 160) * depth / max(max_depth, 1))
-        for i, name in enumerate(group):
-            x = int(80 + (width - 160) * (i + 1) / (len(group) + 1))
-            pos[name] = (x + random.uniform(-30, 30), y + random.uniform(-20, 20))
+    # 初始随机散布，不做深度分层
+    for n in names:
+        pos[n] = (random.uniform(60, width - 60), random.uniform(60, height - 60))
 
-    # 简单 repulsion/attraction iteration
-    for _ in range(50):
+    # 简单力导向：排斥力均匀分布，吸引力沿边收缩
+    for _ in range(80):
         forces = {n: [0.0, 0.0] for n in names}
         for a in names:
             for b in names:
