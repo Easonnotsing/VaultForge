@@ -79,20 +79,6 @@ def build_graph(notes: List[Dict]) -> Tuple[List[Tuple[str, str, str]], List[Dic
                 if key not in seen:
                     seen.add(key)
                     edges.append((a["title"], b["title"], "analogy"))
-    # 补充 context 边：同 H2 下随机连接以增加密度
-    h2_groups = defaultdict(list)
-    for n in notes:
-        parts = Path(n["path"]).parts
-        if len(parts) >= 1:
-            h2_groups[parts[0]].append(n["title"])
-    for h2, names in h2_groups.items():
-        for i, a in enumerate(names):
-            for b in names[i + 1 : i + 4]:
-                if b:
-                    key = tuple(sorted([a, b]))
-                    if key not in seen:
-                        seen.add(key)
-                        edges.append((a, b, "context"))
     return edges, notes
 
 
@@ -109,40 +95,50 @@ def layout_graph(
         for n in names
     }
 
-    # 初始随机散布，不做深度分层
-    for n in names:
-        pos[n] = (random.uniform(60, width - 60), random.uniform(60, height - 60))
+    # 初始环形散布
+    cx, cy = width / 2, height / 2
+    radius = min(width, height) * 0.38
+    for i, n in enumerate(names):
+        angle = 2 * math.pi * i / len(names)
+        pos[n] = (
+            cx + radius * math.cos(angle) + random.uniform(-15, 15),
+            cy + radius * math.sin(angle) + random.uniform(-15, 15),
+        )
 
-    # 简单力导向：排斥力均匀分布，吸引力沿边收缩
-    for _ in range(80):
+    # 力导向：排斥 + 边吸引 + 中心引力
+    for _ in range(100):
         forces = {n: [0.0, 0.0] for n in names}
-        for a in names:
-            for b in names:
-                if a >= b:
-                    continue
+        # 节点间排斥
+        for i, a in enumerate(names):
+            for b in names[i + 1 :]:
                 dx = pos[b][0] - pos[a][0]
                 dy = pos[b][1] - pos[a][1]
                 d = max(math.hypot(dx, dy), 1)
-                # repulsion
-                f = 5000 / (d * d)
-                forces[a][0] -= f * dx / d
-                forces[a][1] -= f * dy / d
-                forces[b][0] += f * dx / d
-                forces[b][1] += f * dy / d
+                f = 8000 / (d * d)  # 强排斥保持均匀
+                fx, fy = f * dx / d, f * dy / d
+                forces[a][0] -= fx; forces[a][1] -= fy
+                forces[b][0] += fx; forces[b][1] += fy
+        # 边吸引力
         for s, t, _kind in edges:
             if s in pos and t in pos:
                 dx = pos[t][0] - pos[s][0]
                 dy = pos[t][1] - pos[s][1]
                 d = max(math.hypot(dx, dy), 1)
-                f = d / 200
-                forces[s][0] += f * dx / d
-                forces[s][1] += f * dy / d
-                forces[t][0] -= f * dx / d
-                forces[t][1] -= f * dy / d
+                f = d / 300
+                fx, fy = f * dx / d, f * dy / d
+                forces[s][0] += fx; forces[s][1] += fy
+                forces[t][0] -= fx; forces[t][1] -= fy
+        # 中心引力保持圆形
+        for n in names:
+            dx = cx - pos[n][0]
+            dy = cy - pos[n][1]
+            forces[n][0] += dx * 0.003
+            forces[n][1] += dy * 0.003
+        # 应用力
         for n in names:
             pos[n] = (
-                max(20, min(width - 20, pos[n][0] + forces[n][0] * 0.1)),
-                max(20, min(height - 20, pos[n][1] + forces[n][1] * 0.1)),
+                max(15, min(width - 15, pos[n][0] + forces[n][0] * 0.08)),
+                max(15, min(height - 15, pos[n][1] + forces[n][1] * 0.08)),
             )
     return pos
 
