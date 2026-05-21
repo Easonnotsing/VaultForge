@@ -1133,14 +1133,7 @@ Randomly pick one, then follow the path for that style:
      - English: "Every read builds something that lasts."
            - 中文: "每一次阅读，都不止于阅读。"
 4. Write the filled template to a temp `.html` file and render with Chrome headless using the style's window size
-5. Generate the **share page** to make sharing easy. Fill `scripts/share-page.html` with:
-   - `{{TOPIC}}` — topic name
-   - `{{CARD_PATH}}` — absolute path to the generated PNG
-   - `{{SHARE_TEXT}}` — URL-encoded share text: "I built a knowledge base on {topic} with VaultForge — {notes} atomic notes, {links} logical links. https://github.com/Easonnotsing/VaultForge"
-   - `{{PAGE_URL}}` — `https://github.com/Easonnotsing/VaultForge`
-   Write it to `{learning folder}/Share Achievement.html` and open it in the browser. The page shows the card image with one-click share buttons for X (Twitter) and LinkedIn.
-
-6. Report to the user: `📸 Achievement card generated and share page opened`
+5. Report to the user: `📸 Achievement card generated: VaultForge Achievement - {Topic}.png`
 
 > Historical failure cases and improvement records: see [HISTORY.md](./HISTORY.md)
 
@@ -1165,7 +1158,6 @@ skill directory/
     ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
     ├── roadmap-editor.py            # Optional: browser-based roadmap editor
     ├── share-card.html              # Achievement card template
-    ├── share-page.html              # Share page with social buttons
     └── graph-bg.svg                 # Static graph view background
 ```
 
