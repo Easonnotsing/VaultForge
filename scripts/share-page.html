@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultForge — Achievement Card</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 20px;min-height:100vh}
+  h2{font-size:24px;font-weight:600;color:#1d1d1f;margin-bottom:24px}
+  .card-img{max-width:450px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:32px}
+  .share-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:12px 24px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;color:#fff;transition:opacity 0.2s;border:none;cursor:pointer}
+  .btn:hover{opacity:0.85}
+  .tw{background:#1DA1F2} .li{background:#0A66C2} .wx{background:#07C160}
+  .cp{background:#0071e3} .dl{background:#86868b}
+  .path{font-size:13px;color:#aeaeb2;margin-top:20px;text-align:center}
+</style>
+</head>
+<body>
+<h2>{{TOPIC}}</h2>
+<img class="card-img" src="{{CARD_PATH}}" alt="Achievement Card">
+<div class="share-btns">
+  <a class="btn tw" href="https://twitter.com/intent/tweet?text={{SHARE_TEXT}}" target="_blank">Share on X</a>
+  <a class="btn li" href="https://www.linkedin.com/sharing/share-offsite/?url={{PAGE_URL}}" target="_blank">Share on LinkedIn</a>
+  <button class="btn cp" onclick="navigator.clipboard.write('{{CARD_PATH}}')">Copy Image Path</button>
+  <button class="btn dl" onclick="download()">Download</button>
+</div>
+<p class="path">File: {{CARD_PATH}}</p>
+<script>
+function download() {
+  const a = document.createElement('a');
+  a.href = '{{CARD_PATH}}';
+  a.download = 'VaultForge Achievement.png';
+  a.click();
+}
+</script>
+</body>
+</html>
