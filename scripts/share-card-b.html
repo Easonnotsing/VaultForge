@@ -4,40 +4,46 @@
 <meta charset="UTF-8">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{width:900px;height:1800px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;display:flex;align-items:center;justify-content:center;position:relative}
-.card{width:780px;text-align:center}
-.hero-img{width:100%;border-radius:20px;margin-bottom:56px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-.topic{font-size:42px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:52px}
-.stats-row{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:60px}
-.stat-item{text-align:center;padding:0 44px}
-.stat-item .num{font-size:34px;font-weight:600;letter-spacing:-0.03em;color:#1d1d1f;line-height:1}
-.stat-item .label{font-size:14px;font-weight:500;color:#86868b;margin-top:6px;letter-spacing:-0.01em}
-.divider{width:1px;height:28px;background:#e5e5ea}
-.sep{width:60px;height:3px;background:#F08800;border-radius:2px;margin:0 auto 52px}
-.slogan{font-size:24px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:52px}
-.qr-section{text-align:center;margin-bottom:32px}
-.qr-section img{width:70px;height:70px;border-radius:8px}
-.footer{font-size:12px;font-weight:500;color:#c7c7cc;letter-spacing:-0.01em;margin-bottom:28px}
+body{width:900px;height:540px;background:#fff;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;display:flex;align-items:center;justify-content:center;position:relative}
+.card{width:840px;text-align:center;display:flex;align-items:center;gap:48px;padding:40px 0}
+.img-col{flex-shrink:0;width:340px}
+.hero-img{width:100%;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.text-col{flex:1;text-align:center}
+.topic{font-size:34px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:28px}
+.stats-row{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:28px}
+.stat-item{text-align:center;padding:0 24px}
+.stat-item .num{font-size:28px;font-weight:600;letter-spacing:-0.03em;color:#1d1d1f;line-height:1}
+.stat-item .label{font-size:13px;font-weight:500;color:#86868b;margin-top:4px;letter-spacing:-0.01em}
+.divider{width:1px;height:24px;background:#e5e5ea}
+.sep{width:50px;height:3px;background:#F08800;border-radius:2px;margin:0 auto 24px}
+.slogan{font-size:20px;font-weight:400;color:#8e8e93;letter-spacing:-0.01em;margin-bottom:20px}
+.qr-section{text-align:center;margin-bottom:0}
+.qr-section img{width:50px;height:50px;border-radius:8px}
+.footer{font-size:11px;font-weight:500;color:#c7c7cc;letter-spacing:-0.01em;margin-bottom:0}
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="topic">{{TOPIC}}</div>
-  <img class="hero-img" src="{{HERO_IMG}}" alt="">
-  <div class="stats-row">
-    <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
-    <div class="divider"></div>
-    <div class="stat-item"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
-    <div class="divider"></div>
-    <div class="stat-item"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
-    <div class="divider"></div>
-    <div class="stat-item"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
+  <div class="img-col">
+    <img class="hero-img" src="{{HERO_IMG}}" alt="">
   </div>
-  <div class="sep"></div>
-  <div class="slogan">{{SLOGAN}}</div>
-  <div class="footer">VaultForge v3.0.0</div>
-  <div class="qr-section">
-    <img src="{{QR_URL}}" alt="QR">
+  <div class="text-col">
+    <div class="topic">{{TOPIC}}</div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="num">{{WORDS}}</div><div class="label">{{LABEL_WORDS}}</div></div>
+      <div class="divider"></div>
+      <div class="stat-item"><div class="num">{{NOTES}}</div><div class="label">{{LABEL_NOTES}}</div></div>
+      <div class="divider"></div>
+      <div class="stat-item"><div class="num">{{QUESTIONS}}</div><div class="label">{{LABEL_QUESTIONS}}</div></div>
+      <div class="divider"></div>
+      <div class="stat-item"><div class="num">{{LINKS}}</div><div class="label">{{LABEL_LINKS}}</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="slogan">{{SLOGAN}}</div>
+    <div class="footer">VaultForge v3.0.0</div>
+    <div class="qr-section">
+      <img src="{{QR_URL}}" alt="QR">
+    </div>
   </div>
 </div>
 </body>

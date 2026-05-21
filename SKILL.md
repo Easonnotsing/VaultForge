@@ -1079,7 +1079,7 @@ Convert the static `scripts/graph-bg.svg` to PNG:
 ```
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
   --headless --disable-gpu --no-sandbox \
-  --window-size=900,1125 \
+  --window-size=900,900 \
   --screenshot={temp}/graph-bg.png \
   "file:///{skill dir}/scripts/graph-bg.svg"
 ```
@@ -1090,8 +1090,8 @@ Encode and inject.
 
 | Style | Template | Ratio | Look |
 |-------|----------|-------|------|
-| A | `scripts/share-card.html` | 5:4 (900×1125) | Graph view background, 2×2 frosted stat panels |
-| B | `scripts/share-card-b.html` | 2:1 (900×1800) | Image at top, inline stats row with dividers |
+| A | `scripts/share-card.html` | 1:1 (900×900) | Graph view background, 2×2 frosted stat panels |
+| B | `scripts/share-card-b.html` | 3:1.8 (900×540) | Image left, stats + slogan right |
 
 Randomly pick one. For style A, inject `{{GRAPH_BG}}` with the graph PNG base64. For style B, inject `{{HERO_IMG}}` with the generated achievement card PNG as base64.
 
@@ -1110,8 +1110,8 @@ Then fill all `{{PLACEHOLDER}}` variables:
      - 中文: "每一次阅读，都不止于阅读。"
 3. Write the filled template to a temp `.html` file
 4. Render with Chrome headless using the chosen style's window size:
-   - Style A: `--window-size=900,1125`
-   - Style B: `--window-size=900,1800`
+   - Style A: `--window-size=900,900`
+   - Style B: `--window-size=900,540`
    ```
    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
      --headless --disable-gpu --no-sandbox \
