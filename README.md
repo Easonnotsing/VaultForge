@@ -1,5 +1,8 @@
 # VaultForge
 
+> [!TIP]
+> If you find VaultForge useful, consider [**starring the repo ⭐**](https://github.com/Easonnotsing/VaultForge) — it helps others discover it.
+
 AI agent skill for Obsidian — transforms PDFs and Markdown files into structured knowledge bases with atomic notes, bi-directional wikilinks, Maps of Content (MOCs), and learning roadmaps. Supports English and Chinese. Works with Claude Code, Codex, and Cursor.
 
 > **Note:** This is an **AI agent skill** (installed in `~/.agents/skills/`), not an MCP server or Obsidian plugin. Use it with Claude Code, Codex, or Cursor.
@@ -260,6 +263,9 @@ MIT
 
 <a name="chinese"></a>
 # VaultForge（中文）
+
+> [!TIP]
+> 觉得好用的话，[**点个 Star ⭐**](https://github.com/Easonnotsing/VaultForge) 帮更多人看到它。
 
 将 PDF / Markdown 学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
 
