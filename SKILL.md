@@ -1062,16 +1062,23 @@ After all phases complete, generate a shareable achievement image summarizing th
 | Core questions count | Phase 5.2 (always ≤5) | 5 | Bottom-left |
 | Wikilinks count | Phase 4.4 report | 156 | Bottom-right |
 
-**Graph View background (optional)**:
+**Graph View background**:
 
-If Obsidian is running and the `obsidian-cli` skill is available, attempt to capture the local graph view of the learning folder:
+Generate a real knowledge graph background from the vault structure:
 
 ```
-obsidian vault="VaultName" eval code="app.workspace.ensureSideLeaf('graph', 'local'); app.workspace.activeLeaf.openLocalGraph();"
-obsidian dev:screenshot path="{learning folder}/graph-view.png"
+python3 scripts/graph-bg-builder.py "{learning folder path}" 900 1200
 ```
 
-If Obsidian is not running or `obsidian-cli` is unavailable, skip this step — the card renders with a solid gradient background.
+This reads the actual VaultForge-generated notes and folders, extracts connections from folder hierarchy and keyword similarity, and renders an SVG graph in Obsidian Graph View style. No Obsidian CLI or user interaction needed. Render the output SVG to PNG:
+
+```
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --headless --disable-gpu --no-sandbox \
+  --window-size=900,1200 \
+  --screenshot={temp}/graph-bg.png \
+  "file:///{output svg path}"
+```
 
 **Render the card**:
 
