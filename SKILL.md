@@ -1094,12 +1094,12 @@ vf_wikilinks={value}         ← Phase 4.4
 Randomly pick one, then follow the path for that style:
 
 **Style A path:**
-1. Convert `scripts/graph-bg.svg` to PNG (`--window-size=900,900`, `--screenshot={temp}/graph-bg.png`)
+1. Convert `scripts/graph-bg.svg` to PNG (`--window-size=900,900`, `--screenshot={temp}/graph-bg-a.png`)
 2. Encode as base64, inject into `scripts/share-card.html`: replace `{{GRAPH_BG}}` with `<img class="bg-layer" src="data:image/png;base64,...">`
 3. Render with `--window-size=900,900`
 
 **Style B path:**
-1. Convert `scripts/graph-bg.svg` to PNG (`--window-size=900,900`, `--screenshot={temp}/graph-bg.png`)
+1. Convert `scripts/graph-bg.svg` to PNG (`--window-size=900,900`, `--screenshot={temp}/graph-bg-b.png`)
 2. Read `scripts/share-card-b.html`
 3. Replace `{{HERO_IMG}}` with the graph-bg PNG base64 as `<img class="hero-img" src="data:image/png;base64,...">`
 4. Render with `--window-size=540,900`
