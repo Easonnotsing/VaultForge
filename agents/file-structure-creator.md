@@ -88,7 +88,7 @@ title: {Knowledge Point Name}
 date: {creation date}
 status: draft
 vf: true
-vf_version: v3.1.0
+vf_version: v3.2.0
 vf_status: pristine
 vf_session: {initial or incremental-YYYY-MM-DD}
 tags:
