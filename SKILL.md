@@ -578,6 +578,17 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
 
 - **`locked`**: A user who wants to protect a specific pristine note from auto-refresh sets `vf_status: locked` in the frontmatter. The system never changes this value. It differs from `user_modified` in that the note body is unchanged — the user is simply choosing to keep it frozen.
 - **`user_modified`**: Detected automatically when a note's file modification time diverges from its frontmatter `date` by more than 5 minutes, or when the content hash changes. The system sets this during Phase 0 scanning.
+
+**`status` field values** (per-note lifecycle, distinct from `vf_status`):
+
+| Value | Meaning | Set By |
+|-------|---------|--------|
+| `draft` | Empty shell file, content pending | Phase 2 file structure creation |
+| `filling` | Currently being filled (.tmp file written) | Phase 3 filling agent |
+| `filled` | Content filled (.tmp → .md rename complete) | Phase 3 filling agent |
+| `reviewed` | Passed quality review | Phase 3 review agent |
+| `needs_review` | Exceeded max retries, needs manual review | Phase 3 main workflow |
+
 3. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
 4. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
 5. Update frontmatter `status` to `filled`
@@ -777,12 +788,10 @@ Must check the following items item by item; **issues found must be fixed**:
 - [ ] Every MOC file has a `## Related Notes` section
 - [ ] All atomic notes under that MOC's folder have been wikilinked to the MOC
 - [ ] Link format is correct: `[[filename|display text]]`
-- See [references/obsidian-structure.md](./references/obsidian-structure.md) "MOC and Atomic Notes" section for format specification
 
 #### 5.1.3 Roadmap ↔ MOC Wikilink Check
 - [ ] Each H3 topic in the outline roadmap has been linked to the corresponding MOC
 - [ ] Each MOC note has a backlink to the outline roadmap
-- See [references/obsidian-structure.md](./references/obsidian-structure.md) "Roadmap and MOC Bidirectional Links" section for format specification
 
 **Step 5.2: Generate "Core Questions" Note**
 
@@ -1174,7 +1183,7 @@ Phase 6: Deep Research & Controversy Analysis
 |----------|------------------|----------------------|
 | Roadmap | Full version: 200+ words per knowledge point + cases + citations + source_range; Outline: strictly H2/H3/bullets only | See Phase 1.5 |
 | Atomic Notes | Core concepts 200+ words + case study 150+ words + original citation + 2-3 reflection questions, no significant duplication | See [agents/atomic-note-filler.md](./agents/atomic-note-filler.md) |
-| Wikilinks | Based on 5 logical relationship types (not term similarity), roadmap ↔ MOC bidirectional | See [references/obsidian-structure.md](./references/obsidian-structure.md) |
-| Obsidian Format | Frontmatter includes title/date/tags, wikilinks target existing notes, format is consistent | See [references/obsidian-structure.md](./references/obsidian-structure.md) |
+| Wikilinks | Based on 5 logical relationship types (not term similarity), roadmap ↔ MOC bidirectional | See the format specification above |
+| Obsidian Format | Frontmatter includes title/date/tags, wikilinks target existing notes, format is consistent | See the format specification above |
 | Core Questions | ≤5 questions, each with background + optional sub-questions, guiding and logically structured | See Phase 5.2 + [references/templates.md](./references/templates.md) |
 | Controversy Analysis | ≥3-5 valuable reference sources, consensus/controversy/context-dependent sections presented objectively | See Phase 6.3 + [references/templates.md](./references/templates.md) |

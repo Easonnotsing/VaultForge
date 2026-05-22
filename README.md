@@ -238,8 +238,7 @@ VaultForge/
 │   ├── atomic-note-filler.md        # Atomic note filling agent
 │   └── note-reviewer.md             # Note review agent
 ├── references/
-│   ├── obsidian-structure.md        # Obsidian format specification
-│   └── templates.md                 # Output templates (core questions, controversy analysis)
+│   │   └── templates.md                 # Output templates (core questions, controversy analysis)
 ├── scripts/
 │   ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
 │   ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
