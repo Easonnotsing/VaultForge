@@ -66,11 +66,6 @@ class ScriptSyntaxTest(unittest.TestCase):
             str(ROOT / "scripts" / "double-link-builder.py"), doraise=True
         )
 
-    def test_roadmap_editor_syntax(self):
-        py_compile.compile(
-            str(ROOT / "scripts" / "roadmap-editor.py"), doraise=True
-        )
-
 
 class AgentFileFormatTest(unittest.TestCase):
     def test_all_agents_have_name(self):

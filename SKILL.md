@@ -1139,8 +1139,7 @@ skill directory/
 └── scripts/
     ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
     ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
-    ├── roadmap-editor.py            # Optional: browser-based roadmap editor
-    ├── share-card.html              # Achievement card template
+    ├── share-card.html              # Achievement card template (graph bg)
     └── graph-bg.svg                 # Static graph view background
 ```
 

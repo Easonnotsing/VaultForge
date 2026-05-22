@@ -13,7 +13,6 @@ This skill is designed to be portable across agent clients. Each client has diff
 - Use the full repository as a skill directory.
 - Subagent files in `agents/` are platform-neutral task specs; the harness maps them to its own agent/task system.
 - If parallel subagents are unavailable, run Phase 3 sequentially in batches of ≤ 5 notes.
-- The optional `roadmap-editor.py` requires Playwright: `pip install playwright && playwright install chromium`.
 
 ## Cursor
 
@@ -33,7 +32,6 @@ This skill is designed to be portable across agent clients. Each client has diff
 |--------|---------|-------------|
 | `context-extractor.py` | Extract source text per knowledge point (Phase 3.0b) | Python 3, pypdf (optional, for PDF) |
 | `double-link-builder.py` | Three-stage funnel: structural → TF-IDF → candidate generation (Phase 4) | Python 3 |
-| `roadmap-editor.py` | Optional browser-based roadmap editor | Python 3, Playwright |
 
 ### double-link-builder.py Modes
 

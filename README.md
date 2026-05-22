@@ -243,7 +243,7 @@ VaultForge/
 ├── scripts/
 │   ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
 │   ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
-│   └── roadmap-editor.py            # Optional: browser-based roadmap editor
+│   └── share-card.html              # Achievement card template
 └── tests/
     ├── fixtures/
     └── test_*.py
