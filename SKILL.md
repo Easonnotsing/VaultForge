@@ -54,15 +54,7 @@ Complete workflow for transforming learning materials into structured Obsidian a
 
 ### ⚠️ CRITICAL: Atomic Note Content Must Be Rich and Thorough
 
-**Atomic notes are teaching materials, not outlines. They must enable a complete beginner to understand the knowledge point.**
-
-Every atomic note must contain:
-- **Detailed explanation**: no less than 200 words of core concept exposition — background, definition, principle, application scenarios
-- **Case study**: a complete case from the learning materials, with background, process, outcome analysis
-- **Original citation**: quote the most relevant original passage (50-150 words), with complete source attribution (document name, author, page range)
-- **Reflection questions**: thought-provoking questions that promote deep understanding, not superficial queries
-
-If a note is overly simplified (e.g., bullet points only), it must be reworked.
+**Atomic notes are teaching materials, not outlines.** Every note must contain detailed explanations, case studies, original citations, and reflection questions. Full quality standards (word counts, structure) are specified in [agents/atomic-note-filler.md](./agents/atomic-note-filler.md).
 
 ### Batch Confirmation Principle
 
@@ -586,10 +578,7 @@ Launch the specified number of agents **in parallel** to execute the fill task. 
 | `reviewed` | Passed quality review | Phase 3 review agent |
 | `needs_review` | Exceeded max retries, needs manual review | Phase 3 main workflow |
 
-3. After writing, verify `.md.tmp` file integrity (file size > 0, frontmatter enclosed)
-4. After verification passes, rename `.md.tmp` to `.md` (filesystem-level atomic operation)
-5. Update frontmatter `status` to `filled`
-6. **Immediately** append to `.obsidian-learning-progress.md`: `[Phase 3] {note}.md → filled`
+The atomic write protocol (.tmp → verify → rename → update status → append progress) is detailed in [agents/atomic-note-filler.md](./agents/atomic-note-filler.md). The filler agent executes these steps per note.
 
 ```
 [agent-1] 📝 Filling: NoteA, NoteB, NoteC
