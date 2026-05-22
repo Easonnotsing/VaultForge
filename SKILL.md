@@ -243,10 +243,7 @@ In **incremental mode**: use the file classification from Phase 0.2. NEW files d
 ```
 
 **Step 1.3: Complete Reading of Learning Materials**
-- Prefer **single-pass full reads** of each file
-- If a file is too large (e.g., PDF), auto-batch (50 pages/batch), **no user confirmation needed**
-- Real-time progress: `📖 Reading: filename.pdf - [150/329 pages] (46%)`
-- Completion report: `✅ Reading complete! X/Y pages (100%)`
+- The `roadmap-generator` agent handles reading strategy (single-pass full reads, auto-batch fallback, progress reporting). See [agents/roadmap-generator.md](./agents/roadmap-generator.md) for the detailed protocol.
 - **Record stat**: append `vf_source_words={total word count}` to `.obsidian-learning-progress.md`. The agent counts words across all selected source files and records the total.
 
 **Step 1.4: Generate and Confirm Roadmap**
