@@ -201,7 +201,7 @@ If no existing notes are found, proceed directly to Phase 1 (normal mode).
 | `.obsidian-learning-progress.md` corrupt / unparseable | Warn the user: "Progress file unreadable — treating all files as NEW." Proceed to mode selection as if it didn't exist. |
 | `vf_processed_files` missing or empty in progress file | Treat all files as NEW (same as missing progress file). |
 | Permission error / inaccessible file during scan | Skip the file, continue scanning. Report skipped count at end of scan: "⚠️ 3 files skipped (inaccessible)." |
-| Zero scan-able files in folder | "📁 Selected folder contains no readable files. Please choose a folder with PDF or Markdown files." → return to Step 1.1. |
+| Zero scan-able files in folder | "📁 Selected folder contains no readable files. Please choose a folder with PDF or Markdown files." → go back to Step 1.1. |
 | Hash mismatch in `vf_processed_files` | File name matches but content hash differs → treat as NEW (user may have updated the source). Log a note: "h: hash mismatch for {filename} — treated as NEW." |
 | Existing notes detected but no roadmap file found | Warn: "Found {N} VaultForge notes but no roadmap file. Suggesting fresh generation." → offer only options 2 (Full regenerate) and 3 (Skip). |
 | `vf: true` false positives | Phase 0.1 scan checks frontmatter for `vf: true`. If non-VaultForge notes happen to also have this field, they will be miscounted. Mitigation: document that `vf: true` is reserved for VaultForge use. |
@@ -359,7 +359,7 @@ Would you like to modify the roadmap?
 
 The `file-structure-creator` agent handles folder hierarchy, MOC placement, and blank note creation. See [agents/file-structure-creator.md](./agents/file-structure-creator.md) for the detailed protocol (folder naming, correct/incorrect structure examples, creation steps).
 
-**Step 2.1 Validation and Confirmation**:
+**Validation and Confirmation**:
 
 **Validated items**:
 - H2 category count matches the outline
@@ -399,7 +399,7 @@ Confirm creation? Reply:
 |--------|---------|------|
 | Phase 2.2 | `- [[atomic note name]]` (links to atomic notes in same H3 folder) | After file creation, before content fill |
 | Phase 4.3 | `- [[../../Learning Roadmap v1 - {Topic}\|Learning Roadmap]]` (backlink to outline roadmap) | After wikilink building |
-| Phase 4.2b | `- [[other note]] (relationship_type)` (inter-note wikilinks) | During wikilink classification |
+| Phase 4.2 | `- [[other note]] (relationship_type)` (inter-note wikilinks) | During wikilink classification |
 
 Each phase only adds its own links; never removes links from a previous phase. Scan for duplicates before insertion.
 
@@ -646,6 +646,7 @@ Final links
    - **Step 4.1**: Run `scripts/double-link-builder.py`, executing stage 1+2 (structural filtering + TF-IDF + keyword heuristics), producing a **candidate pair list** (`candidates.json`).
    - **Step 4.2**: The main agent reads the candidate pair list and uses LLM to classify each candidate pair into the 5 relationship types (can batch process, 5-10 pairs per batch). Only writes to `## Related Notes` when a relationship type is positively identified.
    - **Step 4.3**: The main agent completes bidirectional links between the outline roadmap ↔ each MOC (coexisting with the atomic note list already written in Phase 2.2), **scanning before insertion** for existing equivalent `[[...]]` links; **duplicate lines forbidden**.
+   - **Step 4.4**: Batch report all added wikilinks with exact count (used by Step 6.5).
 
 2. **Script-only path (non-LLM degradation)**
    - When the environment does not support LLM calls: `double-link-builder.py` runs with `--mode strict`, using only stage 1+2 deterministic rules (structural filtering + TF-IDF > threshold + keyword triggers). Produced links have **high precision but low recall** (covering ~40-50% of logical relationships). The script outputs an estimated coverage percentage.
@@ -1087,13 +1088,15 @@ skill directory/
 │   ├── atomic-note-filler.md        # Atomic note filling agent
 │   └── note-reviewer.md             # Note review agent
 ├── references/
-│   ├── obsidian-structure.md        # Obsidian format specification
 │   └── templates.md                 # Output templates (core questions, controversy analysis)
 └── scripts/
     ├── double-link-builder.py       # Wikilink builder (3-stage funnel v2)
     ├── context-extractor.py         # Context pre-extraction (Phase 3.0b)
-    ├── share-card.html              # Achievement card template (graph bg)
-    └── graph-bg.svg                 # Static graph view background
+    ├── share-card.html              # Achievement card template (Style A: graph bg)
+    ├── share-card-b.html            # Achievement card template (Style B: hero img)
+    ├── graph-bg.svg                 # Static graph view background
+    ├── graph-bg.png                 # Pre-rendered graph background (derived from SVG)
+    └── hero-bg.png                  # Hero image for Style B card
 ```
 
 ## Flow Overview
@@ -1119,7 +1122,7 @@ Phase 6: Deep Research & Controversy Analysis
 - **Claude Code / Codex**: Typical trigger via slash command (e.g., `/VaultForge`, subject to local command configuration); sub-agents and "skill calling skill" depend on whether the current harness supports them.
 - **Cursor**: Usually auto-matched by **Agent Skills** based on description, or the user explicitly requests execution per this SKILL in conversation; if multi-agent orchestration is unavailable, Phase 3 degrades to **sequential grouping** as described above.
 - **`scripts/double-link-builder.py` (v2)**: Executes stages 1+2 of the three-stage funnel (structural affinity filtering + TF-IDF + keyword heuristics). `--mode full` (default) outputs `candidates.json` for the main agent's LLM to do stage 3 classification; `--mode strict` (degraded) directly writes deterministic links; `--mode incremental` writes links only between new notes and outputs new→old suggestions (requires `--new-notes` and `--output-suggestions`). The script is conservative by design — relationships not covered by keywords are left unlinked, to be completed by LLM stage 3 or by the user in Obsidian.
-- **LLM Stage 3 Dependency**: Phase 4.2b's LLM batch classification requires the main agent to have LLM calling capability. If unsupported (e.g., purely local environment), use the `--mode strict` degraded path.
+- **LLM Stage 3 Dependency**: Phase 4.2's LLM batch classification requires the main agent to have LLM calling capability. If unsupported (e.g., purely local environment), use the `--mode strict` degraded path.
 
 ## Output Quality Standards
 
