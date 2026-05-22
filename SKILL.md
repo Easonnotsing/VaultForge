@@ -357,49 +357,7 @@ Would you like to modify the roadmap?
 
 **Step 2.1: Batch Create Folders and Files**
 
-**Folder structure rules**:
-- H2 → first-level folder (format: `XX. Category Name`)
-- H3 → second-level folder under H2 (placed directly inside the H2 folder)
-- MOC → **must be placed inside the H3 folder**, not the H2 folder
-- Atomic notes → placed in the corresponding H3 folder
-
-**Correct structure example**:
-```
-vault/
-├── 01. Digital Transformation/
-│   ├── Overview/              ← H3 topic folder
-│   │   ├── Overview MOC.md    ← ✅ MOC inside H3 folder
-│   │   ├── Digitization vs Transformation.md
-│   │   └── Transformation Framework.md
-│   └── Customer Domain/
-│       ├── Customer Domain MOC.md    ← ✅ MOC inside H3 folder
-│       └── ...
-├── 02. Strategic Management/
-│   ├── Strategic Analysis/
-│   │   ├── Strategic Analysis MOC.md    ← ✅ MOC inside H3 folder
-│   │   └── ...
-```
-
-**Incorrect structure example** (MOC in H2 folder, **must avoid**):
-```
-vault/
-├── 01. Digital Transformation/
-│   ├── Overview MOC.md        ← ❌ Wrong! MOC must not be at H2 level
-│   ├── Overview/              ← H3 topic folder
-│   │   └── ...
-```
-
-**Creation steps**:
-0. **Pre-creation validation**: first read the outline roadmap, parse the H2/H3/bullet hierarchy, and cross-validate with the planned folder structure
-1. Create folder structure following H2/H3 hierarchy
-2. Create MOC notes (blank template) **inside each H3 topic folder**
-3. Create **blank atomic note files** for each bullet knowledge point (frontmatter with `vf: true` and `status: draft`, title only, **no body content**)
-4. **Present all created files at once** after creation
-
-**⚠️ Important: Step 2 only creates empty files, does not fill content**
-- MOC notes: frontmatter and title only, body empty
-- Atomic note files: frontmatter (with `status: draft`) and title only; sections like `## Core Concepts`, `## Case Study` etc. are blank
-- **Content filling is done in Phase 3**; Step 2 strictly forbids writing any body content
+The `file-structure-creator` agent handles folder hierarchy, MOC placement, and blank note creation. See [agents/file-structure-creator.md](./agents/file-structure-creator.md) for the detailed protocol (folder naming, correct/incorrect structure examples, creation steps).
 
 **Step 2.1 Validation and Confirmation**:
 
