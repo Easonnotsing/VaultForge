@@ -1029,14 +1029,16 @@ After all phases complete, generate a shareable achievement image summarizing th
 
 **Data collection** (read from `.obsidian-learning-progress.md` — do NOT re-count):
 
-Previous phases have already recorded these values. Read them directly:
+Open `.obsidian-learning-progress.md` and scan for lines matching these patterns. Extract the value after `=` — no parser needed, plain text split:
 
 ```
 vf_source_words={value}      ← Phase 1.3
 vf_atomic_notes={value}      ← Phase 3.5
-vf_core_questions={value}    ← Phase 5.2 (always ≤5)
 vf_wikilinks={value}         ← Phase 4.4
+vf_core_questions={value}    ← Phase 5.2
 ```
+
+If any line is missing or unparseable, fall back to file-system scan (current behavior).
 
 **Render the card** (randomly pick style A or B):
 
