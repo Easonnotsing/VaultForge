@@ -2,9 +2,9 @@
 name: VaultForge
 description: >-
   Process learning materials into structured Obsidian atomic notes with roadmaps, MOCs, and double-links.
-  Auto-generate study vaults from PDFs/Markdown with AI-powered note-taking, knowledge linking, and deep research.
-  Supports English and Chinese output. Use when the user wants to build a study vault from PDFs/Markdown.
-  将学习资料（PDF/Markdown 等）转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库。支持中英文输出。用户希望「从材料到笔记库」时使用。
+  Auto-generate study vaults from PDFs, Markdown, Word, PowerPoint, and more with AI-powered note-taking, knowledge linking, and deep research.
+  Supports English and Chinese output. Use when the user wants to build a study vault from documents.
+  将学习资料转为带路线图、MOC、双链与终检的 Obsidian 原子笔记知识库。支持中英文输出。用户希望「从材料到笔记库」时使用。
 ---
 
 # VaultForge
@@ -118,7 +118,7 @@ All user confirmation points follow a uniform pattern:
 
 ## Use Cases
 
-- User provides learning materials (PDF, Markdown, etc.)
+- User provides learning materials (PDF, Markdown, Word, PowerPoint, Text, HTML, etc.)
 - Need to generate a learning roadmap
 - Need to create atomic notes and MOCs
 - Need to establish inter-note wikilinks
@@ -164,6 +164,9 @@ Phase 0 scan result:
 | `📄 [PDF]` | Extension `.pdf` |
 | `📝 [Markdown]` | Extension `.md` |
 | `📋 [Text]` | Extension `.txt` |
+| `📎 [Word]` | Extension `.docx`, `.doc` |
+| `📊 [PPT]` | Extension `.pptx`, `.ppt` |
+| `🌐 [HTML]` | Extension `.html`, `.htm` |
 | `❓ [Unknown]` | Any other extension |
 
 **Combined display format**: `NEW   📄 [PDF]`, `DONE  📄 [PDF]`
@@ -201,7 +204,7 @@ If no existing notes are found, proceed directly to Phase 1 (normal mode).
 | `.obsidian-learning-progress.md` corrupt / unparseable | Warn the user: "Progress file unreadable — treating all files as NEW." Proceed to mode selection as if it didn't exist. |
 | `vf_processed_files` missing or empty in progress file | Treat all files as NEW (same as missing progress file). |
 | Permission error / inaccessible file during scan | Skip the file, continue scanning. Report skipped count at end of scan: "⚠️ 3 files skipped (inaccessible)." |
-| Zero scan-able files in folder | "📁 Selected folder contains no readable files. Please choose a folder with PDF or Markdown files." → go back to Step 1.1. |
+| Zero scan-able files in folder | "📁 Selected folder contains no readable files. Please choose a folder with document files (PDF, Markdown, Word, PowerPoint, Text, HTML)." → go back to Step 1.1. |
 | Hash mismatch in `vf_processed_files` | File name matches but content hash differs → treat as NEW (user may have updated the source). Log a note: "h: hash mismatch for {filename} — treated as NEW." |
 | Existing notes detected but no roadmap file found | Warn: "Found {N} VaultForge notes but no roadmap file. Suggesting fresh generation." → offer only options 2 (Full regenerate) and 3 (Skip). |
 | `vf: true` false positives | Phase 0.1 scan checks frontmatter for `vf: true`. If non-VaultForge notes happen to also have this field, they will be miscounted. Mitigation: document that `vf: true` is reserved for VaultForge use. |
@@ -456,9 +459,9 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 
 **Degradation strategy**: If PDF source lacks PyPDF2 dependency or file is unreadable, the script outputs a stderr warning, skips that file, and sets the corresponding excerpt's `text` to an empty string. The filling agent then degrades to locating content from the full source material.
 
-**Only when** no `source_range` annotations exist in the complete roadmap (extremely old legacy roadmaps), skip this step and fall back to passing the **full original source files** (PDFs, Markdown) directly to the filler agent.
+**Only when** no `source_range` annotations exist in the complete roadmap (extremely old legacy roadmaps), skip this step and fall back to passing the **full original source files** directly to the filler agent.
 
-> ⚠️ **Critical: the degradation source is the original learning material (PDF/Markdown files), NEVER the roadmap.** The roadmap is a structural outline — it has been condensed, summarized, and may not contain case studies or detailed exposition. If the filling agent receives only the roadmap as input, the resulting notes will be lossy (information decay), miss case studies, and potentially introduce hallucinations.
+> ⚠️ **Critical: the degradation source is the original learning material, NEVER the roadmap.** The roadmap is a structural outline — it has been condensed, summarized, and may not contain case studies or detailed exposition. If the filling agent receives only the roadmap as input, the resulting notes will be lossy (information decay), miss case studies, and potentially introduce hallucinations.
 
 **When context-extractor.py cannot extract context, the filler must:**
 1. Receive the **full text of all selected source files** (not the roadmap)
@@ -742,7 +745,7 @@ Must check the following items item by item; **issues found must be fixed**:
 
 **Storage location**: `{vault}/{learning materials folder}/Core Questions.md`
 
-Create the `Core Questions.md` file directly in the same folder as the learning materials (PDF/MD files).
+Create the `Core Questions.md` file directly in the same folder as the learning materials.
 
 #### 5.2.1 Question Requirements
 
@@ -967,7 +970,7 @@ Save the complete research report to:
 
 **Storage location**: `{vault}/{learning materials folder}/{Topic} - Controversy Analysis.md`
 
-Create the `{Topic} - Controversy Analysis.md` file directly in the same folder as the learning materials (PDF/MD files).
+Create the `{Topic} - Controversy Analysis.md` file directly in the same folder as the learning materials.
 
 #### 6.3.1 Note Structure
 
@@ -1022,7 +1025,7 @@ After all phases complete, generate a shareable achievement image summarizing th
 
 | Stat | How to Count | Example |
 |------|-------------|---------|
-| Source words | Phase 1.2: count total words across all selected source files (PDF/MD). Round to nearest 0.1k. Do NOT count from generated notes — they are condensed output. | 51.5k |
+| Source words | Phase 1.2: count total words across all selected source files. Round to nearest 0.1k. Do NOT count from generated notes — they are condensed output. | 51.5k |
 | Atomic notes | Phase 3: count `.md` files in H3 subfolders. **Exclude** files with "MOC" in name. **Exclude** roadmap files. **Exclude** `Core Questions.md` and `*Deep Research.md` and `*Controversy Analysis.md`. | 45 |
 | Core questions | Phase 5.2: count generated questions (always ≤5). | 5 |
 | Wikilinks | Phase 4.4: count actual `[[wikilink]]` entries in `## Related Notes` sections of atomic notes. **Exclude** any link targeting a MOC file or roadmap file. Do NOT count structural candidates or estimate from folder hierarchy — scan the written files. | 18 |

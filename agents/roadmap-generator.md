@@ -45,11 +45,12 @@ Analyzes learning materials and generates a structured learning roadmap.
 
 ## Reading Flow
 
-### Markdown Files
+### Markdown, Word, PPT, HTML, TXT Files
 - Directly `Read` tool read of full content
+- Word and PowerPoint files may be read as plain text in some environments; the Agent extracts the best available text
 - Report file line count and size
 
-### PDF Files
+### PDF, Word, PPT, HTML, TXT Files
 - **Prefer single-pass read** (specify full page range)
 - If it fails (exceeds limit), auto-batch:
   - 50 pages per batch

@@ -3,7 +3,7 @@
 > [!TIP]
 > If you find VaultForge useful, consider [**starring the repo ⭐**](https://github.com/Easonnotsing/VaultForge) — it helps others discover it.
 
-AI agent skill for Obsidian — transforms PDFs and Markdown files into structured knowledge bases with atomic notes, bi-directional wikilinks, Maps of Content (MOCs), and learning roadmaps. Supports English and Chinese. Works with Claude Code, Codex, and Cursor.
+AI agent skill for Obsidian — transforms PDFs, Markdown, Word, PowerPoint, and more into structured knowledge bases with atomic notes, bi-directional wikilinks, Maps of Content (MOCs), and learning roadmaps. Supports English and Chinese. Works with Claude Code, Codex, and Cursor.
 
 > **Note:** This is an **AI agent skill** (installed in `~/.agents/skills/`), not an MCP server or Obsidian plugin. Use it with Claude Code, Codex, or Cursor.
 
@@ -196,7 +196,7 @@ Without MCP backends, VaultForge falls back to built-in web search, or skips Pha
 
 ### Q: How do I start?
 
-Place learning materials (PDF/MD) in your vault folder, trigger the skill, select the folder. Start with small materials (< 50 pages) for testing.
+Place learning materials (PDF, Markdown, Word, PPT, etc.) in your vault folder, trigger the skill, select the folder. Start with small materials for testing.
 
 ### Q: What if the task is interrupted?
 
@@ -212,7 +212,7 @@ The skill requires 200+ word core explanations, 150+ word case analysis, and 50-
 
 ### Q: Can I incrementally add new materials?
 
-Yes. Place new PDF/MD files in the same vault folder and re-trigger the skill. Phase 0 auto-detects existing VaultForge notes, marks new files pre-selected, and runs in **add-only incremental mode** — new notes are created, existing notes are never modified, and new-to-old wikilinks are suggested (not auto-written). See `VaultForge Update Report - {date}.md` for a summary.
+Yes. Place new files in the same vault folder and re-trigger the skill. Phase 0 auto-detects existing VaultForge notes, marks new files pre-selected, and runs in **add-only incremental mode** — new notes are created, existing notes are never modified, and new-to-old wikilinks are suggested (not auto-written). See `VaultForge Update Report - {date}.md` for a summary.
 
 ### Q: How to trigger Phase 6 deep research?
 
@@ -220,7 +220,7 @@ Phase 5 completion prompts a confirmation. Choose "continue" and the agent loads
 
 ### Q: What file formats are supported?
 
-PDF (requires pypdf/PyPDF2) and Markdown. TXT can extract full text but page numbering is imprecise.
+PDF, Markdown, Word (.docx), PowerPoint (.pptx), HTML, and TXT. PDF requires pypdf/PyPDF2 for page extraction.
 
 ---
 
@@ -266,7 +266,7 @@ MIT
 > [!TIP]
 > 觉得好用的话，[**点个 Star ⭐**](https://github.com/Easonnotsing/VaultForge) 帮更多人看到它。
 
-将 PDF / Markdown 学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
+将 PDF、Markdown、Word、PPT 等学习资料自动转化为结构化的 Obsidian 原子笔记知识库。
 
 > 咨询顾问式的学习方法论——在极短时间内掌握一个领域，达到能与专业人士深入交流的水平。你只负责理解、思考、提问，AI 代为完成繁琐整理。
 
