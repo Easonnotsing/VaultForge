@@ -143,16 +143,63 @@ def _count_lexemes(text: str, lexemes: Tuple[str, ...]) -> int:
     return sum(1 for w in lexemes if w in text)
 
 
+def _find_roadmap_file(vault_path: str, roadmap_name: str) -> Optional[str]:
+    """Find the actual roadmap file on disk, trying English then Chinese patterns."""
+    patterns = [
+        f"Learning Roadmap v1 - {roadmap_name}.md",
+        f"Learning Roadmap - {roadmap_name}.md",
+        f"学习路线图 v1 - {roadmap_name}.md",
+        f"学习路线图 - {roadmap_name}.md",
+    ]
+    for pattern in patterns:
+        path = os.path.join(vault_path, pattern)
+        if os.path.exists(path):
+            return pattern
+    return f"学习路线图 - {roadmap_name}.md"  # fallback
+
+
+def _get_related_notes_header(content: str) -> str:
+    """Detect the language of Related Notes section."""
+    return "## Related Notes" if "## Related Notes" in content else "## 相关笔记"
+
+
+def _get_roadmap_backlink(roadmap_filename: str, roadmap_name: str) -> str:
+    """Generate the roadmap backlink matching the roadmap file's language."""
+    if "Learning Roadmap" in roadmap_filename:
+        return f"[[../../{roadmap_filename.replace('.md', '')}|Learning Roadmap]]"
+    return f"[[../../{roadmap_filename.replace('.md', '')}|学习路线图]]"
+
+
+# Helper: detect link existing in MOC already (language-aware)
+def _link_exists_in_moc(moc_content: str, roadmap_filename: str, roadmap_name: str) -> bool:
+    """Check if MOC already has roadmap backlink, checking both language patterns."""
+    backlink_en = f"[[../../Learning Roadmap v1 - {roadmap_name}|Learning Roadmap]]"
+    backlink_cn = f"[[../../学习路线图 v1 - {roadmap_name}|学习路线图]]"
+    legacy_en = f"[[../../Learning Roadmap - {roadmap_name}|Learning Roadmap]]"
+    legacy_cn = f"[[../../学习路线图 - {roadmap_name}|学习路线图]]"
+    return any(link in moc_content for link in [backlink_en, backlink_cn, legacy_en, legacy_cn])
+
+
 def discover_roadmap_theme(vault_path: str) -> Optional[str]:
     vault = Path(vault_path)
     themes: List[str] = []
-    for f in sorted(vault.glob("学习路线图 - *.md")):
-        if "完整版" in f.name:
-            continue
-        stem = f.stem
-        prefix = "学习路线图 - "
-        if stem.startswith(prefix):
-            themes.append(stem[len(prefix):])
+
+    patterns = [
+        ("学习路线图 - ", vault.glob("学习路线图 - *.md")),
+        ("学习路线图 v", vault.glob("学习路线图 v* - *.md")),
+        ("Learning Roadmap v", vault.glob("Learning Roadmap v* - *.md")),
+        ("Learning Roadmap - ", vault.glob("Learning Roadmap - *.md")),
+    ]
+
+    for prefix, files in patterns:
+        for f in sorted(files):
+            if "完整版" in f.name or "(Full)" in f.name:
+                continue
+            stem = f.stem
+            idx = stem.find(" - ")
+            if idx > 0:
+                themes.append(stem[idx + 3:])
+
     if not themes:
         return None
     if len(themes) > 1:
@@ -413,12 +460,13 @@ def add_links_to_notes(vault_path: str, note_links: Dict[str, List[str]]) -> int
         if not missing:
             continue
         append_block = "\n".join(f"- [[{note}]]" for note in missing)
-        if "## 相关笔记" in content:
+        header = _get_related_notes_header(content)
+        if header in content:
             content = content.rstrip() + "\n" + append_block + "\n"
         else:
             content = (
                 content.rstrip()
-                + f"\n## 相关笔记\n\n{append_block}\n"
+                + f"\n{header}\n\n{append_block}\n"
             )
         with open(full_path, "w", encoding="utf-8") as f:
             f.write(content)
@@ -429,7 +477,8 @@ def add_links_to_notes(vault_path: str, note_links: Dict[str, List[str]]) -> int
 def build_roadmap_moc_links(
     vault_path: str, roadmap_name: str, mocs: List[Dict]
 ) -> int:
-    roadmap_path = os.path.join(vault_path, f"学习路线图 - {roadmap_name}.md")
+    roadmap_filename = _find_roadmap_file(vault_path, roadmap_name)
+    roadmap_path = os.path.join(vault_path, roadmap_filename)
     if not os.path.exists(roadmap_path):
         print(f"⚠️ 路线图文件不存在: {roadmap_path}")
         return 0
@@ -450,9 +499,12 @@ def build_roadmap_moc_links(
         moc_rel_path = moc["rel_path"]
         with open(os.path.join(vault_path, moc_rel_path), "r", encoding="utf-8") as f:
             moc_content = f.read()
-        if f"[[../../学习路线图 - {roadmap_name}" not in moc_content:
-            if "## 相关笔记" not in moc_content:
-                new_section = f"\n## 相关笔记\n\n- [[../../学习路线图 - {roadmap_name}|学习路线图]]\n"
+
+        if not _link_exists_in_moc(moc_content, roadmap_filename, roadmap_name):
+            header = _get_related_notes_header(moc_content)
+            backlink = _get_roadmap_backlink(roadmap_filename, roadmap_name)
+            if header not in moc_content:
+                new_section = f"\n{header}\n\n- {backlink}\n"
                 moc_content = moc_content.rstrip() + new_section
             else:
                 moc_content = (
@@ -625,11 +677,13 @@ def main():
         print("\n✏️ 增量模式: 新笔记间写入链接...")
         new_links: Dict[str, List[str]] = {}
         old_to_new_suggestions: List[Dict] = []
+        # Build title → rel_path mapping for comparison
+        title_to_path = {n["title"]: n["rel_path"] for n in notes}
         # 分离新→新和新→旧
         for note_path, targets in note_links.items():
             note_in_new = note_path in incremental_new
-            new_targets = [t for t in targets if t in incremental_new]
-            old_targets = [t for t in targets if t not in incremental_new]
+            new_targets = [t for t in targets if title_to_path.get(t, "") in incremental_new]
+            old_targets = [t for t in targets if title_to_path.get(t, "") not in incremental_new]
             if note_in_new and new_targets:
                 new_links[note_path] = new_targets
             if note_in_new and old_targets:

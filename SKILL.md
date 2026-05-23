@@ -452,9 +452,11 @@ python3 scripts/context-extractor.py <vault_path> <complete_roadmap_path> --outp
 
 **Script capabilities**:
 1. Parse `source_range` annotations in the complete roadmap (supports multi-range: `file.pdf:12-15, 45-48, 102`)
-2. For PDF sources: use PyPDF2 to extract specified pages (with ±1 page buffer), stitch page-by-page
+2. For PDF sources: use pypdf to extract specified pages (with ±1 page buffer), stitch page-by-page
 3. For Markdown/TXT sources: extract full file content (proportional extraction if page numbers are annotated)
 4. Output structured context packet JSON (top-level fields: `vault_path`, `buffer`, `total_knowledge_points`, `packets`):
+
+> **Format support**: `context-extractor.py` provides precise page-range extraction for PDF, Markdown, and TXT files. Word (.docx), PowerPoint (.pptx), and HTML files are read by the Agent's `Read` tool as full text — they do not support page-range extraction since they lack fixed page boundaries. The Agent handles these formats transparently: read full content → fill notes from the complete source.
    - Each packet contains `note_file`, `title`, `source_excerpts` (array, each item `{source, pages, text}`)
 
 **Degradation strategy**: If PDF source lacks PyPDF2 dependency or file is unreadable, the script outputs a stderr warning, skips that file, and sets the corresponding excerpt's `text` to an empty string. The filling agent then degrades to locating content from the full source material.

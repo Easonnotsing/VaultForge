@@ -44,7 +44,7 @@ _PDF_BACKEND = None  # "pypdf" or "pypdf2"
 _HAS_PDF = False
 
 try:
-    from pypdf import PdfReader  # noqa: F401
+    import pypdf  # noqa: F401
 
     _PDF_BACKEND = "pypdf"
     _HAS_PDF = True
@@ -53,13 +53,6 @@ except ImportError:
         import PyPDF2  # noqa: F401
 
         _PDF_BACKEND = "pypdf2"
-        _HAS_PDF = True
-    except ImportError:
-        pass
-    try:
-        import pypdf  # noqa: F401 (PyPDF2 后继项目)
-
-        _PDF_BACKEND = "pypdf"
         _HAS_PDF = True
     except ImportError:
         pass
