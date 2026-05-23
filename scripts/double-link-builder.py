@@ -160,8 +160,14 @@ def _find_roadmap_file(vault_path: str, roadmap_name: str) -> Optional[str]:
         if os.path.exists(path):
             candidates.append(legacy)
     if candidates:
-        # Prefer highest version (v2 > v1), then English over Chinese
-        candidates.sort(reverse=True)
+        # Sort by numeric version (v10 > v2 > v1), English preferred over Chinese at same version
+        import re as _re
+        def _version_key(filename: str) -> tuple:
+            m = _re.search(r'v(\d+)', filename)
+            ver = int(m.group(1)) if m else 0
+            eng = 1 if 'Learning Roadmap' in filename else 0
+            return (-ver, -eng)  # higher version first, English first
+        candidates.sort(key=_version_key)
         return candidates[0]
     return f"学习路线图 - {roadmap_name}.md"  # fallback
 
@@ -223,7 +229,7 @@ def get_all_notes(vault_path: str) -> List[Dict]:
     for root, dirs, files in os.walk(vault_path):
         dirs[:] = [d for d in dirs if not d.startswith(".")]
         for f in files:
-            if f.endswith(".md") and "MOC" not in f and "习路线图" not in f and "Learning Roadmap" not in f:
+            if f.endswith(".md") and "MOC" not in f and "学习路线图" not in f and "Learning Roadmap" not in f:
                 if _is_auxiliary_note_file(f):
                     continue
                 path = os.path.join(root, f)

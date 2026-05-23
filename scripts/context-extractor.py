@@ -60,6 +60,8 @@ except ImportError:
 
 def _get_pdf_reader(filepath):
     """统一 PDF reader 工厂，兼容 PyPDF2 和 pypdf"""
+    if not _HAS_PDF:
+        return None
     if _PDF_BACKEND == "pypdf2":
         return PyPDF2.PdfReader(str(filepath))
     elif _PDF_BACKEND == "pypdf":

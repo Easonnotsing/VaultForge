@@ -191,5 +191,23 @@ class ExtractTextForSourceTest(unittest.TestCase):
         self.assertIn("12-15", result["pages"])
 
 
+class PypdfBackendTest(unittest.TestCase):
+    """P0 regression: _get_pdf_reader doesn't NameError when pypdf backend set."""
+
+    def test_pypdf_backend_no_nameerror(self):
+        # Force pypdf backend and verify module-level setup is coherent
+        saved_backend = mod._PDF_BACKEND
+        saved_has = mod._HAS_PDF
+        try:
+            mod._PDF_BACKEND = "pypdf"
+            mod._HAS_PDF = False
+            # When pypdf not installed, _get_pdf_reader returns None
+            reader = mod._get_pdf_reader("/nonexistent.pdf")
+            self.assertIsNone(reader)
+        finally:
+            mod._PDF_BACKEND = saved_backend
+            mod._HAS_PDF = saved_has
+
+
 if __name__ == "__main__":
     unittest.main()

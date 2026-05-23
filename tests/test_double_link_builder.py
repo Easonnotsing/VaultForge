@@ -266,7 +266,33 @@ class EnglishRoadmapTest(unittest.TestCase):
             shutil.copytree(src, dst)
             mocs = mod.get_all_mocs(dst)
             updated = mod.build_roadmap_moc_links(dst, "Platform Strategy", mocs)
-            self.assertGreaterEqual(updated, 0)  # Should at least not crash
+            self.assertGreaterEqual(updated, 0)
+            # Verify English backlink was written, not Chinese
+            for moc in mocs:
+                moc_path = os.path.join(dst, moc["rel_path"])
+                content = open(moc_path, encoding="utf-8").read()
+                self.assertIn("Learning Roadmap", content)
+                self.assertNotIn("学习路线图", content)
+
+
+class RoadmapVersionTest(unittest.TestCase):
+    """P1 regression: numeric version sorting (v10 > v2)."""
+
+    def test_numeric_version_sort(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create roadmap files with different versions
+            for name in ("Learning Roadmap v10 - Test.md",
+                         "Learning Roadmap v2 - Test.md",
+                         "学习路线图 v3 - Test.md"):
+                Path(tmpdir, name).write_text("# Test")
+            result = mod._find_roadmap_file(tmpdir, "Test")
+            self.assertIn("v10", result)  # v10 > v3 > v2
+
+    def test_legacy_fallback(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            Path(tmpdir, "Learning Roadmap - Test.md").write_text("# Test")
+            result = mod._find_roadmap_file(tmpdir, "Test")
+            self.assertIn("Learning Roadmap - Test", result)
 
 
 if __name__ == "__main__":
