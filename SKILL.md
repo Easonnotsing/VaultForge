@@ -1012,7 +1012,7 @@ Present once:
 - Controversy Analysis note generated
 - Reference source list
 
-Ask the user: "📸 Generate an achievement share card? This takes about 1-2 minutes. Reply 'yes' or 'no'."
+Ask the user: "📸 Generate an achievement share card? Reply 'yes' or 'no'."
 
 - If **no** → append `[Phase 6] Complete — Achievement card skipped by user` to progress file, workflow ends
 - If **yes** → proceed to Step 6.5

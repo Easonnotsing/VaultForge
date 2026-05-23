@@ -156,7 +156,7 @@ Every note uses **bold-labeled sections** for readability:
 | **Obsidian Vault** | Install and initialize Obsidian |
 | **AI Agent Client** | Claude Code / Codex / Cursor or any client supporting Skill loading |
 | **Python 3** | Required by `context-extractor.py`, `double-link-builder.py` |
-| **pypdf** (recommended) | PDF page extraction: `pip install pypdf` (or `PyPDF2`) |
+| **pypdf** (recommended) | PDF page extraction: `pip install pypdf` |
 
 ### Phase 6 Deep Research (optional)
 
@@ -220,7 +220,7 @@ Phase 5 completion prompts a confirmation. Choose "continue" and the agent loads
 
 ### Q: What file formats are supported?
 
-PDF, Markdown, Word (.docx), PowerPoint (.pptx), HTML, and TXT. PDF requires pypdf/PyPDF2 for page extraction.
+PDF, Markdown, Word (.docx), PowerPoint (.pptx), HTML, and TXT. PDF requires pypdf for page extraction.
 
 ---
 

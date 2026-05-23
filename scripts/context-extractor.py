@@ -11,14 +11,14 @@
   - PDF 提取（±1 页缓冲区）
   - Markdown / TXT 全文提取
   - 非 PDF 文件无页码概念时，source_range 可省略页码表示全文
-  - PyPDF2 缺失时优雅降级（跳过 PDF，提取仍可用的非 PDF 内容）
+  - pypdf 缺失时优雅降级（跳过 PDF，提取仍可用的非 PDF 内容）
 
 用法:
   python3 context-extractor.py <vault_path> <roadmap_path> --output context_packets.json
   python3 context-extractor.py <vault_path> <roadmap_path> --output packets.json --note-filter note1.md,note2.md
 
 依赖:
-  - PyPDF2（可选，用于 PDF 页码提取；未安装时 PDF 源降级为空文本）
+  - pypdf（可选，用于 PDF 页码提取；未安装时 PDF 源降级为空文本）
 
 source_range 格式规范:
   source_range: {文件名}:{页码段1}, {页码段2}, ...
@@ -40,15 +40,22 @@ from typing import Dict, List, Optional, Set, Tuple
 
 # ─── PDF 依赖检测 ──────────────────────────────────────────────────
 
-_PDF_BACKEND = None  # "pypdf2" or "pypdf"
+_PDF_BACKEND = None  # "pypdf" or "pypdf2"
 _HAS_PDF = False
 
 try:
-    import PyPDF2  # noqa: F401
+    from pypdf import PdfReader  # noqa: F401
 
-    _PDF_BACKEND = "pypdf2"
+    _PDF_BACKEND = "pypdf"
     _HAS_PDF = True
 except ImportError:
+    try:
+        import PyPDF2  # noqa: F401
+
+        _PDF_BACKEND = "pypdf2"
+        _HAS_PDF = True
+    except ImportError:
+        pass
     try:
         import pypdf  # noqa: F401 (PyPDF2 后继项目)
 
@@ -530,7 +537,6 @@ def print_summary(packets: List[ContextPacket]) -> None:
     if empty_excerpts > 0:
         print(f"\n   ⚠️ {empty_excerpts} 个原文片段为空。")
         if not _HAS_PDF:
-            print(f"   原因: PDF 库未安装（pypdf 或 PyPDF2）。")
             print(f"   修复: pip install pypdf")
         print(f"   后果: 对应的填充 agent 将降级为从头阅读全量材料。")
 
@@ -539,7 +545,7 @@ def print_summary(packets: List[ContextPacket]) -> None:
         print(f"   请检查:")
         print(f"   1. 源文件是否在 vault 路径下可访问")
         print(f"   2. source_range 中的文件名拼写是否与实际一致")
-        print(f"   3. PyPDF2 是否已安装（PDF 文件）")
+        print(f"   3. pypdf 是否已安装（PDF 文件）")
 
 
 # ─── 检查依赖（主入口前调用）───────────────────────────────────────
