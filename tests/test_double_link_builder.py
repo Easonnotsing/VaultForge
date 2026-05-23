@@ -1,10 +1,12 @@
 import importlib.util
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+FIXTURES_DIR = os.path.join(ROOT, "tests", "fixtures")
 
 spec = importlib.util.spec_from_file_location(
     "double_link_builder", ROOT / "scripts" / "double-link-builder.py"
@@ -233,6 +235,34 @@ class BuildRoadmapMocLinksTest(unittest.TestCase):
         self.assertGreater(len(mocs), 0)
         updated = mod.build_roadmap_moc_links(self.vault, "平台战略", mocs)
         self.assertGreaterEqual(updated, 1)
+
+
+class EnglishRoadmapTest(unittest.TestCase):
+    """P0-2 regression: English roadmap filenames and bilingual headers."""
+
+    def test_discover_roadmap_theme_english(self):
+        vault = os.path.join(FIXTURES_DIR, "english-vault")
+        theme = mod.discover_roadmap_theme(vault)
+        self.assertEqual(theme, "Platform Strategy")
+
+    def test_discover_roadmap_theme_chinese(self):
+        vault = os.path.join(FIXTURES_DIR, "sample_vault")
+        theme = mod.discover_roadmap_theme(vault)
+        self.assertIsNotNone(theme)
+
+    def test_get_related_notes_header_english(self):
+        content = "## Related Notes\n- [[Note1]]"
+        self.assertEqual(mod._get_related_notes_header(content), "## Related Notes")
+
+    def test_get_related_notes_header_chinese(self):
+        content = "## 相关笔记\n- [[Note1]]"
+        self.assertEqual(mod._get_related_notes_header(content), "## 相关笔记")
+
+    def test_english_roadmap_moc_links(self):
+        vault = os.path.join(FIXTURES_DIR, "english-vault")
+        mocs = mod.get_all_mocs(vault)
+        updated = mod.build_roadmap_moc_links(vault, "Platform Strategy", mocs)
+        self.assertGreaterEqual(updated, 0)  # Should at least not crash
 
 
 if __name__ == "__main__":
