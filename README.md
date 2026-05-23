@@ -220,7 +220,7 @@ Phase 5 completion prompts a confirmation. Choose "continue" and the agent loads
 
 ### Q: What file formats are supported?
 
-PDF, Markdown, Word (.docx), PowerPoint (.pptx), HTML, and TXT. PDF requires pypdf for page extraction.
+PDF, Markdown, and TXT files are supported for precise page-range extraction (via `context-extractor.py`). Word (.docx), PowerPoint (.pptx), and HTML files are read as full text by the Agent's `Read` tool — they cannot use page-range extraction since they lack fixed page boundaries.
 
 ---
 

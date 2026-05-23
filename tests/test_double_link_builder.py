@@ -259,10 +259,14 @@ class EnglishRoadmapTest(unittest.TestCase):
         self.assertEqual(mod._get_related_notes_header(content), "## 相关笔记")
 
     def test_english_roadmap_moc_links(self):
-        vault = os.path.join(FIXTURES_DIR, "english-vault")
-        mocs = mod.get_all_mocs(vault)
-        updated = mod.build_roadmap_moc_links(vault, "Platform Strategy", mocs)
-        self.assertGreaterEqual(updated, 0)  # Should at least not crash
+        with tempfile.TemporaryDirectory() as tmpdir:
+            import shutil
+            src = os.path.join(FIXTURES_DIR, "english-vault")
+            dst = os.path.join(tmpdir, "english-vault")
+            shutil.copytree(src, dst)
+            mocs = mod.get_all_mocs(dst)
+            updated = mod.build_roadmap_moc_links(dst, "Platform Strategy", mocs)
+            self.assertGreaterEqual(updated, 0)  # Should at least not crash
 
 
 if __name__ == "__main__":

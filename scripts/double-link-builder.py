@@ -144,17 +144,25 @@ def _count_lexemes(text: str, lexemes: Tuple[str, ...]) -> int:
 
 
 def _find_roadmap_file(vault_path: str, roadmap_name: str) -> Optional[str]:
-    """Find the actual roadmap file on disk, trying English then Chinese patterns."""
-    patterns = [
-        f"Learning Roadmap v1 - {roadmap_name}.md",
-        f"Learning Roadmap - {roadmap_name}.md",
-        f"学习路线图 v1 - {roadmap_name}.md",
-        f"学习路线图 - {roadmap_name}.md",
-    ]
-    for pattern in patterns:
-        path = os.path.join(vault_path, pattern)
+    """Find the actual roadmap file on disk, preferring highest v-number, trying English then Chinese."""
+    import glob as globmod
+    candidates = []
+    # Search for both English and Chinese patterns with any version suffix
+    for prefix in ("Learning Roadmap v* - ", "学习路线图 v* - "):
+        pattern = os.path.join(vault_path, prefix + roadmap_name + ".md")
+        for f in sorted(globmod.glob(pattern)):
+            if "(Full)" in f or "完整版" in f:
+                continue
+            candidates.append(os.path.basename(f))
+    # Legacy patterns (no version suffix)
+    for legacy in (f"Learning Roadmap - {roadmap_name}.md", f"学习路线图 - {roadmap_name}.md"):
+        path = os.path.join(vault_path, legacy)
         if os.path.exists(path):
-            return pattern
+            candidates.append(legacy)
+    if candidates:
+        # Prefer highest version (v2 > v1), then English over Chinese
+        candidates.sort(reverse=True)
+        return candidates[0]
     return f"学习路线图 - {roadmap_name}.md"  # fallback
 
 
@@ -172,12 +180,12 @@ def _get_roadmap_backlink(roadmap_filename: str, roadmap_name: str) -> str:
 
 # Helper: detect link existing in MOC already (language-aware)
 def _link_exists_in_moc(moc_content: str, roadmap_filename: str, roadmap_name: str) -> bool:
-    """Check if MOC already has roadmap backlink, checking both language patterns."""
-    backlink_en = f"[[../../Learning Roadmap v1 - {roadmap_name}|Learning Roadmap]]"
-    backlink_cn = f"[[../../学习路线图 v1 - {roadmap_name}|学习路线图]]"
-    legacy_en = f"[[../../Learning Roadmap - {roadmap_name}|Learning Roadmap]]"
-    legacy_cn = f"[[../../学习路线图 - {roadmap_name}|学习路线图]]"
-    return any(link in moc_content for link in [backlink_en, backlink_cn, legacy_en, legacy_cn])
+    """Check if MOC already has roadmap backlink (language-aware, actual filename)."""
+    base = roadmap_filename.replace(".md", "")
+    # The backlink we would generate
+    expected = _get_roadmap_backlink(roadmap_filename, roadmap_name)
+    # Also check the raw link target without display text
+    return f"[[../../{base}" in moc_content or expected in moc_content
 
 
 def discover_roadmap_theme(vault_path: str) -> Optional[str]:
@@ -215,7 +223,7 @@ def get_all_notes(vault_path: str) -> List[Dict]:
     for root, dirs, files in os.walk(vault_path):
         dirs[:] = [d for d in dirs if not d.startswith(".")]
         for f in files:
-            if f.endswith(".md") and "MOC" not in f and "学习路线图" not in f:
+            if f.endswith(".md") and "MOC" not in f and "习路线图" not in f and "Learning Roadmap" not in f:
                 if _is_auxiliary_note_file(f):
                     continue
                 path = os.path.join(root, f)
@@ -485,6 +493,7 @@ def build_roadmap_moc_links(
     with open(roadmap_path, "r", encoding="utf-8") as f:
         roadmap_content = f.read()
     updated_mocs = 0
+    roadmap_modified = False
     for moc in mocs:
         moc_title = moc["title"]
         pattern = rf"(^###\s+{re.escape(moc_title)}\s*$)"
@@ -496,6 +505,7 @@ def build_roadmap_moc_links(
                 roadmap_content = re.sub(
                     pattern, replacement, roadmap_content, count=1, flags=re.MULTILINE
                 )
+                roadmap_modified = True
         moc_rel_path = moc["rel_path"]
         with open(os.path.join(vault_path, moc_rel_path), "r", encoding="utf-8") as f:
             moc_content = f.read()
@@ -509,13 +519,14 @@ def build_roadmap_moc_links(
             else:
                 moc_content = (
                     moc_content.rstrip()
-                    + f"\n- [[../../学习路线图 - {roadmap_name}|学习路线图]]\n"
+                    + f"\n- {backlink}\n"
                 )
             with open(os.path.join(vault_path, moc_rel_path), "w", encoding="utf-8") as f:
                 f.write(moc_content)
             updated_mocs += 1
-    with open(roadmap_path, "w", encoding="utf-8") as f:
-        f.write(roadmap_content)
+    if roadmap_modified:
+        with open(roadmap_path, "w", encoding="utf-8") as f:
+            f.write(roadmap_content)
     return updated_mocs
 
 
