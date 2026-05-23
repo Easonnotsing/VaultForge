@@ -295,5 +295,23 @@ class RoadmapVersionTest(unittest.TestCase):
             self.assertIn("Learning Roadmap - Test", result)
 
 
+class AuxiliaryFileFilterTest(unittest.TestCase):
+    """P2: English auxiliary files excluded from note scanning."""
+
+    def test_english_aux_files_filtered(self):
+        self.assertTrue(mod._is_auxiliary_note_file("Core Questions.md"))
+        self.assertTrue(mod._is_auxiliary_note_file("Topic - Deep Research.md"))
+        self.assertTrue(mod._is_auxiliary_note_file("Topic - Controversy Analysis.md"))
+
+    def test_chinese_aux_files_filtered(self):
+        self.assertTrue(mod._is_auxiliary_note_file("核心问题.md"))
+        self.assertTrue(mod._is_auxiliary_note_file("Topic - 深度研究.md"))
+        self.assertTrue(mod._is_auxiliary_note_file("Topic - 争议分析.md"))
+
+    def test_normal_notes_not_filtered(self):
+        self.assertFalse(mod._is_auxiliary_note_file("Network Effects.md"))
+        self.assertFalse(mod._is_auxiliary_note_file("Power and Influence.md"))
+
+
 if __name__ == "__main__":
     unittest.main()

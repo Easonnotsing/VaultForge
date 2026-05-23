@@ -106,12 +106,16 @@ class TfidfIndex:
 
 
 def _is_auxiliary_note_file(filename: str) -> bool:
-    if filename == "核心问题.md":
-        return True
-    if filename.endswith("- 深度研究.md"):
-        return True
-    if filename.endswith("- 争议分析.md"):
-        return True
+    """Exclude generated auxiliary files from note scanning (bilingual)."""
+    aux_patterns = [
+        "核心问题.md", "Core Questions.md",
+        "- 深度研究.md", "- Deep Research.md",
+        "- 争议分析.md", "- Controversy Analysis.md",
+    ]
+    for pattern in aux_patterns:
+        if filename.endswith(pattern):
+            return True
+    return False
     return False
 
 
