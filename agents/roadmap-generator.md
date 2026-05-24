@@ -243,6 +243,8 @@ When `incremental_mode = true`, the agent adjusts its behavior:
 
 Only generate after **confirming all content has been read**.
 
+**🚫 If the source material cannot support at least one H2 containing ≥2 H3 topics, stop and inform the user. A roadmap without H3 topics is structurally invalid — it produces a flat vault with no MOCs, no wikilink scoping, and no topic-level organization.**
+
 **Full version format requirements:**
 
 1. **Detailed knowledge point descriptions** (200+ words)

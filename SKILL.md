@@ -329,6 +329,8 @@ Procedure:
    - Strategic Management: 1 H3 → ❌ redundant hierarchy
      Suggestions: a) split b) merge into adjacent H2 c) elevate H3 to H2
 
+**🚫 Fatal: if H3 count is 0, the roadmap is structurally invalid.** Atomic notes would be placed directly under H2 with no MOC — this produces a flat, unusable vault. Do NOT proceed to Phase 2. The user MUST revise the roadmap to include H3 topics before continuing.
+
 Would you like to modify the roadmap?
   - "continue" → proceed to Phase 2
   - "modify + specific feedback" → return to Step 1.4 to revise, re-save, and re-parse

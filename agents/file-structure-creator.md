@@ -33,6 +33,8 @@ Read the roadmap outline and parse out:
 - H3 level (topics)
 - Bullet items (knowledge points)
 
+**🚫 If there are 0 H3 topics in the roadmap, do NOT create any folders.** An H2-only roadmap would create a flat vault with atomic notes directly under H2 — no MOC, no structure. Report this as a fatal error and stop. The roadmap must be revised to include H3 topics before Phase 2 can continue.
+
 ### Step 2: Create Folder Structure
 
 Create folders following the outline's H2/H3 hierarchy:
