@@ -1057,9 +1057,8 @@ If any line is missing or unparseable, fall back to file-system scan (current be
 Randomly pick one, then follow the path for that style:
 
 **Style A path:**
-1. Read `scripts/share-card.html`
-2. The graph background is already embedded — no conversion needed
-3. Render with `--window-size=900,900`
+1. Read `scripts/graph-bg.png` → encode as base64 → replace `{{GRAPH_BG}}` in `scripts/share-card.html`
+2. Render with `--window-size=900,900`
 
 **Style B path:**
 1. Read `scripts/share-card-b.html`
