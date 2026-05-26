@@ -364,6 +364,8 @@ Would you like to modify the roadmap?
 
 The `file-structure-creator` agent handles folder hierarchy, MOC placement, and blank note creation. See [agents/file-structure-creator.md](./agents/file-structure-creator.md) for the detailed protocol (folder naming, correct/incorrect structure examples, creation steps).
 
+**🚫 Phase 2 MUST NOT write any note content beyond frontmatter and section headers.** Content filling is exclusively Phase 3's responsibility. Writing content in Phase 2 bypasses the atomic write protection, breaks the state machine, and prevents breakpoint recovery.
+
 **Validation and Confirmation**:
 
 **Validated items**:
@@ -1016,7 +1018,7 @@ Present once:
 - Controversy Analysis note generated
 - Reference source list
 
-Ask the user: "📸 Generate an achievement share card? Reply 'yes' or 'no'."
+Ask the user: "📸 Generate an achievement share card? (yes / skip)" — default to yes if user does not explicitly reply "skip".
 
 - If **no** → append `[Phase 6] Complete — Achievement card skipped by user` to progress file, workflow ends
 - If **yes** → proceed to Step 6.5

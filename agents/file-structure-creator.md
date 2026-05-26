@@ -84,6 +84,10 @@ This Map of Content collects atomic notes related to {Topic Name}.
 
 ### Step 4: Create Atomic Note Templates (Blank)
 
+**🚫 CRITICAL: Do NOT write any content into atomic notes.** Phase 2 creates EMPTY shells only. The `## Core Concepts`, `## Case Study`, `## Original Text`, `## Reflection Questions` sections must remain blank. Filling content is Phase 3's exclusive responsibility. Writing content now breaks the state machine (`status: draft` → should be `status: filling` during Phase 3), bypasses atomic write protection (`.md.tmp` → verify → rename), and leaves no breakpoint recovery path.
+
+The template below is the COMPLETE file — nothing more:
+
 ```markdown
 ---
 title: {Knowledge Point Name}
