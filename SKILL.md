@@ -1079,7 +1079,7 @@ Randomly pick one, then follow the path for that style:
    - `{{SLOGAN}}` — language-aware:
      - English: "Every read builds something that lasts."
            - 中文: "每一次阅读，都不止于阅读。"
-4. Write the filled template to a temp `.html` file and render with Chrome headless using the style's window size
+4. Write the filled template to a temp `.html` file and render with Chrome headless using the style's window size. **Chrome headless `--screenshot` is the only acceptable rendering method.** Do not output HTML to the user. Do not use Playwright — it is not a VaultForge dependency. The result must be a PNG file.
 5. Report to the user: `📸 Achievement card generated: VaultForge Achievement - {Topic}.png`
 
 > Historical failure cases and improvement records: see [HISTORY.md](./HISTORY.md)
